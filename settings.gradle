@@ -1,0 +1,3 @@
+include ':libexcamera'
+include ':app'
+rootProject.name = "ExCamera"

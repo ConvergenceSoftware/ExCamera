@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.convergence.excamera.view.config.component.MirrorFlipLayout
+        android:id="@+id/item_flip_layout_usb_tele_config"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <include layout="@layout/divider_config" />
+
+    <com.convergence.excamera.view.config.component.TeleFocusLayout
+        android:id="@+id/item_focus_layout_usb_tele_config"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <include layout="@layout/divider_config" />
+
+    <com.convergence.excamera.view.config.component.ConfigMixLayout
+        android:id="@+id/item_white_balance_layout_usb_tele_config"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:configType="whiteBalance" />
+
+    <include layout="@layout/divider_config" />
+
+    <com.convergence.excamera.view.config.component.ConfigMixLayout
+        android:id="@+id/item_exposure_layout_usb_tele_config"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:configType="exposure" />
+
+    <include layout="@layout/divider_config" />
+
+    <com.convergence.excamera.view.config.component.ConfigComLayout
+        android:id="@+id/item_brightness_layout_usb_tele_config"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:configType="brightness" />
+
+    <include layout="@layout/divider_config" />
+
+    <com.convergence.excamera.view.config.component.ConfigComLayout
+        android:id="@+id/item_contrast_layout_usb_tele_config"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:configType="contrast" />
+
+    <include layout="@layout/divider_config" />
+
+    <com.convergence.excamera.view.config.component.ConfigComLayout
+        android:id="@+id/item_hue_layout_usb_tele_config"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:configType="hue" />
+
+    <include layout="@layout/divider_config" />
+
+    <com.convergence.excamera.view.config.component.ConfigComLayout
+        android:id="@+id/item_saturation_layout_usb_tele_config"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:configType="saturation" />
+
+    <include layout="@layout/divider_config" />
+
+    <com.convergence.excamera.view.config.component.ConfigComLayout
+        android:id="@+id/item_sharpness_layout_usb_tele_config"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:configType="sharpness" />
+
+    <include layout="@layout/divider_config" />
+
+    <com.convergence.excamera.view.config.component.ConfigComLayout
+        android:id="@+id/item_gamma_layout_usb_tele_config"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:configType="gamma" />
+
+    <include layout="@layout/divider_config" />
+
+    <com.convergence.excamera.view.config.component.ConfigComLayout
+        android:id="@+id/item_gain_layout_usb_tele_config"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:configType="gain" />
+
+</LinearLayout>

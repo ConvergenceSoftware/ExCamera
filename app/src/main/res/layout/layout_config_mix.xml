@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="15dp"
+    android:paddingTop="5dp"
+    android:paddingEnd="15dp"
+    android:paddingBottom="5dp">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        tools:ignore="UnusedAttribute">
+
+        <TextView
+            android:id="@+id/tv_name_layout_config_mix"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|start"
+            android:text="Name"
+            android:textColor="@color/colorTextMain"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|end"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_auto_layout_config_mix"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:autoSizeMaxTextSize="15sp"
+                android:autoSizeMinTextSize="5dp"
+                android:autoSizeTextType="uniform"
+                android:gravity="center"
+                android:text="Auto"
+                android:textColor="@color/colorPrimary" />
+
+            <Switch
+                android:id="@+id/sw_auto_layout_config_mix"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:thumb="@drawable/switch_thumb_camera_setting"
+                android:track="@drawable/switch_track_camera_setting" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/item_param_layout_config_mix"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <com.convergence.excamera.view.config.component.ConfigSeekBarLayout
+            android:id="@+id/csbl_layout_config_mix"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/tv_reset_layout_config_mix"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:text="Reset"
+            android:textColor="@color/colorPrimary"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
+</LinearLayout>

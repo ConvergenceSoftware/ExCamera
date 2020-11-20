@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_rv_resolution"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:background="?attr/selectableItemBackground"
+    android:paddingStart="15dp"
+    android:paddingEnd="15dp">
+
+    <TextView
+        android:id="@+id/tv_content_rv_resolution"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|start"
+        android:gravity="center"
+        android:text="1280 * 720"
+        android:textColor="@color/colorTextMain"
+        android:textSize="15sp" />
+
+    <ImageView
+        android:id="@+id/iv_select_rv_resolution"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center|end"
+        android:padding="5dp"
+        android:src="@drawable/ic_selected_circle" />
+
+</FrameLayout>

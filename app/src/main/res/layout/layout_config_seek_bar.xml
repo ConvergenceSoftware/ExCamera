@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <SeekBar
+        android:id="@+id/sb_layout_config_seek_bar"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:maxHeight="3dp"
+        android:progressDrawable="@drawable/seek_bar_track_config"
+        android:thumb="@drawable/seek_bar_thumb_config" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp">
+
+        <TextView
+            android:id="@+id/tv_min_layout_config_seek_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|start"
+            android:text="Min"
+            android:textColor="@color/colorTextMain"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tv_cur_layout_config_seek_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Cur"
+            android:textColor="@color/colorPrimary"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tv_max_layout_config_seek_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|end"
+            android:text="Max"
+            android:textColor="@color/colorTextMain"
+            android:textSize="15sp" />
+
+    </FrameLayout>
+
+</LinearLayout>

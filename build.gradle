@@ -1,0 +1,46 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:4.0.0"
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        google()
+        jcenter()
+        maven {
+            url 'https://gitee.com/wang_ziheng/libcommon/raw/master/repository/'
+        }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+ext {
+    //variable that can be referenced to keep support libs consistent
+    androidXVersion = '1.1.0'
+    //UVCCamera common library version https://github.com/saki4510t/libcommon
+    commonLibVersion = '4.1.1'
+    versionCompiler = 29
+    // when target<=27, 10.0 is ok
+    versionTarget = 27
+    minSdkVersion = 21
+    versionCode = 1
+    versionName = '1.0.0'
+    retrofit2Version = '2.9.0'
+    okhttp3Version = '4.9.0'
+    rxJava3Version = '3.0.0'
+    javaSourceCompatibility = JavaVersion.VERSION_1_8
+    javaTargetCompatibility = JavaVersion.VERSION_1_8
+}

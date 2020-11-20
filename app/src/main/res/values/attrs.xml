@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RatioFrameLayout">
+        <attr name="isDependOnWidth" format="boolean" />
+        <attr name="rflWidthWeight" format="integer" />
+        <attr name="rflHeightWeight" format="integer" />
+    </declare-styleable>
+    <declare-styleable name="ConfigBaseLayout">
+        <attr name="configType" format="enum">
+            <enum name="unknown" value="0" />
+            <enum name="focus" value="1" />
+            <enum name="whiteBalance" value="2" />
+            <enum name="exposure" value="3" />
+            <enum name="brightness" value="4" />
+            <enum name="contrast" value="5" />
+            <enum name="hue" value="6" />
+            <enum name="saturation" value="7" />
+            <enum name="sharpness" value="8" />
+            <enum name="gamma" value="9" />
+            <enum name="gain" value="10" />
+            <enum name="iris" value="11" />
+            <enum name="zoom" value="12" />
+            <enum name="roll" value="13" />
+            <enum name="pan" value="14" />
+            <enum name="tilt" value="15" />
+            <enum name="quality" value="16" />
+        </attr>
+    </declare-styleable>
+</resources>
