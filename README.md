@@ -61,9 +61,9 @@ Now, you are able to use ExCamera SDK in your project. :)
 
 3. After permission is gained, we try to open the UVC Camera and start preview.
 
-4. In view of the situation like the screen goes out, the preview is need to be restored, so we start preview on `onResume` and stop preview on `onPause` in activity lifecycle.
+4. Preview is need to be restored when you come back after leaving the preview page, so we start preview on `onResume` and stop preview on `onPause` in activity lifecycle.
 
-5. When the USB device is disconnected or the acitviy is going to destory, we need to stop preview and release the UVC Camera, so release on `onDestory` in the activity lifecycle is needed.
+5. When the USB device is disconnected or the activity is going to destroy, we need to stop preview and release the UVC Camera, so release on `onDestory` in the activity lifecycle is needed.
 
 6. For more details, you can have a look at [UsbCameraCommand][UsbCameraCommand.java].
 
@@ -98,7 +98,7 @@ As mentioned above, the process of USB connection is complicated, but all you ne
     }
 ```
 
-Well, you are able to preivew on you own application by USB Connection now.
+Well, you are able to preview on you own application by USB Connection now.
 
 #### WiFi Connection
 
@@ -114,7 +114,7 @@ Well, you are able to preivew on you own application by USB Connection now.
 
 4. Sometimes, we may lost the wireless connection or meet other troubles, so it is necessary to have a retry mechanism. Well, we already provided the retry mechanism for you don't have to consider about it.
 
-5. Similarly, please release on `onDestory` in the activity lifecycle.
+5. Similarly, please release on `onDestroy` in the activity lifecycle.
 
 6. For more details, you can have a look at [WifiCameraCommand][WifiCameraCommand.java].
 
@@ -149,7 +149,7 @@ Similarly, we also provide simple way for you to complete the complicated proces
     }
 ```
 
-Well, you are able to preivew on you own application by WiFi Connection now.
+Well, you are able to preview on you own application by WiFi Connection now.
 
 ------------
 
@@ -388,21 +388,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ```
 
-[CamManager.dir]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/app/src/main/java/com/convergence/excamera/manager
-[ApiService.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/convergence/excamera/sdk/wifi/net/ApiService
+[CamManager.dir]: https://github.com/ConvergenceSoftware/ExCamera/tree/master/app/src/main/java/com/convergence/excamera/manager
+[ApiService.java]: https://github.com/ConvergenceSoftware/ExCamera/tree/master/libexcamera/src/main/java/com/convergence/excamera/sdk/wifi/net/ApiService.java
 
-[UsbCameraCommand.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/convergence/excamera/sdk/usb/core/UsbCameraCommand
-[UsbCameraController.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/convergence/excamera/sdk/usb/core/UsbCameraController
-[UsbCameraView.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/convergence/excamera/sdk/usb/core/UsbCameraView
-[UsbMicroCamManager.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/app/src/main/java/com/convergence/excamera/manager/UsbMicroCamManager
-[UVCConfig.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/serenegiant/usb/config/base/UVCConfig
-[UVCCamera.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/serenegiant/usb/UVCCamera
+[UsbCameraCommand.java]: https://github.com/ConvergenceSoftware/ExCamera/tree/master/libexcamera/src/main/java/com/convergence/excamera/sdk/usb/core/UsbCameraCommand.java
+[UsbCameraController.java]: https://github.com/ConvergenceSoftware/ExCamera/tree/master/libexcamera/src/main/java/com/convergence/excamera/sdk/usb/core/UsbCameraController.java
+[UsbCameraView.java]: https://github.com/ConvergenceSoftware/ExCamera/tree/master/libexcamera/src/main/java/com/convergence/excamera/sdk/usb/core/UsbCameraView.java
+[UsbMicroCamManager.java]: https://github.com/ConvergenceSoftware/ExCamera/tree/master/app/src/main/java/com/convergence/excamera/manager/UsbMicroCamManager.java
+[UVCConfig.java]: https://github.com/ConvergenceSoftware/ExCamera/tree/master/libexcamera/src/main/java/com/serenegiant/usb/config/base/UVCConfig.java
+[UVCCamera.java]: https://github.com/ConvergenceSoftware/ExCamera/tree/master/libexcamera/src/main/java/com/serenegiant/usb/UVCCamera.java
 
-[WifiCameraCommand.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/convergence/excamera/sdk/wifi/core/WifiCameraCommand
-[WifiCameraController.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/convergence/excamera/sdk/wifi/core/WifiCameraController
-[WifiCameraView.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/convergence/excamera/sdk/wifi/core/WifiCameraView
-[WifiMicroCamManager.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/app/src/main/java/com/convergence/excamera/manager/WifiMicroCamManager
-[WifiConfig.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/convergence/excamera/sdk/wifi/config/base/WifiConfig
+[WifiCameraCommand.java]: https://github.com/ConvergenceSoftware/ExCamera/tree/master/libexcamera/src/main/java/com/convergence/excamera/sdk/wifi/core/WifiCameraCommand.java
+[WifiCameraController.java]: https://github.com/ConvergenceSoftware/ExCamera/tree/master/libexcamera/src/main/java/com/convergence/excamera/sdk/wifi/core/WifiCameraController.java
+[WifiCameraView.java]: https://github.com/ConvergenceSoftware/ExCamera/tree/master/libexcamera/src/main/java/com/convergence/excamera/sdk/wifi/core/WifiCameraView.java
+[WifiMicroCamManager.java]: https://github.com/ConvergenceSoftware/ExCamera/tree/master/app/src/main/java/com/convergence/excamera/manager/WifiMicroCamManager.java
+[WifiConfig.java]: https://github.com/ConvergenceSoftware/ExCamera/tree/master/libexcamera/src/main/java/com/convergence/excamera/sdk/wifi/config/base/WifiConfig.java
 
 [cvgc.link]: http://www.cvgc.cn
 [tipscope.link]: http://www.tipscope.com
