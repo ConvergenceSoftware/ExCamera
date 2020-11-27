@@ -9,8 +9,9 @@ import android.os.Message;
 
 import androidx.annotation.NonNull;
 
-import com.convergence.excamera.sdk.WifiCameraConstant;
 import com.convergence.excamera.sdk.common.CameraLogger;
+import com.convergence.excamera.sdk.wifi.WifiCameraConstant;
+import com.convergence.excamera.sdk.wifi.WifiCameraState;
 import com.convergence.excamera.sdk.wifi.config.base.WifiAutoConfig;
 import com.convergence.excamera.sdk.wifi.config.base.WifiConfig;
 import com.convergence.excamera.sdk.wifi.config.base.WifiParamConfig;
@@ -43,13 +44,6 @@ public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener,
     private static final int MSG_RETRY_STREAM = 102;
     private static final int MSG_LOAD_FRAME = 103;
 
-    public enum State {
-        Free,           //空闲状态，初始状态，未进行网络请求获取图像数据流
-        Retrying,       //重试状态，网络请求获取图像数据流失败或连续多帧图片获取失败触发，不断重新请求推流
-        Prepared,       //准备状态，网络请求获取图像数据流成功，开启轮询读取画面帧，过渡状态
-        Previewing      //预览状态，正常预览并且未因连续多帧图片获取失败触发重试状态
-    }
-
     private final WifiCameraNetWork netWork = WifiCameraNetWork.getInstance();
     private CameraLogger cameraLogger = WifiCameraConstant.GetLogger();
 
@@ -58,7 +52,7 @@ public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener,
     private Handler handler;
     private WifiCameraSetting cameraSetting;
     private WifiCameraStreamLooper streamLooper;
-    private State curState = State.Free;
+    private WifiCameraState curState = WifiCameraState.Free;
 
     private Bitmap latestBitmap;
     private int retryTimes = 0;
@@ -105,9 +99,9 @@ public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener,
                 isPrepared = true;
                 Message msg = new Message();
                 msg.what = MSG_START_STREAM;
-                msg.obj = curState == State.Retrying;
+                msg.obj = curState == WifiCameraState.Retrying;
                 handler.sendMessage(msg);
-                updateState(State.Prepared);
+                updateState(WifiCameraState.Prepared);
                 cameraLogger.LogD("start stream success");
                 loadConfig(true);
             }
@@ -133,7 +127,7 @@ public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener,
             msg.obj = false;
             handler.sendMessage(msg);
         }
-        updateState(State.Free);
+        updateState(WifiCameraState.Free);
     }
 
     /**
@@ -151,7 +145,7 @@ public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener,
             msg.obj = true;
             handler.sendMessage(msg);
         }
-        updateState(State.Retrying);
+        updateState(WifiCameraState.Retrying);
         cameraLogger.LogD("retry stream");
         handler.sendEmptyMessageDelayed(MSG_RETRY_STREAM, WifiCameraConstant.DEFAULT_WIFI_CAMERA_RETRY_PERIOD);
     }
@@ -429,14 +423,14 @@ public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener,
             return;
         }
         latestBitmap = flipBitmap(frame);
-        updateState(State.Previewing);
+        updateState(WifiCameraState.Previewing);
         handler.sendEmptyMessage(MSG_LOAD_FRAME);
     }
 
     /**
      * 更新当前WiFi相机状态
      */
-    private void updateState(State state) {
+    private void updateState(WifiCameraState state) {
         if (curState == state) return;
         cameraLogger.LogD("WiFi State update : " + curState + " ==> " + state);
         curState = state;
@@ -552,7 +546,7 @@ public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener,
     /**
      * 获取当前WiFi相机状态
      */
-    public State getCurState() {
+    public WifiCameraState getCurState() {
         return curState;
     }
 
@@ -581,7 +575,7 @@ public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener,
      * 是否正常预览中
      */
     public boolean isPreviewing() {
-        return isPrepared() && isParamAvailable() && curState == State.Previewing;
+        return isPrepared() && isParamAvailable() && curState == WifiCameraState.Previewing;
     }
 
     @Override
@@ -591,7 +585,7 @@ public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener,
 
     @Override
     public void onLooping() {
-        if (curState == State.Free || isReleased) return;
+        if (curState == WifiCameraState.Free || isReleased) return;
         loadFrameFromStream();
     }
 
@@ -652,7 +646,7 @@ public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener,
          *
          * @param state 当前WiFi相机连接状态
          */
-        void onStateUpdate(State state);
+        void onStateUpdate(WifiCameraState state);
 
         /**
          * 获取画面帧

@@ -3,7 +3,7 @@ package com.convergence.excamera.sdk.usb.entity;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.convergence.excamera.sdk.UsbCameraConstant;
+import com.convergence.excamera.sdk.usb.UsbCameraConstant;
 import com.convergence.excamera.sdk.common.OutputUtil;
 
 /**

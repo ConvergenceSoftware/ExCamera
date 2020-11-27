@@ -1,4 +1,4 @@
-package com.convergence.excamera.sdk;
+package com.convergence.excamera.sdk.usb;
 
 import com.convergence.excamera.sdk.common.CameraLogger;
 

@@ -2,7 +2,7 @@ package com.convergence.excamera.sdk.wifi.entity;
 
 import android.text.TextUtils;
 
-import com.convergence.excamera.sdk.WifiCameraConstant;
+import com.convergence.excamera.sdk.wifi.WifiCameraConstant;
 import com.convergence.excamera.sdk.wifi.net.bean.NConfigList;
 
 import java.util.ArrayList;
@@ -19,6 +19,12 @@ import java.util.Map;
  * @Organization Convergence Ltd.
  */
 public class WifiCameraResolution {
+
+    /**
+     * resolutionList = [<8>1024 * 768, <7>1280 * 720, <6>1600 * 1200, <0>1920 * 1080, <5>2048 * 1536,
+     * <4>2592 * 1944, <3>3264 * 2448, <2>3840 * 2160, <1>3840 * 3104] ,
+     * curResolution = <7>1280 * 720
+     */
 
     //分辨率列表
     private List<Resolution> resolutionList;

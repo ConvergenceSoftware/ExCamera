@@ -14,6 +14,39 @@ import java.util.Map;
  */
 public abstract class WifiConfig {
 
+    /**
+     * Config <Focus, Auto> : id = 10094860 , type = 2 , flag = 0 , group = 1 , dest = 0 , step = 1 ,
+     * min = 0 , max = 1 , def = 0 , cur = 1
+     * Config <White Balance Temperature, Auto> : id = 9963788 , type = 2 , flag = 0 , group = 1 , dest = 0 , step = 1 ,
+     * min = 0 , max = 1 , def = 1 , cur = 1
+     * Config <Exposure, Auto> : id = 10094849 , type = 3 , flag = 0 , group = 1 , dest = 0 , step = 1 ,
+     * min = 0 , max = 3 , def = 3 , cur = 3
+     * Config <Focus (absolute)> : id = 10094858 , type = 1 , flag = 16 , group = 1 , dest = 0 , step = 1 ,
+     * min = 0 , max = 255 , def = 0 , cur = 0
+     * Config <White Balance Temperature> : id = 9963802 , type = 1 , flag = 16 , group = 1 , dest = 0 , step = 1 ,
+     * min = 2800 , max = 6500 , def = 4600 , cur = 4600
+     * Config <Exposure (Absolute)> : id = 10094850 , type = 1 , flag = 16 , group = 1 , dest = 0 , step = 1 ,
+     * min = 3 , max = 2047 , def = 166 , cur = 166
+     * Config <Brightness> : id = 9963776 , type = 1 , flag = 0 , group = 1 , dest = 0 , step = 1 ,
+     * min = -64 , max = 64 , def = -9 , cur = -9
+     * Config <Contrast> : id = 9963777 , type = 1 , flag = 0 , group = 1 , dest = 0 , step = 1 ,
+     * min = 0 , max = 95 , def = 0 , cur = 0
+     * Config <Saturation> : id = 9963778 , type = 1 , flag = 0 , group = 1 , dest = 0 , step = 1 ,
+     * min = 0 , max = 100 , def = 68 , cur = 68
+     * Config <Hue> : id = 9963779 , type = 1 , flag = 0 , group = 1 , dest = 0 , step = 1 ,
+     * min = -2000 , max = 2000 , def = 185 , cur = 185
+     * Config <Gamma> : id = 9963792 , type = 1 , flag = 0 , group = 1 , dest = 0 , step = 1 ,
+     * min = 100 , max = 300 , def = 140 , cur = 140
+     * Config <Sharpness> : id = 9963803 , type = 1 , flag = 0 , group = 1 , dest = 0 , step = 1 ,
+     * min = 1 , max = 8 , def = 6 , cur = 6
+     * Config <Backlight Compensation> : id = 9963804 , type = 1 , flag = 0 , group = 1 , dest = 0 , step = 1 ,
+     * min = 0 , max = 1 , def = 1 , cur = 1
+     * Config <Power Line Frequency> : id = 9963800 , type = 3 , flag = 0 , group = 1 , dest = 0 , step = 1 ,
+     * min = 0 , max = 2 , def = 1 , cur = 1
+     * Config <JPEG quality> : id = 1 , type = 1 , flag = 0 , group = 3 , dest = 0 , step = 1 ,
+     * min = 0 , max = 100 , def = 50 , cur = 0
+     */
+
     public static final String TAG_AUTO_FOCUS_AUTO = "FocusAuto";
     public static final String TAG_AUTO_WHITE_BALANCE_AUTO = "WhiteBalanceAuto";
     public static final String TAG_AUTO_EXPOSURE_AUTO = "ExposureAuto";

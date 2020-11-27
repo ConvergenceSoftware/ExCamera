@@ -30,7 +30,7 @@ import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
-import com.convergence.excamera.sdk.UsbCameraConstant;
+import com.convergence.excamera.sdk.usb.UsbCameraConstant;
 import com.serenegiant.usb.USBMonitor.UsbControlBlock;
 import com.serenegiant.usb.config.auto.UVCFocusAuto;
 import com.serenegiant.usb.config.auto.UVCPrivacy;

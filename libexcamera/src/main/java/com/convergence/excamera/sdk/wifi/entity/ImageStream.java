@@ -3,7 +3,7 @@ package com.convergence.excamera.sdk.wifi.entity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import com.convergence.excamera.sdk.WifiCameraConstant;
+import com.convergence.excamera.sdk.wifi.WifiCameraConstant;
 import com.convergence.excamera.sdk.common.CameraLogger;
 
 import java.io.BufferedInputStream;

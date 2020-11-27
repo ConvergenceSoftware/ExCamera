@@ -1,4 +1,4 @@
-package com.convergence.excamera.sdk.common;
+package com.convergence.excamera.sdk.common.video;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -6,10 +6,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Size;
 
+import com.convergence.excamera.sdk.common.MediaScanner;
+
 import java.io.File;
-import java.util.LinkedList;
 import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.LinkedTransferQueue;
 
 /**

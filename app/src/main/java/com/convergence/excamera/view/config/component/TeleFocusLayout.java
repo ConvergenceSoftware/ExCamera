@@ -31,8 +31,6 @@ import butterknife.ButterKnife;
  */
 public class TeleFocusLayout extends LinearLayout implements View.OnTouchListener {
 
-    private static final long ACTION_DELAY_TIME = 1000L;
-
     @BindView(R.id.tv_focus_back_layout_tele_focus)
     TextView tvFocusBackLayoutTeleFocus;
     @BindView(R.id.iv_focus_back_layout_tele_focus)
@@ -52,7 +50,6 @@ public class TeleFocusLayout extends LinearLayout implements View.OnTouchListene
 
     private Context context;
     private OnTeleFocusListener onTeleFocusListener;
-    private DelayActionRunnable delayActionRunnable;
     private PressState curPressState = PressState.None;
 
     public TeleFocusLayout(Context context) {
@@ -87,23 +84,26 @@ public class TeleFocusLayout extends LinearLayout implements View.OnTouchListene
         itemFocusFrontLayoutTeleFocus.setOnTouchListener(this);
     }
 
+    /**
+     * 设置监听
+     */
     public void setOnTeleFocusListener(OnTeleFocusListener onTeleFocusListener) {
         this.onTeleFocusListener = onTeleFocusListener;
     }
 
-    private int getColor(@ColorRes int colorId) {
-        return ResourcesCompat.getColor(getResources(), colorId, null);
-    }
-
-    private Drawable getDrawable(@DrawableRes int drawableId) {
-        return ResourcesCompat.getDrawable(getResources(), drawableId, null);
-    }
-
+    /**
+     * 更新按压状态
+     */
     private void updatePressState(PressState state) {
         if (curPressState == state) return;
         curPressState = state;
     }
 
+    /**
+     * 按钮按下
+     *
+     * @param isBack 是否向后调焦
+     */
     private void focusActionDown(boolean isBack) {
         if (curPressState != PressState.None) return;
         if (isBack) {
@@ -116,13 +116,16 @@ public class TeleFocusLayout extends LinearLayout implements View.OnTouchListene
             ivFocusFrontLayoutTeleFocus.setBackground(getDrawable(R.drawable.ic_bg_btn_tele_focus_press));
         }
         updatePressState(isBack ? PressState.Back : PressState.Front);
-        delayActionRunnable = new DelayActionRunnable(isBack);
-        postDelayed(delayActionRunnable, ACTION_DELAY_TIME);
         if (onTeleFocusListener != null) {
             onTeleFocusListener.onTeleFocusDown(isBack);
         }
     }
 
+    /**
+     * 按钮抬起或移出控件外
+     *
+     * @param isBack 是否向后调焦
+     */
     private void focusActionUp(boolean isBack) {
         switch (curPressState) {
             case None:
@@ -144,13 +147,17 @@ public class TeleFocusLayout extends LinearLayout implements View.OnTouchListene
             ivFocusFrontLayoutTeleFocus.setBackground(getDrawable(R.drawable.ic_bg_btn_tele_focus_normal));
         }
         updatePressState(PressState.None);
-        if (delayActionRunnable != null) {
-            removeCallbacks(delayActionRunnable);
-            delayActionRunnable = null;
-        }
         if (onTeleFocusListener != null) {
             onTeleFocusListener.onTeleFocusUp(isBack);
         }
+    }
+
+    private int getColor(@ColorRes int colorId) {
+        return ResourcesCompat.getColor(getResources(), colorId, null);
+    }
+
+    private Drawable getDrawable(@DrawableRes int drawableId) {
+        return ResourcesCompat.getDrawable(getResources(), drawableId, null);
     }
 
     @Override
@@ -161,6 +168,7 @@ public class TeleFocusLayout extends LinearLayout implements View.OnTouchListene
                     case MotionEvent.ACTION_DOWN:
                         focusActionDown(true);
                         return true;
+                    case MotionEvent.ACTION_CANCEL:
                     case MotionEvent.ACTION_UP:
                         focusActionUp(true);
                         return true;
@@ -172,6 +180,7 @@ public class TeleFocusLayout extends LinearLayout implements View.OnTouchListene
                     case MotionEvent.ACTION_DOWN:
                         focusActionDown(false);
                         return true;
+                    case MotionEvent.ACTION_CANCEL:
                     case MotionEvent.ACTION_UP:
                         focusActionUp(false);
                         return true;
@@ -183,22 +192,9 @@ public class TeleFocusLayout extends LinearLayout implements View.OnTouchListene
         }
     }
 
-    private class DelayActionRunnable implements Runnable {
-
-        private boolean isBack;
-
-        public DelayActionRunnable(boolean isBack) {
-            this.isBack = isBack;
-        }
-
-        @Override
-        public void run() {
-            if (onTeleFocusListener != null) {
-                onTeleFocusListener.onTeleFocusDelayAction(isBack);
-            }
-        }
-    }
-
+    /**
+     * 望远相机调焦按钮监听
+     */
     public interface OnTeleFocusListener {
 
         /**
@@ -214,12 +210,5 @@ public class TeleFocusLayout extends LinearLayout implements View.OnTouchListene
          * @param isBack 是否向后调焦
          */
         void onTeleFocusUp(boolean isBack);
-
-        /**
-         * 调焦延时操作
-         *
-         * @param isBack 是否向后调焦
-         */
-        void onTeleFocusDelayAction(boolean isBack);
     }
 }

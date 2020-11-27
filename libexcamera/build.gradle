@@ -2,13 +2,11 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 
 android {
-    compileSdkVersion rootProject.ext.versionCompiler
+    compileSdkVersion 29
 
     defaultConfig {
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.versionTarget
-        versionCode 1
-        versionName rootProject.ext.versionName
+        minSdkVersion 21
+        targetSdkVersion 27
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         // "armeabi-v7a" can adapter most of the devices
@@ -24,8 +22,8 @@ android {
     }
     // solving com.android.tools.r8.CompilationFailedException: Compilation failed to complete
     compileOptions {
-        sourceCompatibility rootProject.ext.javaSourceCompatibility
-        targetCompatibility rootProject.ext.javaTargetCompatibility
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
@@ -33,16 +31,16 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
-    implementation "androidx.appcompat:appcompat:${androidXVersion}"
-    api "com.serenegiant:common:${commonLibVersion}"
+    implementation "androidx.appcompat:appcompat:1.1.0"
+    api "com.serenegiant:common:4.1.1"
 
-    implementation "com.squareup.retrofit2:retrofit:${retrofit2Version}"
-    implementation "com.squareup.retrofit2:adapter-rxjava3:${retrofit2Version}"
-    implementation "com.squareup.retrofit2:converter-gson:${retrofit2Version}"
-    implementation "com.squareup.retrofit2:converter-scalars:${retrofit2Version}"
-    implementation "com.squareup.okhttp3:okhttp:${okhttp3Version}"
-    implementation "com.squareup.okhttp3:logging-interceptor:${okhttp3Version}"
+    implementation "com.squareup.retrofit2:retrofit:2.9.0"
+    implementation "com.squareup.retrofit2:adapter-rxjava3:2.9.0"
+    implementation "com.squareup.retrofit2:converter-gson:2.9.0"
+    implementation "com.squareup.retrofit2:converter-scalars:2.9.0"
+    implementation "com.squareup.okhttp3:okhttp:4.9.0"
+    implementation "com.squareup.okhttp3:logging-interceptor:4.9.0"
 
-    implementation "io.reactivex.rxjava3:rxandroid:${rxJava3Version}"
-    implementation "io.reactivex.rxjava3:rxjava:${rxJava3Version}"
+    implementation "io.reactivex.rxjava3:rxandroid:3.0.0"
+    implementation "io.reactivex.rxjava3:rxjava:3.0.0"
 }

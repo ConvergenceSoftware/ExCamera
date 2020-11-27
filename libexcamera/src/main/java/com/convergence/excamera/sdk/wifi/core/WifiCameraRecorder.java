@@ -3,7 +3,7 @@ package com.convergence.excamera.sdk.wifi.core;
 import android.content.Context;
 import android.util.Size;
 
-import com.convergence.excamera.sdk.common.VideoCreator;
+import com.convergence.excamera.sdk.common.video.VideoCreator;
 
 /**
  * WiFi相机录制视频功能封装类

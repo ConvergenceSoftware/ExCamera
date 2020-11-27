@@ -2,6 +2,7 @@ package com.convergence.excamera.sdk.usb.core;
 
 import android.hardware.usb.UsbDevice;
 
+import com.convergence.excamera.sdk.usb.UsbCameraState;
 import com.serenegiant.usb.USBMonitor;
 
 /**
@@ -61,7 +62,7 @@ public class UsbDevConnection implements USBMonitor.OnDeviceConnectListener {
     public void onConnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock, boolean createNew) {
         connectionInfo = new ConnectionInfo(device, ctrlBlock);
         isConnected = true;
-        usbCameraCommand.updateState(UsbCameraCommand.State.Connected);
+        usbCameraCommand.updateState(UsbCameraState.Connected);
         if (onConnectListener != null) {
             onConnectListener.onUsbConnect();
         }
@@ -72,7 +73,7 @@ public class UsbDevConnection implements USBMonitor.OnDeviceConnectListener {
     // do nothing
     @Override
     public void onDisconnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock) {
-        usbCameraCommand.updateState(UsbCameraCommand.State.Free);
+        usbCameraCommand.updateState(UsbCameraState.Free);
         if (onConnectListener != null) {
             onConnectListener.onUsbDisConnect();
         }

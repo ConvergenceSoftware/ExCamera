@@ -1,4 +1,4 @@
-package com.convergence.excamera.sdk;
+package com.convergence.excamera.sdk.wifi;
 
 import com.convergence.excamera.sdk.common.CameraLogger;
 
@@ -30,9 +30,9 @@ public class WifiCameraConstant {
     public static final long DEFAULT_WIFI_CAMERA_RETRY_PERIOD = 2000;
 
     //WIFI相机默认分辨率宽度
-    public static final int DEFAULT_RESOLUTION_WIDTH = 1280;
+    public static final int DEFAULT_RESOLUTION_WIDTH = 1920;
     //WIFI相机默认分辨率高度
-    public static final int DEFAULT_RESOLUTION_HEIGHT = 720;
+    public static final int DEFAULT_RESOLUTION_HEIGHT = 1080;
     //是否默认水平翻转开启
     public static final boolean DEFAULT_IS_FLIP_HORIZONTAL = false;
     //是否默认垂直翻转开启

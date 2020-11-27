@@ -1,4 +1,4 @@
-package com.convergence.excamera.sdk.common;
+package com.convergence.excamera.sdk.common.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -21,6 +21,8 @@ import android.view.TextureView;
 import androidx.annotation.NonNull;
 import androidx.core.math.MathUtils;
 
+import com.convergence.excamera.sdk.common.PreviewTransformInfo;
+
 /**
  * 相机预览控件基类
  *
@@ -28,7 +30,7 @@ import androidx.core.math.MathUtils;
  * @CreateDate 2020-11-11
  * @Organization Convergence Ltd.
  */
-public abstract class BaseCameraView extends TextureView implements Handler.Callback,
+public abstract class BaseExCameraView extends TextureView implements Handler.Callback,
         TextureView.SurfaceTextureListener, PreviewTransformInfo.OnTransformListener {
 
     private static final int MSG_SET_TRANSFORM = 100;
@@ -46,20 +48,20 @@ public abstract class BaseCameraView extends TextureView implements Handler.Call
     private PointF touchPoint;
     private boolean isSurfaceAvailable = false;
 
-    public BaseCameraView(Context context) {
+    public BaseExCameraView(Context context) {
         super(context);
         this.context = context;
         init();
     }
 
-    public BaseCameraView(Context context, AttributeSet attrs) {
+    public BaseExCameraView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
         initAttrs(attrs);
         init();
     }
 
-    public BaseCameraView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public BaseExCameraView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
         initAttrs(attrs);

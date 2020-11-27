@@ -1,4 +1,4 @@
-package com.convergence.excamera.sdk.common;
+package com.convergence.excamera.sdk.common.video;
 
 import android.graphics.Bitmap;
 import android.media.MediaCodec;
@@ -9,6 +9,9 @@ import android.media.MediaMuxer;
 import android.os.Build;
 import android.util.Log;
 import android.util.Size;
+
+import com.convergence.excamera.sdk.common.BitmapUtil;
+import com.convergence.excamera.sdk.common.OutputUtil;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;

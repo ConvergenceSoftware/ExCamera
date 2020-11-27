@@ -8,13 +8,18 @@ import android.util.Size;
 
 import androidx.annotation.NonNull;
 
-import com.convergence.excamera.sdk.UsbCameraConstant;
+import com.convergence.excamera.sdk.common.ActionState;
 import com.convergence.excamera.sdk.common.BitmapUtil;
 import com.convergence.excamera.sdk.common.CameraLogger;
 import com.convergence.excamera.sdk.common.FrameRateObserver;
 import com.convergence.excamera.sdk.common.MediaScanner;
 import com.convergence.excamera.sdk.common.OutputUtil;
-import com.convergence.excamera.sdk.common.VideoCreator;
+import com.convergence.excamera.sdk.common.TeleFocusHelper;
+import com.convergence.excamera.sdk.common.callback.OnCameraRecordListener;
+import com.convergence.excamera.sdk.common.callback.OnCameraPhotographListener;
+import com.convergence.excamera.sdk.common.video.VideoCreator;
+import com.convergence.excamera.sdk.usb.UsbCameraConstant;
+import com.convergence.excamera.sdk.usb.UsbCameraState;
 import com.convergence.excamera.sdk.usb.entity.UsbCameraResolution;
 import com.convergence.excamera.sdk.usb.entity.UsbCameraSP;
 import com.convergence.excamera.sdk.usb.entity.UsbCameraSetting;
@@ -38,30 +43,28 @@ public class UsbCameraController implements Handler.Callback, UsbCameraCommand.O
     private static final int MSG_TAKE_PHOTO_SUCCESS = 102;
     private static final int MSG_TAKE_PHOTO_FAIL = 103;
 
-    public enum ActionState {
-        Normal, Photographing, Recording
-    }
-
     private CameraLogger cameraLogger = UsbCameraConstant.GetLogger();
 
     private Context context;
     private UsbCameraView usbCameraView;
     private UsbCameraCommand usbCameraCommand;
     private UsbCameraRecorder usbCameraRecorder;
+    private TeleFocusHelper teleFocusHelper;
     private Handler handler;
     private MediaScanner mediaScanner;
     private FrameRateObserver frameRateObserver;
     private ActionState curActionState = ActionState.Normal;
 
     private OnControlListener onControlListener;
-    private OnTakePhotoListener onTakePhotoListener;
-    private OnRecordListener onRecordListener;
+    private OnCameraPhotographListener onCameraPhotographListener;
+    private OnCameraRecordListener onCameraRecordListener;
 
     public UsbCameraController(Context context, UsbCameraView usbCameraView) {
         this.context = context;
         this.usbCameraView = usbCameraView;
         usbCameraCommand = new UsbCameraCommand(context, usbCameraView);
         usbCameraRecorder = new UsbCameraRecorder(context, this, this);
+        teleFocusHelper = new TeleFocusHelper(this);
         handler = new Handler(this);
         mediaScanner = new MediaScanner(context);
         frameRateObserver = new FrameRateObserver(this);
@@ -114,15 +117,15 @@ public class UsbCameraController implements Handler.Callback, UsbCameraCommand.O
     /**
      * 设置拍照监听
      */
-    public void setOnTakePhotoListener(OnTakePhotoListener onTakePhotoListener) {
-        this.onTakePhotoListener = onTakePhotoListener;
+    public void setOnCameraPhotographListener(OnCameraPhotographListener onCameraPhotographListener) {
+        this.onCameraPhotographListener = onCameraPhotographListener;
     }
 
     /**
      * 设置录像监听
      */
-    public void setOnRecordListener(OnRecordListener onRecordListener) {
-        this.onRecordListener = onRecordListener;
+    public void setOnCameraRecordListener(OnCameraRecordListener onCameraRecordListener) {
+        this.onCameraRecordListener = onCameraRecordListener;
     }
 
     /**
@@ -147,23 +150,23 @@ public class UsbCameraController implements Handler.Callback, UsbCameraCommand.O
      */
     public void takePhoto() {
         if (!isPreviewing()) {
-            if (onTakePhotoListener != null) {
-                onTakePhotoListener.onTakePhotoFail();
+            if (onCameraPhotographListener != null) {
+                onCameraPhotographListener.onTakePhotoFail();
             }
             return;
         }
         switch (curActionState) {
             case Normal:
                 updateActionState(ActionState.Photographing);
-                if (onTakePhotoListener != null) {
-                    onTakePhotoListener.onTakePhotoStart();
+                if (onCameraPhotographListener != null) {
+                    onCameraPhotographListener.onTakePhotoStart();
                 }
                 break;
             case Photographing:
                 break;
             case Recording:
-                if (onTakePhotoListener != null) {
-                    onTakePhotoListener.onTakePhotoFail();
+                if (onCameraPhotographListener != null) {
+                    onCameraPhotographListener.onTakePhotoFail();
                 }
                 break;
         }
@@ -174,8 +177,8 @@ public class UsbCameraController implements Handler.Callback, UsbCameraCommand.O
      */
     public void startRecord() {
         if (!isPreviewing()) {
-            if (onRecordListener != null) {
-                onRecordListener.onRecordStartFail();
+            if (onCameraRecordListener != null) {
+                onCameraRecordListener.onRecordStartFail();
             }
             return;
         }
@@ -183,8 +186,8 @@ public class UsbCameraController implements Handler.Callback, UsbCameraCommand.O
             case Normal:
                 UsbCameraSetting usbCameraSetting = UsbCameraSetting.getInstance();
                 if (!usbCameraSetting.isAvailable()) {
-                    if (onRecordListener != null) {
-                        onRecordListener.onRecordStartFail();
+                    if (onCameraRecordListener != null) {
+                        onCameraRecordListener.onRecordStartFail();
                     }
                     break;
                 }
@@ -194,8 +197,8 @@ public class UsbCameraController implements Handler.Callback, UsbCameraCommand.O
                 usbCameraRecorder.setup(path, videoSize);
                 break;
             case Photographing:
-                if (onRecordListener != null) {
-                    onRecordListener.onRecordStartFail();
+                if (onCameraRecordListener != null) {
+                    onCameraRecordListener.onRecordStartFail();
                 }
                 break;
             case Recording:
@@ -220,7 +223,7 @@ public class UsbCameraController implements Handler.Callback, UsbCameraCommand.O
     /**
      * 获取当前USB相机状态
      */
-    public UsbCameraCommand.State getCurUsbState() {
+    public UsbCameraState getCurUsbState() {
         return usbCameraCommand.getCurState();
     }
 
@@ -329,6 +332,24 @@ public class UsbCameraController implements Handler.Callback, UsbCameraCommand.O
     }
 
     /**
+     * 开始望远相机调焦
+     *
+     * @param isBack 是否向后调焦
+     */
+    public void startTeleFocus(boolean isBack) {
+        teleFocusHelper.startPress(isBack);
+    }
+
+    /**
+     * 结束望远相机调焦
+     *
+     * @param isBack 是否向后调焦
+     */
+    public void stopTeleFocus(boolean isBack) {
+        teleFocusHelper.stopPress(isBack);
+    }
+
+    /**
      * 更新当前功能状态
      */
     private void updateActionState(ActionState state) {
@@ -341,7 +362,7 @@ public class UsbCameraController implements Handler.Callback, UsbCameraCommand.O
     }
 
     @Override
-    public void onStateUpdate(UsbCameraCommand.State state) {
+    public void onStateUpdate(UsbCameraState state) {
         if (onControlListener != null) {
             onControlListener.onUsbStateUpdate(state);
         }
@@ -427,46 +448,46 @@ public class UsbCameraController implements Handler.Callback, UsbCameraCommand.O
 
     @Override
     public void onSetupRecordError() {
-        if (onRecordListener != null) {
-            onRecordListener.onRecordStartFail();
+        if (onCameraRecordListener != null) {
+            onCameraRecordListener.onRecordStartFail();
         }
     }
 
     @Override
     public void onStartRecordSuccess() {
         updateActionState(ActionState.Recording);
-        if (onRecordListener != null) {
-            onRecordListener.onRecordStartSuccess();
+        if (onCameraRecordListener != null) {
+            onCameraRecordListener.onRecordStartSuccess();
         }
     }
 
     @Override
     public void onStartRecordError() {
-        if (onRecordListener != null) {
-            onRecordListener.onRecordStartFail();
+        if (onCameraRecordListener != null) {
+            onCameraRecordListener.onRecordStartFail();
         }
     }
 
     @Override
     public void onRecordProgress(int recordTime) {
-        if (onRecordListener != null) {
-            onRecordListener.onRecordProgress(recordTime);
+        if (onCameraRecordListener != null) {
+            onCameraRecordListener.onRecordProgress(recordTime);
         }
     }
 
     @Override
     public void onRecordSuccess(String videoPath) {
         updateActionState(ActionState.Normal);
-        if (onRecordListener != null) {
-            onRecordListener.onRecordSuccess(videoPath);
+        if (onCameraRecordListener != null) {
+            onCameraRecordListener.onRecordSuccess(videoPath);
         }
     }
 
     @Override
     public void onRecordError() {
         updateActionState(ActionState.Normal);
-        if (onRecordListener != null) {
-            onRecordListener.onRecordFail();
+        if (onCameraRecordListener != null) {
+            onCameraRecordListener.onRecordFail();
         }
     }
 
@@ -507,16 +528,16 @@ public class UsbCameraController implements Handler.Callback, UsbCameraCommand.O
                 }
                 break;
             case MSG_TAKE_PHOTO_SUCCESS:
-                if (onTakePhotoListener != null) {
+                if (onCameraPhotographListener != null) {
                     String photoPath = (String) msg.obj;
-                    onTakePhotoListener.onTakePhotoDone();
-                    onTakePhotoListener.onTakePhotoSuccess(photoPath);
+                    onCameraPhotographListener.onTakePhotoDone();
+                    onCameraPhotographListener.onTakePhotoSuccess(photoPath);
                 }
                 break;
             case MSG_TAKE_PHOTO_FAIL:
-                if (onTakePhotoListener != null) {
-                    onTakePhotoListener.onTakePhotoDone();
-                    onTakePhotoListener.onTakePhotoFail();
+                if (onCameraPhotographListener != null) {
+                    onCameraPhotographListener.onTakePhotoDone();
+                    onCameraPhotographListener.onTakePhotoFail();
                 }
                 break;
         }
@@ -560,7 +581,7 @@ public class UsbCameraController implements Handler.Callback, UsbCameraCommand.O
          *
          * @param state 当前USB连接状态
          */
-        void onUsbStateUpdate(UsbCameraCommand.State state);
+        void onUsbStateUpdate(UsbCameraState state);
 
         /**
          * 功能状态更新
@@ -583,62 +604,5 @@ public class UsbCameraController implements Handler.Callback, UsbCameraCommand.O
          * @param averageFPS 平均帧率
          */
         void onLoadFPS(int instantFPS, float averageFPS);
-    }
-
-    public interface OnTakePhotoListener {
-
-        /**
-         * 拍照开始
-         */
-        void onTakePhotoStart();
-
-        /**
-         * 拍照完成
-         */
-        void onTakePhotoDone();
-
-        /**
-         * 拍照成功
-         *
-         * @param path 图片输出路径
-         */
-        void onTakePhotoSuccess(String path);
-
-        /**
-         * 拍照失败
-         */
-        void onTakePhotoFail();
-    }
-
-    public interface OnRecordListener {
-
-        /**
-         * 录像开始成功
-         */
-        void onRecordStartSuccess();
-
-        /**
-         * 录像开始识别
-         */
-        void onRecordStartFail();
-
-        /**
-         * 录像进度回调
-         *
-         * @param recordSeconds 当前录像时长（秒）
-         */
-        void onRecordProgress(int recordSeconds);
-
-        /**
-         * 录像成功
-         *
-         * @param path 视频输出路径
-         */
-        void onRecordSuccess(String path);
-
-        /**
-         * 录像失败
-         */
-        void onRecordFail();
     }
 }

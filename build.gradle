@@ -26,21 +26,3 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
-
-ext {
-    //variable that can be referenced to keep support libs consistent
-    androidXVersion = '1.1.0'
-    //UVCCamera common library version https://github.com/saki4510t/libcommon
-    commonLibVersion = '4.1.1'
-    versionCompiler = 29
-    // when target<=27, 10.0 is ok
-    versionTarget = 27
-    minSdkVersion = 21
-    versionCode = 1
-    versionName = '1.0.0'
-    retrofit2Version = '2.9.0'
-    okhttp3Version = '4.9.0'
-    rxJava3Version = '3.0.0'
-    javaSourceCompatibility = JavaVersion.VERSION_1_8
-    javaTargetCompatibility = JavaVersion.VERSION_1_8
-}

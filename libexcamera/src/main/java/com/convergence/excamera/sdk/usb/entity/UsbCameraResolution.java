@@ -3,7 +3,7 @@ package com.convergence.excamera.sdk.usb.entity;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.convergence.excamera.sdk.UsbCameraConstant;
+import com.convergence.excamera.sdk.usb.UsbCameraConstant;
 import com.serenegiant.usb.Size;
 
 import java.util.ArrayList;

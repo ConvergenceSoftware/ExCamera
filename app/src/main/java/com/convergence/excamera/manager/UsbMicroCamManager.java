@@ -9,8 +9,11 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.convergence.excamera.sdk.common.ActionState;
 import com.convergence.excamera.sdk.common.OutputUtil;
-import com.convergence.excamera.sdk.usb.core.UsbCameraCommand;
+import com.convergence.excamera.sdk.common.callback.OnCameraPhotographListener;
+import com.convergence.excamera.sdk.common.callback.OnCameraRecordListener;
+import com.convergence.excamera.sdk.usb.UsbCameraState;
 import com.convergence.excamera.sdk.usb.core.UsbCameraController;
 import com.convergence.excamera.sdk.usb.core.UsbCameraView;
 import com.convergence.excamera.sdk.usb.entity.UsbCameraResolution;
@@ -37,8 +40,8 @@ import java.util.List;
  */
 public class UsbMicroCamManager implements CamManager, MirrorFlipLayout.OnMirrorFlipListener,
         ConfigMixLayout.OnMixConfigListener, ConfigComLayout.OnComConfigListener,
-        UsbCameraController.OnControlListener, UsbCameraController.OnTakePhotoListener,
-        UsbCameraController.OnRecordListener {
+        UsbCameraController.OnControlListener, OnCameraPhotographListener,
+        OnCameraRecordListener {
 
     private static final int EXPOSURE_MODE_AUTO = 8;
     private static final int EXPOSURE_MODE_MANUAL = 1;
@@ -63,8 +66,8 @@ public class UsbMicroCamManager implements CamManager, MirrorFlipLayout.OnMirror
     private void init() {
         usbCameraController = new UsbCameraController(context, usbCameraView);
         usbCameraController.setOnControlListener(this);
-        usbCameraController.setOnTakePhotoListener(this);
-        usbCameraController.setOnRecordListener(this);
+        usbCameraController.setOnCameraPhotographListener(this);
+        usbCameraController.setOnCameraRecordListener(this);
         if (configLayout != null) {
             configLayout.setOnMirrorFlipListener(this);
             configLayout.setOnMixConfigListener(this);
@@ -152,7 +155,7 @@ public class UsbMicroCamManager implements CamManager, MirrorFlipLayout.OnMirror
 
     @Override
     public boolean isRecording() {
-        return usbCameraController.getCurActionState() == UsbCameraController.ActionState.Recording;
+        return usbCameraController.getCurActionState() == ActionState.Recording;
     }
 
     /**
@@ -325,12 +328,12 @@ public class UsbMicroCamManager implements CamManager, MirrorFlipLayout.OnMirror
     }
 
     @Override
-    public void onUsbStateUpdate(UsbCameraCommand.State state) {
+    public void onUsbStateUpdate(UsbCameraState state) {
 
     }
 
     @Override
-    public void onActionStateUpdate(UsbCameraController.ActionState state) {
+    public void onActionStateUpdate(ActionState state) {
 
     }
 

@@ -12,10 +12,10 @@ import android.view.Surface;
 import androidx.annotation.NonNull;
 
 import com.convergence.excamera.sdk.R;
-import com.convergence.excamera.sdk.UsbCameraConstant;
+import com.convergence.excamera.sdk.usb.UsbCameraConstant;
 import com.convergence.excamera.sdk.common.BitmapUtil;
 import com.convergence.excamera.sdk.common.CameraLogger;
-import com.convergence.excamera.sdk.common.FrameRateObserver;
+import com.convergence.excamera.sdk.usb.UsbCameraState;
 import com.convergence.excamera.sdk.usb.entity.UsbCameraSP;
 import com.convergence.excamera.sdk.usb.entity.UsbCameraSetting;
 import com.serenegiant.usb.DeviceFilter;
@@ -42,13 +42,6 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
     private static final int MSG_LOAD_FRAME = 100;
     private static final int MSG_START_PREVIEW = 101;
 
-    public enum State {
-        Free,           //空闲状态，未进行USB连接授权
-        Connected,      //连接状态，已进行USB连接授权，但未打开UVC Camera
-        Opened,         //开启状态，已打开UVC Camera，但未开启预览
-        Previewing      //预览状态，正在预览中
-    }
-
     private final Object configSync = new Object();
     private Context context;
     private UsbCameraView usbCameraView;
@@ -65,7 +58,7 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
     private android.util.Size updateSize;
 
     private Bitmap latestBitmap;
-    private State curState = State.Free;
+    private UsbCameraState curState = UsbCameraState.Free;
     private OnCommandListener onCommandListener;
     private OnConnectListener onConnectListener;
 
@@ -127,7 +120,7 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
             supportedSizeList = uvcCamera.getSupportedSizeList();
             usbCameraSetting.initConnection(connectionInfo);
             usbCameraSetting.initResolution(supportedSizeList);
-            updateState(State.Opened);
+            updateState(UsbCameraState.Opened);
             result = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -148,7 +141,7 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
         stopPreview();
         uvcCamera.destroy();
         uvcCamera = null;
-        updateState(State.Free);
+        updateState(UsbCameraState.Free);
         if (onConnectListener != null) {
             onConnectListener.onCameraClose();
         }
@@ -186,7 +179,7 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
         usbCameraView.resize(previewWidth, previewHeight);
         usbCameraSetting.refreshCurResolution(previewWidth, previewHeight);
         updateFlip();
-        updateState(State.Previewing);
+        updateState(UsbCameraState.Previewing);
         if (onConnectListener != null) {
             onConnectListener.onPreviewStart();
         }
@@ -199,8 +192,8 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
         if (uvcCamera != null) {
             uvcCamera.stopPreview();
         }
-        if (curState != State.Free) {
-            updateState(State.Opened);
+        if (curState != UsbCameraState.Free) {
+            updateState(UsbCameraState.Opened);
         }
         if (onConnectListener != null) {
             onConnectListener.onPreviewStop();
@@ -210,7 +203,7 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
     /**
      * 更新当前USB相机状态
      */
-    public void updateState(State state) {
+    public void updateState(UsbCameraState state) {
         if (curState == state) return;
         cameraLogger.LogD("Usb State update : " + curState + " ==> " + state);
         curState = state;
@@ -765,7 +758,7 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
     /**
      * 获取当前USB相机状态
      */
-    public State getCurState() {
+    public UsbCameraState getCurState() {
         return curState;
     }
 
@@ -821,21 +814,21 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
      * 是否已经连接上USB设备
      */
     public boolean isConnected() {
-        return curState != State.Free && usbDevConnection.isConnected();
+        return curState != UsbCameraState.Free && usbDevConnection.isConnected();
     }
 
     /**
      * 是否已获取USB权限并打开相机
      */
     public boolean isOpened() {
-        return uvcCamera != null && isConnected() && (curState == State.Opened || curState == State.Previewing);
+        return uvcCamera != null && isConnected() && (curState == UsbCameraState.Opened || curState == UsbCameraState.Previewing);
     }
 
     /**
      * 是否正在预览
      */
     public boolean isPreviewing() {
-        return uvcCamera != null && isOpened() && curState == State.Previewing;
+        return uvcCamera != null && isOpened() && curState == UsbCameraState.Previewing;
     }
 
     /**
@@ -883,7 +876,7 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
          *
          * @param state 当前UVC Camera状态
          */
-        void onStateUpdate(State state);
+        void onStateUpdate(UsbCameraState state);
 
         /**
          * 获取画面帧

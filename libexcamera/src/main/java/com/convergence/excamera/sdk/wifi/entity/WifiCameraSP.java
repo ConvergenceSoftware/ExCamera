@@ -3,7 +3,7 @@ package com.convergence.excamera.sdk.wifi.entity;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.convergence.excamera.sdk.WifiCameraConstant;
+import com.convergence.excamera.sdk.wifi.WifiCameraConstant;
 import com.convergence.excamera.sdk.common.OutputUtil;
 
 /**

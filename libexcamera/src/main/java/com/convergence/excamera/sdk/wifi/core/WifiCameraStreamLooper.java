@@ -1,6 +1,6 @@
 package com.convergence.excamera.sdk.wifi.core;
 
-import com.convergence.excamera.sdk.WifiCameraConstant;
+import com.convergence.excamera.sdk.wifi.WifiCameraConstant;
 import com.convergence.excamera.sdk.common.CameraLogger;
 
 import java.util.concurrent.TimeUnit;

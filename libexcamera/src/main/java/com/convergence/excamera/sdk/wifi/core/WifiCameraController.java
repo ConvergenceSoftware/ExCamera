@@ -8,13 +8,18 @@ import android.util.Size;
 
 import androidx.annotation.NonNull;
 
-import com.convergence.excamera.sdk.WifiCameraConstant;
+import com.convergence.excamera.sdk.common.ActionState;
 import com.convergence.excamera.sdk.common.BitmapUtil;
 import com.convergence.excamera.sdk.common.CameraLogger;
 import com.convergence.excamera.sdk.common.FrameRateObserver;
 import com.convergence.excamera.sdk.common.MediaScanner;
 import com.convergence.excamera.sdk.common.OutputUtil;
-import com.convergence.excamera.sdk.common.VideoCreator;
+import com.convergence.excamera.sdk.common.TeleFocusHelper;
+import com.convergence.excamera.sdk.common.callback.OnCameraRecordListener;
+import com.convergence.excamera.sdk.common.callback.OnCameraPhotographListener;
+import com.convergence.excamera.sdk.common.video.VideoCreator;
+import com.convergence.excamera.sdk.wifi.WifiCameraConstant;
+import com.convergence.excamera.sdk.wifi.WifiCameraState;
 import com.convergence.excamera.sdk.wifi.config.base.WifiAutoConfig;
 import com.convergence.excamera.sdk.wifi.config.base.WifiParamConfig;
 import com.convergence.excamera.sdk.wifi.entity.WifiCameraParam;
@@ -36,30 +41,28 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
     private static final int MSG_TAKE_PHOTO_SUCCESS = 101;
     private static final int MSG_TAKE_PHOTO_FAIL = 102;
 
-    public enum ActionState {
-        Normal, Photographing, Recording
-    }
-
     private CameraLogger cameraLogger = WifiCameraConstant.GetLogger();
 
     private Context context;
     private WifiCameraView wifiCameraView;
     private WifiCameraCommand wifiCameraCommand;
     private WifiCameraRecorder wifiCameraRecorder;
+    private TeleFocusHelper teleFocusHelper;
     private Handler handler;
     private MediaScanner mediaScanner;
     private FrameRateObserver frameRateObserver;
     private ActionState curActionState = ActionState.Normal;
 
     private OnControlListener onControlListener;
-    private OnTakePhotoListener onTakePhotoListener;
-    private OnRecordListener onRecordListener;
+    private OnCameraPhotographListener onCameraPhotographListener;
+    private OnCameraRecordListener onCameraRecordListener;
 
     public WifiCameraController(Context context, WifiCameraView wifiCameraView) {
         this.context = context;
         this.wifiCameraView = wifiCameraView;
         wifiCameraCommand = new WifiCameraCommand(context, wifiCameraView);
         wifiCameraRecorder = new WifiCameraRecorder(context, this, this);
+        teleFocusHelper = new TeleFocusHelper(this);
         handler = new Handler(this);
         mediaScanner = new MediaScanner(context);
         frameRateObserver = new FrameRateObserver(this);
@@ -118,15 +121,15 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
     /**
      * 设置拍照监听
      */
-    public void setOnTakePhotoListener(OnTakePhotoListener onTakePhotoListener) {
-        this.onTakePhotoListener = onTakePhotoListener;
+    public void setOnCameraPhotographListener(OnCameraPhotographListener onCameraPhotographListener) {
+        this.onCameraPhotographListener = onCameraPhotographListener;
     }
 
     /**
      * 设置录像监听
      */
-    public void setOnRecordListener(OnRecordListener onRecordListener) {
-        this.onRecordListener = onRecordListener;
+    public void setOnCameraRecordListener(OnCameraRecordListener onCameraRecordListener) {
+        this.onCameraRecordListener = onCameraRecordListener;
     }
 
     /**
@@ -170,8 +173,8 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
      */
     public void takePhoto() {
         if (!isPreviewing()) {
-            if (onTakePhotoListener != null) {
-                onTakePhotoListener.onTakePhotoFail();
+            if (onCameraPhotographListener != null) {
+                onCameraPhotographListener.onTakePhotoFail();
             }
             return;
         }
@@ -180,8 +183,8 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
                 switch (WifiCameraConstant.PHOTOGRAPH_TYPE) {
                     case Stream:
                         updateActionState(ActionState.Photographing);
-                        if (onTakePhotoListener != null) {
-                            onTakePhotoListener.onTakePhotoStart();
+                        if (onCameraPhotographListener != null) {
+                            onCameraPhotographListener.onTakePhotoStart();
                         }
                         break;
                     case NetworkRequest:
@@ -192,8 +195,8 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
             case Photographing:
                 break;
             case Recording:
-                if (onTakePhotoListener != null) {
-                    onTakePhotoListener.onTakePhotoFail();
+                if (onCameraPhotographListener != null) {
+                    onCameraPhotographListener.onTakePhotoFail();
                 }
                 break;
         }
@@ -204,8 +207,8 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
      */
     public void startRecord() {
         if (!isPreviewing()) {
-            if (onRecordListener != null) {
-                onRecordListener.onRecordStartFail();
+            if (onCameraRecordListener != null) {
+                onCameraRecordListener.onRecordStartFail();
             }
             return;
         }
@@ -213,8 +216,8 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
             case Normal:
                 WifiCameraSetting wifiCameraSetting = WifiCameraSetting.getInstance();
                 if (!wifiCameraSetting.isAvailable()) {
-                    if (onRecordListener != null) {
-                        onRecordListener.onRecordStartFail();
+                    if (onCameraRecordListener != null) {
+                        onCameraRecordListener.onRecordStartFail();
                     }
                     break;
                 }
@@ -224,8 +227,8 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
                 wifiCameraRecorder.setup(path, videoSize);
                 break;
             case Photographing:
-                if (onRecordListener != null) {
-                    onRecordListener.onRecordStartFail();
+                if (onCameraRecordListener != null) {
+                    onCameraRecordListener.onRecordStartFail();
                 }
                 break;
             case Recording:
@@ -250,7 +253,7 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
     /**
      * 获取当前WiFi相机状态
      */
-    public WifiCameraCommand.State getCurUsbState() {
+    public WifiCameraState getCurUsbState() {
         return wifiCameraCommand.getCurState();
     }
 
@@ -345,14 +348,32 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
     }
 
     /**
+     * 开始望远相机调焦
+     *
+     * @param isBack 是否向后调焦
+     */
+    public void startTeleFocus(boolean isBack) {
+        teleFocusHelper.startPress(isBack);
+    }
+
+    /**
+     * 结束望远相机调焦
+     *
+     * @param isBack 是否向后调焦
+     */
+    public void stopTeleFocus(boolean isBack) {
+        teleFocusHelper.stopPress(isBack);
+    }
+
+    /**
      * 网络请求snapshot实现拍照
      */
     private void networkPhotograph() {
         wifiCameraCommand.loadOneFrame(new WifiCameraCommand.OnLoadOneFrameListener() {
             @Override
             public void onStart() {
-                if (onTakePhotoListener != null) {
-                    onTakePhotoListener.onTakePhotoStart();
+                if (onCameraPhotographListener != null) {
+                    onCameraPhotographListener.onTakePhotoStart();
                 }
             }
 
@@ -421,13 +442,16 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
     @Override
     public void onStreamStop(boolean isRetry) {
         frameRateObserver.stopObserve();
+        if (curActionState == ActionState.Recording) {
+            stopRecord();
+        }
         if (onControlListener != null) {
             onControlListener.onStreamStop(isRetry);
         }
     }
 
     @Override
-    public void onStateUpdate(WifiCameraCommand.State state) {
+    public void onStateUpdate(WifiCameraState state) {
         if (onControlListener != null) {
             onControlListener.onWifiStateUpdate(state);
         }
@@ -460,46 +484,46 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
 
     @Override
     public void onSetupRecordError() {
-        if (onRecordListener != null) {
-            onRecordListener.onRecordStartFail();
+        if (onCameraRecordListener != null) {
+            onCameraRecordListener.onRecordStartFail();
         }
     }
 
     @Override
     public void onStartRecordSuccess() {
         updateActionState(ActionState.Recording);
-        if (onRecordListener != null) {
-            onRecordListener.onRecordStartSuccess();
+        if (onCameraRecordListener != null) {
+            onCameraRecordListener.onRecordStartSuccess();
         }
     }
 
     @Override
     public void onStartRecordError() {
-        if (onRecordListener != null) {
-            onRecordListener.onRecordStartFail();
+        if (onCameraRecordListener != null) {
+            onCameraRecordListener.onRecordStartFail();
         }
     }
 
     @Override
     public void onRecordProgress(int recordTime) {
-        if (onRecordListener != null) {
-            onRecordListener.onRecordProgress(recordTime);
+        if (onCameraRecordListener != null) {
+            onCameraRecordListener.onRecordProgress(recordTime);
         }
     }
 
     @Override
     public void onRecordSuccess(String videoPath) {
         updateActionState(ActionState.Normal);
-        if (onRecordListener != null) {
-            onRecordListener.onRecordSuccess(videoPath);
+        if (onCameraRecordListener != null) {
+            onCameraRecordListener.onRecordSuccess(videoPath);
         }
     }
 
     @Override
     public void onRecordError() {
         updateActionState(ActionState.Normal);
-        if (onRecordListener != null) {
-            onRecordListener.onRecordFail();
+        if (onCameraRecordListener != null) {
+            onCameraRecordListener.onRecordFail();
         }
     }
 
@@ -530,16 +554,16 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
     public boolean handleMessage(@NonNull Message msg) {
         switch (msg.what) {
             case MSG_TAKE_PHOTO_SUCCESS:
-                if (onTakePhotoListener != null) {
+                if (onCameraPhotographListener != null) {
                     String photoPath = (String) msg.obj;
-                    onTakePhotoListener.onTakePhotoDone();
-                    onTakePhotoListener.onTakePhotoSuccess(photoPath);
+                    onCameraPhotographListener.onTakePhotoDone();
+                    onCameraPhotographListener.onTakePhotoSuccess(photoPath);
                 }
                 break;
             case MSG_TAKE_PHOTO_FAIL:
-                if (onTakePhotoListener != null) {
-                    onTakePhotoListener.onTakePhotoDone();
-                    onTakePhotoListener.onTakePhotoFail();
+                if (onCameraPhotographListener != null) {
+                    onCameraPhotographListener.onTakePhotoDone();
+                    onCameraPhotographListener.onTakePhotoFail();
                 }
                 break;
         }
@@ -567,7 +591,7 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
          *
          * @param state 当前WiFi相机连接状态
          */
-        void onWifiStateUpdate(WifiCameraCommand.State state);
+        void onWifiStateUpdate(WifiCameraState state);
 
         /**
          * 功能状态更新
@@ -598,62 +622,5 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
          * @param isReset 是否需要重置UI控件
          */
         void onParamUpdate(WifiCameraParam param, boolean isReset);
-    }
-
-    public interface OnTakePhotoListener {
-
-        /**
-         * 拍照开始
-         */
-        void onTakePhotoStart();
-
-        /**
-         * 拍照完成
-         */
-        void onTakePhotoDone();
-
-        /**
-         * 拍照成功
-         *
-         * @param path 图片输出路径
-         */
-        void onTakePhotoSuccess(String path);
-
-        /**
-         * 拍照失败
-         */
-        void onTakePhotoFail();
-    }
-
-    public interface OnRecordListener {
-
-        /**
-         * 录像开始成功
-         */
-        void onRecordStartSuccess();
-
-        /**
-         * 录像开始识别
-         */
-        void onRecordStartFail();
-
-        /**
-         * 录像进度回调
-         *
-         * @param recordSeconds 当前录像时长（秒）
-         */
-        void onRecordProgress(int recordSeconds);
-
-        /**
-         * 录像成功
-         *
-         * @param path 视频输出路径
-         */
-        void onRecordSuccess(String path);
-
-        /**
-         * 录像失败
-         */
-        void onRecordFail();
     }
 }

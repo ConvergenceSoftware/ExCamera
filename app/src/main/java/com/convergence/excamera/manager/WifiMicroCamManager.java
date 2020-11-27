@@ -9,8 +9,12 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.convergence.excamera.sdk.common.ActionState;
 import com.convergence.excamera.sdk.common.OutputUtil;
+import com.convergence.excamera.sdk.common.callback.OnCameraPhotographListener;
+import com.convergence.excamera.sdk.common.callback.OnCameraRecordListener;
 import com.convergence.excamera.sdk.usb.entity.UsbCameraSP;
+import com.convergence.excamera.sdk.wifi.WifiCameraState;
 import com.convergence.excamera.sdk.wifi.config.base.WifiAutoConfig;
 import com.convergence.excamera.sdk.wifi.config.base.WifiConfig;
 import com.convergence.excamera.sdk.wifi.config.base.WifiParamConfig;
@@ -41,7 +45,7 @@ import java.util.List;
  */
 public class WifiMicroCamManager implements CamManager, MirrorFlipLayout.OnMirrorFlipListener,
         ConfigMixLayout.OnMixConfigListener, ConfigComLayout.OnComConfigListener, WifiCameraController.OnControlListener,
-        WifiCameraController.OnTakePhotoListener, WifiCameraController.OnRecordListener {
+        OnCameraPhotographListener, OnCameraRecordListener {
 
     private Context context;
     private WifiCameraView wifiCameraView;
@@ -63,8 +67,8 @@ public class WifiMicroCamManager implements CamManager, MirrorFlipLayout.OnMirro
     private void init() {
         wifiCameraController = new WifiCameraController(context, wifiCameraView);
         wifiCameraController.setOnControlListener(this);
-        wifiCameraController.setOnTakePhotoListener(this);
-        wifiCameraController.setOnRecordListener(this);
+        wifiCameraController.setOnCameraPhotographListener(this);
+        wifiCameraController.setOnCameraRecordListener(this);
         if (configLayout != null) {
             configLayout.setOnMirrorFlipListener(this);
             configLayout.setOnMixConfigListener(this);
@@ -172,7 +176,7 @@ public class WifiMicroCamManager implements CamManager, MirrorFlipLayout.OnMirro
 
     @Override
     public boolean isRecording() {
-        return wifiCameraController.getCurActionState() == WifiCameraController.ActionState.Recording;
+        return wifiCameraController.getCurActionState() == ActionState.Recording;
     }
 
     /**
@@ -428,12 +432,12 @@ public class WifiMicroCamManager implements CamManager, MirrorFlipLayout.OnMirro
     }
 
     @Override
-    public void onWifiStateUpdate(WifiCameraCommand.State state) {
+    public void onWifiStateUpdate(WifiCameraState state) {
 
     }
 
     @Override
-    public void onActionStateUpdate(WifiCameraController.ActionState state) {
+    public void onActionStateUpdate(ActionState state) {
 
     }
 

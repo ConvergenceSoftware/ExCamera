@@ -1,23 +1,17 @@
 package com.convergence.excamera.sdk.wifi.net;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-
-import com.convergence.excamera.sdk.WifiCameraConstant;
+import com.convergence.excamera.sdk.wifi.WifiCameraConstant;
 import com.convergence.excamera.sdk.common.CameraLogger;
 import com.convergence.excamera.sdk.wifi.config.base.WifiConfig;
 import com.convergence.excamera.sdk.wifi.net.bean.NConfigList;
 import com.convergence.excamera.sdk.wifi.net.bean.NCommandResult;
-import com.convergence.excamera.sdk.wifi.net.callback.ComNetCallback;
 import com.convergence.excamera.sdk.wifi.net.callback.NetCallback;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;

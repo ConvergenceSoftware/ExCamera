@@ -1,7 +1,7 @@
 package com.convergence.excamera.sdk.wifi.entity;
 
 
-import com.convergence.excamera.sdk.WifiCameraConstant;
+import com.convergence.excamera.sdk.wifi.WifiCameraConstant;
 import com.convergence.excamera.sdk.common.CameraLogger;
 import com.convergence.excamera.sdk.wifi.config.base.WifiConfig;
 import com.convergence.excamera.sdk.wifi.config.base.WifiConfigCreator;

@@ -3,8 +3,7 @@ package com.convergence.excamera.sdk.usb.core;
 import android.content.Context;
 import android.util.Size;
 
-import com.convergence.excamera.sdk.UsbCameraConstant;
-import com.convergence.excamera.sdk.common.VideoCreator;
+import com.convergence.excamera.sdk.common.video.VideoCreator;
 
 /**
  * USB相机录制视频功能封装类
