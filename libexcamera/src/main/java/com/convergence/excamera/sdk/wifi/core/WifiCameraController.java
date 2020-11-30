@@ -14,6 +14,7 @@ import com.convergence.excamera.sdk.common.CameraLogger;
 import com.convergence.excamera.sdk.common.FrameRateObserver;
 import com.convergence.excamera.sdk.common.MediaScanner;
 import com.convergence.excamera.sdk.common.OutputUtil;
+import com.convergence.excamera.sdk.common.PhotoSaver;
 import com.convergence.excamera.sdk.common.TeleFocusHelper;
 import com.convergence.excamera.sdk.common.callback.OnCameraRecordListener;
 import com.convergence.excamera.sdk.common.callback.OnCameraPhotographListener;
@@ -36,7 +37,8 @@ import com.convergence.excamera.sdk.wifi.entity.WifiCameraSetting;
  * @Organization Convergence Ltd.
  */
 public class WifiCameraController implements Handler.Callback, WifiCameraCommand.OnCommandListener,
-        WifiCameraRecorder.OnRecordListener, VideoCreator.DataProvider, FrameRateObserver.OnFrameRateListener {
+        WifiCameraRecorder.OnRecordListener, PhotoSaver.OnPhotoSaverListener,
+        VideoCreator.DataProvider, FrameRateObserver.OnFrameRateListener {
 
     private static final int MSG_TAKE_PHOTO_SUCCESS = 101;
     private static final int MSG_TAKE_PHOTO_FAIL = 102;
@@ -47,6 +49,7 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
     private WifiCameraView wifiCameraView;
     private WifiCameraCommand wifiCameraCommand;
     private WifiCameraRecorder wifiCameraRecorder;
+    private PhotoSaver photoSaver;
     private TeleFocusHelper teleFocusHelper;
     private Handler handler;
     private MediaScanner mediaScanner;
@@ -62,6 +65,7 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
         this.wifiCameraView = wifiCameraView;
         wifiCameraCommand = new WifiCameraCommand(context, wifiCameraView);
         wifiCameraRecorder = new WifiCameraRecorder(context, this, this);
+        photoSaver = new PhotoSaver(this);
         teleFocusHelper = new TeleFocusHelper(this);
         handler = new Handler(this);
         mediaScanner = new MediaScanner(context);
@@ -95,6 +99,7 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
      */
     public void startPreview() {
         wifiCameraCommand.startPreview();
+        photoSaver.run();
     }
 
     /**
@@ -102,6 +107,7 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
      */
     public void stopPreview() {
         wifiCameraCommand.stopPreview();
+        photoSaver.release();
     }
 
     /**
@@ -172,6 +178,14 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
      * 拍照
      */
     public void takePhoto() {
+        String path = OutputUtil.getRandomPicPath(WifiCameraSP.getEditor(context).getCameraOutputRootPath());
+        takePhoto(path);
+    }
+
+    /**
+     * 拍照
+     */
+    public void takePhoto(String path) {
         if (!isPreviewing()) {
             if (onCameraPhotographListener != null) {
                 onCameraPhotographListener.onTakePhotoFail();
@@ -183,12 +197,13 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
                 switch (WifiCameraConstant.PHOTOGRAPH_TYPE) {
                     case Stream:
                         updateActionState(ActionState.Photographing);
+                        photoSaver.addTask(path);
                         if (onCameraPhotographListener != null) {
                             onCameraPhotographListener.onTakePhotoStart();
                         }
                         break;
                     case NetworkRequest:
-                        networkPhotograph();
+                        networkPhotograph(path);
                         break;
                 }
                 break;
@@ -206,6 +221,14 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
      * 开始录像
      */
     public void startRecord() {
+        String path = OutputUtil.getRandomVideoPath(WifiCameraSP.getEditor(context).getCameraOutputRootPath());
+        startRecord(path);
+    }
+
+    /**
+     * 开始录像（自定义路径）
+     */
+    public void startRecord(String path) {
         if (!isPreviewing()) {
             if (onCameraRecordListener != null) {
                 onCameraRecordListener.onRecordStartFail();
@@ -221,7 +244,6 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
                     }
                     break;
                 }
-                String path = OutputUtil.getRandomVideoPath(WifiCameraSP.getEditor(context).getCameraOutputRootPath());
                 WifiCameraResolution.Resolution resolution = wifiCameraSetting.getWifiCameraParam().getWifiCameraResolution().getCurResolution();
                 Size videoSize = new Size(resolution.getWidth(), resolution.getHeight());
                 wifiCameraRecorder.setup(path, videoSize);
@@ -368,7 +390,7 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
     /**
      * 网络请求snapshot实现拍照
      */
-    private void networkPhotograph() {
+    private void networkPhotograph(String path) {
         wifiCameraCommand.loadOneFrame(new WifiCameraCommand.OnLoadOneFrameListener() {
             @Override
             public void onStart() {
@@ -384,12 +406,16 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
 
             @Override
             public void onSuccess(Bitmap bitmap) {
-                savePhotograph(bitmap);
+                photoSaver.addTask(path);
+                photoSaver.provideFrame(bitmap);
             }
 
             @Override
             public void onError(String error) {
-                handler.sendEmptyMessage(MSG_TAKE_PHOTO_FAIL);
+                if (onCameraPhotographListener != null) {
+                    onCameraPhotographListener.onTakePhotoDone();
+                    onCameraPhotographListener.onTakePhotoFail();
+                }
             }
         });
     }
@@ -465,7 +491,7 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
         }
         if (WifiCameraConstant.PHOTOGRAPH_TYPE == WifiCameraConstant.PhotographType.Stream
                 && curActionState == ActionState.Photographing) {
-            savePhotograph(bitmap);
+            photoSaver.provideFrame(bitmap);
             updateActionState(ActionState.Normal);
         }
     }
@@ -474,6 +500,23 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
     public void onParamUpdate(WifiCameraParam param, boolean isReset) {
         if (onControlListener != null) {
             onControlListener.onParamUpdate(param, isReset);
+        }
+    }
+
+    @Override
+    public void onSavePhotoSuccess(String path) {
+        mediaScanner.scanFile(path, null);
+        if (onCameraPhotographListener != null) {
+            onCameraPhotographListener.onTakePhotoDone();
+            onCameraPhotographListener.onTakePhotoSuccess(path);
+        }
+    }
+
+    @Override
+    public void onSavePhotoFail() {
+        if (onCameraPhotographListener != null) {
+            onCameraPhotographListener.onTakePhotoDone();
+            onCameraPhotographListener.onTakePhotoFail();
         }
     }
 

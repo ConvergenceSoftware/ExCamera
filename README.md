@@ -160,8 +160,10 @@ Well, you are able to preview on you own application by WiFi Connection now.
 |**Update Resolution**|UsbCameraController.updateResolution(int width, int height)|WifiCameraController.updateResolution(int width, int height)|
 |**Flip Horizontal**|UsbCameraSP.setIsFlipHorizontal(boolean value)|WifiCameraSP.setIsFlipHorizontal(boolean value)|
 |**Flip Vertical**|UsbCameraSP.setIsFlipVertical(boolean value)|WifiCameraSP.setIsFlipVertical(boolean value)|
-|**Take Photo**|UsbCameraController.takePhoto()|WifiCameraController.takePhoto()|
-|**Start Record**|UsbCameraController.startRecord()|WifiCameraController.startRecord()|
+|**Take Photo(Default Path)**|UsbCameraController.takePhoto()|WifiCameraController.takePhoto()|
+|**Take Photo(Custom Path)**|UsbCameraController.takePhoto(String path)|WifiCameraController.takePhoto(String path)|
+|**Start Record(Default Path)**|UsbCameraController.startRecord()|WifiCameraController.startRecord()|
+|**Start Record(Custom Path)**|UsbCameraController.startRecord(String path)|WifiCameraController.startRecord(String path)|
 |**Stop Record**|UsbCameraController.stopRecord()|WifiCameraController.stopRecord()|
 
 ------------
@@ -347,6 +349,98 @@ For `WhiteBalance` of **MicroScope CAM**, it will be **Auto** when `WhiteBalance
 
 For `Exposure` of **MicroScope CAM**, it will be **Auto** when `ExposureAuto = 3` and be **Manual** when `ExposureAuto = 1`
 
+------------
+
+### 5. Callback
+
+#### USB Connection
+
+`UsbCameraController.OnControlListener`
+
+- **void onUsbConnect()**
+
+	It will be called when the USB device is connected and permission is granted
+
+- **void onUsbDisConnect()**
+
+	It will be called when the USB device is disconnected
+
+- **void onCameraOpen()**
+
+	It will be called when the UVC Camera is opened
+
+- **void onCameraClose()**
+
+	It will be called when the UVC Camera is closed
+
+- **void onPreviewStart()**
+
+	It will be called when the preview start
+
+- **void onPreviewStop()**
+
+	It will be called when the preview stop
+
+- **void onUsbStateUpdate(UsbCameraState state)**
+
+	It will be called when [UsbCameraState][UsbCameraState.java] update
+
+- **void onActionStateUpdate(ActionState state)**
+
+	It will be called when [ActionState][ActionState.java] update
+
+- **void onLoadFrame(Bitmap bitmap)**
+
+	You can get every frame from this callback
+
+- **void onLoadFPS(int instantFPS, float averageFPS)**
+
+	You can get current FPS from this callback
+
+#### WiFi Connection
+
+`WifiCameraController.OnControlListener`
+
+- **void onStreamStart(boolean isRetry)**
+
+	It will be call when the stream start and preview correctly, and isRetry will be ture if restored from Retrying state
+
+- **void onStreamStop(boolean isRetry)**
+
+	It will be call when the stream stop, and isRetry will be ture if current state become Retrying
+
+- **void onWifiStateUpdate(WifiCameraState state)**
+
+	It will be called when [WifiCameraState][WifiCameraState.java] update
+
+- **void onActionStateUpdate(ActionState state)**
+
+	It will be called when [ActionState][ActionState.java] update
+
+- **void onParamUpdate(WifiCameraParam param, boolean isReset)**
+
+	It will be called when configuration is loaded success from network, and isReset will be true if the stream is just started
+
+- **void onLoadFrame(Bitmap bitmap)**
+
+	You can get every frame from this callback
+
+- **void onLoadFPS(int instantFPS, float averageFPS)**
+
+	You can get every frame from this callback
+
+------------
+
+### 6. Default Setting
+
+Default setting for USB Connection : [UsbCameraConstant][UsbCameraConstant.java]
+
+Default setting for WiFi Connection : [WifiCameraConstant][WifiCameraConstant.java]
+
+Default output path : [OutputUtil][OutputUtil.java]
+
+------------
+
 ## Thanks
 
 [UVCCamera][UVCCamera.link] , [AndroidUSBCamera][AndroidUSBCamera.link] , [
@@ -388,21 +482,29 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ```
 
-[CamManager.dir]: https://github.com/ConvergenceSoftware/ExCamera/tree/master/app/src/main/java/com/convergence/excamera/manager
-[ApiService.java]: https://github.com/ConvergenceSoftware/ExCamera/tree/master/libexcamera/src/main/java/com/convergence/excamera/sdk/wifi/net/ApiService.java
+[CamManager.dir]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/app/src/main/java/com/convergence/excamera/manager
+[ApiService.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/convergence/excamera/sdk/wifi/net/ApiService.java
 
-[UsbCameraCommand.java]: https://github.com/ConvergenceSoftware/ExCamera/tree/master/libexcamera/src/main/java/com/convergence/excamera/sdk/usb/core/UsbCameraCommand.java
-[UsbCameraController.java]: https://github.com/ConvergenceSoftware/ExCamera/tree/master/libexcamera/src/main/java/com/convergence/excamera/sdk/usb/core/UsbCameraController.java
-[UsbCameraView.java]: https://github.com/ConvergenceSoftware/ExCamera/tree/master/libexcamera/src/main/java/com/convergence/excamera/sdk/usb/core/UsbCameraView.java
-[UsbMicroCamManager.java]: https://github.com/ConvergenceSoftware/ExCamera/tree/master/app/src/main/java/com/convergence/excamera/manager/UsbMicroCamManager.java
-[UVCConfig.java]: https://github.com/ConvergenceSoftware/ExCamera/tree/master/libexcamera/src/main/java/com/serenegiant/usb/config/base/UVCConfig.java
-[UVCCamera.java]: https://github.com/ConvergenceSoftware/ExCamera/tree/master/libexcamera/src/main/java/com/serenegiant/usb/UVCCamera.java
+[UsbCameraCommand.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/convergence/excamera/sdk/usb/core/UsbCameraCommand.java
+[UsbCameraController.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/convergence/excamera/sdk/usb/core/UsbCameraController.java
+[UsbCameraView.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/convergence/excamera/sdk/usb/core/UsbCameraView.java
+[UsbMicroCamManager.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/app/src/main/java/com/convergence/excamera/manager/UsbMicroCamManager.java
+[UVCConfig.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/serenegiant/usb/config/base/UVCConfig.java
+[UVCCamera.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/serenegiant/usb/UVCCamera.java
 
-[WifiCameraCommand.java]: https://github.com/ConvergenceSoftware/ExCamera/tree/master/libexcamera/src/main/java/com/convergence/excamera/sdk/wifi/core/WifiCameraCommand.java
-[WifiCameraController.java]: https://github.com/ConvergenceSoftware/ExCamera/tree/master/libexcamera/src/main/java/com/convergence/excamera/sdk/wifi/core/WifiCameraController.java
-[WifiCameraView.java]: https://github.com/ConvergenceSoftware/ExCamera/tree/master/libexcamera/src/main/java/com/convergence/excamera/sdk/wifi/core/WifiCameraView.java
-[WifiMicroCamManager.java]: https://github.com/ConvergenceSoftware/ExCamera/tree/master/app/src/main/java/com/convergence/excamera/manager/WifiMicroCamManager.java
-[WifiConfig.java]: https://github.com/ConvergenceSoftware/ExCamera/tree/master/libexcamera/src/main/java/com/convergence/excamera/sdk/wifi/config/base/WifiConfig.java
+[WifiCameraCommand.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/convergence/excamera/sdk/wifi/core/WifiCameraCommand.java
+[WifiCameraController.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/convergence/excamera/sdk/wifi/core/WifiCameraController.java
+[WifiCameraView.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/convergence/excamera/sdk/wifi/core/WifiCameraView.java
+[WifiMicroCamManager.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/app/src/main/java/com/convergence/excamera/manager/WifiMicroCamManager.java
+[WifiConfig.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/convergence/excamera/sdk/wifi/config/base/WifiConfig.java
+
+[UsbCameraState.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/convergence/excamera/sdk/usb/UsbCameraState.java
+[WifiCameraState.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/convergence/excamera/sdk/wifi/WifiCameraState.java
+[ActionState.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/convergence/excamera/sdk/common/ActionState.java
+
+[UsbCameraConstant.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/convergence/excamera/sdk/usb/UsbCameraConstant.java
+[WifiCameraConstant.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/convergence/excamera/sdk/wifi/WifiCameraConstant.java
+[OutputUtil.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/convergence/excamera/sdk/common/OutputUtil.java
 
 [cvgc.link]: http://www.cvgc.cn
 [tipscope.link]: http://www.tipscope.com
