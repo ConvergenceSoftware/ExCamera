@@ -9,7 +9,6 @@ import android.util.Size;
 import androidx.annotation.NonNull;
 
 import com.convergence.excamera.sdk.common.ActionState;
-import com.convergence.excamera.sdk.common.BitmapUtil;
 import com.convergence.excamera.sdk.common.CameraLogger;
 import com.convergence.excamera.sdk.common.FrameRateObserver;
 import com.convergence.excamera.sdk.common.MediaScanner;
@@ -39,9 +38,6 @@ import com.convergence.excamera.sdk.wifi.entity.WifiCameraSetting;
 public class WifiCameraController implements Handler.Callback, WifiCameraCommand.OnCommandListener,
         WifiCameraRecorder.OnRecordListener, PhotoSaver.OnPhotoSaverListener,
         VideoCreator.DataProvider, FrameRateObserver.OnFrameRateListener {
-
-    private static final int MSG_TAKE_PHOTO_SUCCESS = 101;
-    private static final int MSG_TAKE_PHOTO_FAIL = 102;
 
     private CameraLogger cameraLogger = WifiCameraConstant.GetLogger();
 
@@ -421,31 +417,6 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
     }
 
     /**
-     * 保存照片
-     *
-     * @param bitmap 图像Bitmap
-     */
-    private void savePhotograph(Bitmap bitmap) {
-        new Thread(() -> {
-            WifiCameraSetting wifiCameraSetting = WifiCameraSetting.getInstance();
-            if (!wifiCameraSetting.isAvailable()) {
-                handler.sendEmptyMessage(MSG_TAKE_PHOTO_FAIL);
-            }
-            String path = OutputUtil.getRandomPicPath(WifiCameraSP.getEditor(context).getCameraOutputRootPath());
-            boolean result = BitmapUtil.saveBitmap(bitmap, path);
-            if (result) {
-                Message message = new Message();
-                message.what = MSG_TAKE_PHOTO_SUCCESS;
-                message.obj = path;
-                handler.sendMessage(message);
-                mediaScanner.scanFile(path, null);
-            } else {
-                handler.sendEmptyMessage(MSG_TAKE_PHOTO_FAIL);
-            }
-        }).start();
-    }
-
-    /**
      * 更新当前功能状态
      */
     private void updateActionState(ActionState state) {
@@ -596,19 +567,6 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
     @Override
     public boolean handleMessage(@NonNull Message msg) {
         switch (msg.what) {
-            case MSG_TAKE_PHOTO_SUCCESS:
-                if (onCameraPhotographListener != null) {
-                    String photoPath = (String) msg.obj;
-                    onCameraPhotographListener.onTakePhotoDone();
-                    onCameraPhotographListener.onTakePhotoSuccess(photoPath);
-                }
-                break;
-            case MSG_TAKE_PHOTO_FAIL:
-                if (onCameraPhotographListener != null) {
-                    onCameraPhotographListener.onTakePhotoDone();
-                    onCameraPhotographListener.onTakePhotoFail();
-                }
-                break;
         }
         return false;
     }
