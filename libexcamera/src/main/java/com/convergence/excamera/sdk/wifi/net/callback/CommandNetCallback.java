@@ -43,6 +43,11 @@ public class CommandNetCallback implements NetCallback {
 
     public interface OnResultListener {
 
+        /**
+         * 结果回调
+         *
+         * @param isSuccess 是否成功
+         */
         void onResult(boolean isSuccess);
     }
 }

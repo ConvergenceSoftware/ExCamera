@@ -21,9 +21,13 @@ import java.util.concurrent.LinkedTransferQueue;
  */
 public class VideoCreator implements Handler.Callback {
 
-    //录像帧率
+    /**
+     * 录像帧率
+     */
     public static final int FRAME_STANDARD_RECORD = 24;
-    //延时摄影帧率
+    /**
+     * 延时摄影帧率
+     */
     public static final int FRAME_TIME_LAPSE_RECORD = 30;
 
     private static final int MSG_WHAT_RUN_TIME = 100;
@@ -33,7 +37,18 @@ public class VideoCreator implements Handler.Callback {
     private static final int MSG_WHAT_STOP_FAIL = 104;
 
     public enum State {
-        Free, Ready, Running
+        /*
+        空闲状态，未进行初始化
+         */
+        Free,
+        /*
+        就绪状态，已进行初始化，可以开始运行
+         */
+        Ready,
+        /*
+        运行状态
+         */
+        Running
     }
 
     private Context context;
@@ -109,6 +124,8 @@ public class VideoCreator implements Handler.Callback {
                 handler.post(decodeRunnable);
                 sendMsg(MSG_WHAT_START_SUCCESS);
                 break;
+            default:
+                break;
         }
     }
 
@@ -157,7 +174,9 @@ public class VideoCreator implements Handler.Callback {
      * 更改状态
      */
     private void changeState(State state) {
-        if (state == curState) return;
+        if (state == curState) {
+            return;
+        }
         curState = state;
         listener.onStateChange(curState);
     }
@@ -166,7 +185,9 @@ public class VideoCreator implements Handler.Callback {
      * 向帧队列中放入图片Bitmap
      */
     private void offerBitmap(Bitmap bitmap) {
-        if (!isRunning() || bitmap == null) return;
+        if (!isRunning() || bitmap == null) {
+            return;
+        }
         long timeUs = System.nanoTime() / 1000;
         frameQueue.offer(new Frame(bitmap, timeUs));
     }
@@ -274,7 +295,9 @@ public class VideoCreator implements Handler.Callback {
 
         @Override
         public void run() {
-            if (!isRunning()) return;
+            if (!isRunning()) {
+                return;
+            }
             mp4MediaMuxer.decodeData();
             handler.post(this);
         }
@@ -297,6 +320,8 @@ public class VideoCreator implements Handler.Callback {
                 break;
             case MSG_WHAT_STOP_FAIL:
                 listener.onCreateVideoError((String) msg.obj);
+                break;
+            default:
                 break;
         }
         return true;
@@ -334,6 +359,8 @@ public class VideoCreator implements Handler.Callback {
 
         /**
          * 提供图像Bitmap
+         *
+         * @return 图像Bitmap
          */
         Bitmap provideBitmap();
     }

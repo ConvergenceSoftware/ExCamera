@@ -127,7 +127,7 @@ public class WifiMicroCamManager implements CamManager, MirrorFlipLayout.OnMirro
     @Override
     public void showResolutionSelection() {
         WifiCameraSetting wifiCameraSetting = WifiCameraSetting.getInstance();
-        if (!isPreviewing() || !wifiCameraSetting.isAvailable()) return;
+        if (!isPreviewing() || !wifiCameraSetting.isAvailable()) {return;}
         WifiCameraResolution wifiCameraResolution = wifiCameraSetting.getWifiCameraParam().getWifiCameraResolution();
         List<WifiCameraResolution.Resolution> resolutionList = wifiCameraResolution.getResolutionList();
         List<ResolutionOption> optionList = new ArrayList<>();
@@ -183,11 +183,11 @@ public class WifiMicroCamManager implements CamManager, MirrorFlipLayout.OnMirro
      * 重置所有参数布局
      */
     private void resetConfigLayout() {
-        if (configLayout == null) return;
+        if (configLayout == null) {return;}
         UsbCameraSP.Editor editor = UsbCameraSP.getEditor(context);
         MirrorFlipLayout itemFlip = configLayout.getItemFlip();
         itemFlip.initSwitch(editor.isFlipHorizontal(), editor.isFlipVertical());
-        if (!isPreviewing()) return;
+        if (!isPreviewing()) {return;}
         resetFocusLayout();
         resetWhiteBalanceLayout();
         resetExposureLayout();
@@ -321,6 +321,8 @@ public class WifiMicroCamManager implements CamManager, MirrorFlipLayout.OnMirro
             case Exposure:
                 setConfigAuto(WifiConfig.TAG_AUTO_EXPOSURE_AUTO, isAuto);
                 break;
+            default:
+                break;
         }
     }
 
@@ -336,6 +338,8 @@ public class WifiMicroCamManager implements CamManager, MirrorFlipLayout.OnMirro
             case Exposure:
                 setConfigParam(WifiConfig.TAG_PARAM_EXPOSURE, value);
                 break;
+            default:
+                break;
         }
     }
 
@@ -350,6 +354,8 @@ public class WifiMicroCamManager implements CamManager, MirrorFlipLayout.OnMirro
                 break;
             case Exposure:
                 resetConfigParam(WifiConfig.TAG_PARAM_EXPOSURE, view::setSeekBarValue);
+                break;
+            default:
                 break;
         }
     }
@@ -381,6 +387,8 @@ public class WifiMicroCamManager implements CamManager, MirrorFlipLayout.OnMirro
             case Quality:
                 setConfigParam(WifiConfig.TAG_PARAM_JPEG_QUALITY, value);
                 break;
+            default:
+                break;
         }
     }
 
@@ -410,6 +418,8 @@ public class WifiMicroCamManager implements CamManager, MirrorFlipLayout.OnMirro
                 break;
             case Quality:
                 resetConfigParam(WifiConfig.TAG_PARAM_JPEG_QUALITY, view::setSeekBarValue);
+                break;
+            default:
                 break;
         }
     }
@@ -552,6 +562,11 @@ public class WifiMicroCamManager implements CamManager, MirrorFlipLayout.OnMirro
 
     private interface OnConfigResetListener {
 
+        /**
+         * 重置完成回调
+         *
+         * @param value 重置后数值
+         */
         void onResetDone(int value);
     }
 }

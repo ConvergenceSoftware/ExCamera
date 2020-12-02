@@ -112,6 +112,8 @@ public class ConfigMixLayout extends ConfigBaseLayout implements CompoundButton.
                     onMixConfigListener.onMixConfigReset(this);
                 }
                 break;
+            default:
+                break;
         }
     }
 

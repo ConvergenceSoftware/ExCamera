@@ -62,7 +62,7 @@ public class ResolutionDialog extends Dialog implements ResolutionRvAdapter.OnIt
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_resolution);
         ButterKnife.bind(this);
-        setCanceledOnTouchOutside(true);//点击外部Dialog消失
+        setCanceledOnTouchOutside(true);
         Window dialogWindow = getWindow();
         dialogWindow.getDecorView().setPadding(0, 0, 0, 0);
         WindowManager.LayoutParams attr = dialogWindow.getAttributes();
@@ -90,14 +90,18 @@ public class ResolutionDialog extends Dialog implements ResolutionRvAdapter.OnIt
     }
 
     private boolean isSizeEqual(Size size1, Size size2) {
-        if (size1 == null || size2 == null) return false;
-        return size1.getWidth() == size2.getWidth() && size1.getHeight() == size2.getHeight();
+        if (size1 == null || size2 == null) {
+            return false;
+        } else {
+            return size1.getWidth() == size2.getWidth() && size1.getHeight() == size2.getHeight();
+        }
     }
 
     @OnClick({R.id.tv_cancel_dialog_resolution, R.id.tv_done_dialog_resolution})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_cancel_dialog_resolution:
+            default:
                 break;
             case R.id.tv_done_dialog_resolution:
                 Size resultSize = getSelectedResolution();
@@ -119,6 +123,11 @@ public class ResolutionDialog extends Dialog implements ResolutionRvAdapter.OnIt
 
     public interface OnClickListener {
 
+        /**
+         * 分辨率更新
+         *
+         * @param resultSize 需要更新的分辨率Size
+         */
         void onResolutionUpdate(Size resultSize);
     }
 }

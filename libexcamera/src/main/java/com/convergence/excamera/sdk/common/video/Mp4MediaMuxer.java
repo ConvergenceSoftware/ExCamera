@@ -94,9 +94,12 @@ public class Mp4MediaMuxer {
         }
         MediaFormat inputFormat = MediaFormat.createVideoFormat(MIME_TYPE, videoSize.getWidth(), videoSize.getHeight());
         inputFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, COLOR_FORMAT);
-        inputFormat.setInteger(MediaFormat.KEY_BIT_RATE, OutputUtil.calculateBitRate(videoSize, frame));//设置比特率(设置码率，通常码率越高，视频越清晰)
-        inputFormat.setInteger(MediaFormat.KEY_FRAME_RATE, frame); //设置帧率
-        inputFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 5);//关键帧间隔时间，通常情况下，你设置成多少问题都不大。
+        //设置比特率(设置码率，通常码率越高，视频越清晰)
+        inputFormat.setInteger(MediaFormat.KEY_BIT_RATE, OutputUtil.calculateBitRate(videoSize, frame));
+        //设置帧率
+        inputFormat.setInteger(MediaFormat.KEY_FRAME_RATE, frame);
+        //关键帧间隔时间，通常情况下，你设置成多少问题都不大。
+        inputFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 5);
         try {
             mediaCodec = MediaCodec.createEncoderByType(MIME_TYPE);
             mediaMuxer = new MediaMuxer(videoPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
@@ -295,8 +298,16 @@ public class Mp4MediaMuxer {
 
     public interface OnSetupListener {
 
+        /**
+         * 初始化配置成功
+         */
         void onSetupSuccess();
 
+        /**
+         * 初始化配置出错
+         *
+         * @param error 错误信息
+         */
         void onSetupError(String error);
     }
 }

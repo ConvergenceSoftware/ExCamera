@@ -83,18 +83,43 @@ public class WifiCameraRecorder implements VideoCreator.OnCreateVideoListener {
 
     public interface OnRecordListener {
 
+        /**
+         * 初始化配置录像成功
+         */
         void onSetupRecordSuccess();
 
+        /**
+         * 初始化配置录像出错
+         */
         void onSetupRecordError();
 
+        /**
+         * 开始录像成功
+         */
         void onStartRecordSuccess();
 
+        /**
+         * 开始录像失败
+         */
         void onStartRecordError();
 
+        /**
+         * 录像读秒回调
+         *
+         * @param recordTime 当前录像秒数
+         */
         void onRecordProgress(int recordTime);
 
+        /**
+         * 录像成功
+         *
+         * @param videoPath 保存路径
+         */
         void onRecordSuccess(String videoPath);
 
+        /**
+         * 录像出错
+         */
         void onRecordError();
     }
 }

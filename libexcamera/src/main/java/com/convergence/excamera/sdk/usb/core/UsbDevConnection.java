@@ -36,8 +36,12 @@ public class UsbDevConnection implements USBMonitor.OnDeviceConnectListener {
         return isConnected && connectionInfo != null;
     }
 
-    // called by checking usb device
-    // do request device permission
+    /**
+     * called by checking usb device
+     * do request device permission
+     *
+     * @param device USB device
+     */
     @Override
     public void onAttach(UsbDevice device) {
         if (!isPermissionRequest) {
@@ -46,8 +50,12 @@ public class UsbDevConnection implements USBMonitor.OnDeviceConnectListener {
         }
     }
 
-    // called by taking out usb device
-    // do close camera
+    /**
+     * called by taking out usb device
+     * do close camera
+     *
+     * @param device USB device
+     */
     @Override
     public void onDettach(UsbDevice device) {
         if (isPermissionRequest) {
@@ -56,8 +64,14 @@ public class UsbDevConnection implements USBMonitor.OnDeviceConnectListener {
         }
     }
 
-    // called by connect to usb camera
-    // do open camera,start previewing
+    /**
+     * called by connect to usb camera
+     * do open camera,start previewing
+     *
+     * @param device    USB device
+     * @param ctrlBlock control class
+     * @param createNew is create New
+     */
     @Override
     public void onConnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock, boolean createNew) {
         connectionInfo = new ConnectionInfo(device, ctrlBlock);
@@ -69,8 +83,12 @@ public class UsbDevConnection implements USBMonitor.OnDeviceConnectListener {
         usbCameraCommand.openCamera();
     }
 
-    // called by disconnect to usb camera
-    // do nothing
+    /**
+     * called by disconnect to usb camera
+     *
+     * @param device    USB device
+     * @param ctrlBlock control class
+     */
     @Override
     public void onDisconnect(UsbDevice device, USBMonitor.UsbControlBlock ctrlBlock) {
         usbCameraCommand.updateState(UsbCameraState.Free);

@@ -35,7 +35,14 @@ public class ConfigSeekBarLayout extends LinearLayout implements SeekBar.OnSeekB
     TextView tvMaxLayoutConfigSeekBar;
 
     public enum Type {
-        Percent, PercentQuadratic
+        /*
+        百分比
+         */
+        Percent,
+        /*
+        一元二次方程对应百分比
+         */
+        PercentQuadratic
     }
 
     private Context context;

@@ -92,7 +92,9 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
      */
     public void requestUsbPermission() {
         List<UsbDevice> usbDeviceList = getUsbDeviceList();
-        if (usbDeviceList == null || usbDeviceList.isEmpty()) return;
+        if (usbDeviceList == null || usbDeviceList.isEmpty()) {
+            return;
+        }
         requestUsbPermission(usbDeviceList.get(0));
     }
 
@@ -102,7 +104,9 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
      * @param usbDevice 指定的USB设备
      */
     public void requestUsbPermission(UsbDevice usbDevice) {
-        if (usbDevice == null) return;
+        if (usbDevice == null) {
+            return;
+        }
         usbMonitor.requestPermission(usbDevice);
     }
 
@@ -113,7 +117,9 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
     public void openCamera() {
         boolean result = false;
         UsbDevConnection.ConnectionInfo connectionInfo = usbDevConnection.getConnectionInfo();
-        if (connectionInfo == null) return;
+        if (connectionInfo == null) {
+            return;
+        }
         try {
             uvcCamera = new UVCCamera();
             uvcCamera.open(connectionInfo.getCtrlBlock());
@@ -125,7 +131,9 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (!result) return;
+        if (!result) {
+            return;
+        }
         refreshPreviewSize();
         if (onConnectListener != null) {
             onConnectListener.onCameraOpen();
@@ -137,7 +145,9 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
      * 关闭UVC Camera
      */
     public void closeCamera() {
-        if (uvcCamera == null) return;
+        if (uvcCamera == null) {
+            return;
+        }
         stopPreview();
         uvcCamera.destroy();
         uvcCamera = null;
@@ -151,7 +161,9 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
      * 开启USB相机预览画面
      */
     public void startPreview() {
-        if (uvcCamera == null || !isOpened()) return;
+        if (uvcCamera == null || !isOpened()) {
+            return;
+        }
         try {
             if (updateSize != null && isSizeSupported(updateSize.getWidth(), updateSize.getHeight())) {
                 uvcCamera.setPreviewSize(updateSize.getWidth(), updateSize.getHeight());
@@ -204,7 +216,9 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
      * 更新当前USB相机状态
      */
     public void updateState(UsbCameraState state) {
-        if (curState == state) return;
+        if (curState == state) {
+            return;
+        }
         cameraLogger.LogD("Usb State update : " + curState + " ==> " + state);
         curState = state;
         if (onCommandListener != null) {
@@ -238,6 +252,8 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
                 updateSize = new android.util.Size(width, height);
                 handler.sendEmptyMessageDelayed(MSG_START_PREVIEW, 500);
                 break;
+            default:
+                break;
         }
     }
 
@@ -257,7 +273,9 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
      * 获取自动类调节参数信息
      */
     public UVCAutoConfig getAutoConfig(String tag) {
-        if (!isOpened()) return null;
+        if (!isOpened()) {
+            return null;
+        }
         switch (tag) {
             case UVCConfig.TAG_AUTO_FOCUS_AUTO:
                 return uvcCamera.getConfigFocusAuto();
@@ -267,15 +285,18 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
                 return uvcCamera.getConfigWhiteBalanceAuto();
             case UVCConfig.TAG_AUTO_WHITE_BALANCE_COMPONENT_AUTO:
                 return uvcCamera.getConfigWhiteBalanceComponentAuto();
+            default:
+                return null;
         }
-        return null;
     }
 
     /**
      * 获取数值类调节参数信息
      */
     public UVCParamConfig getParamConfig(String tag) {
-        if (!isOpened()) return null;
+        if (!isOpened()) {
+            return null;
+        }
         switch (tag) {
             case UVCConfig.TAG_PARAM_SCANNING_MODE:
                 return uvcCamera.getConfigScanningMode();
@@ -339,8 +360,9 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
                 return uvcCamera.getConfigAnalogVideoStandard();
             case UVCConfig.TAG_PARAM_ANALOG_VIDEO_LOCK_STATUS:
                 return uvcCamera.getConfigAnalogVideoLockStatus();
+            default:
+                return null;
         }
-        return null;
     }
 
     /**
@@ -358,7 +380,9 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
      * 判断自动类调节参数当前是否自动状态
      */
     public boolean getAuto(String tag) {
-        if (!isOpened() || !checkConfigEnable(tag)) return false;
+        if (!isOpened() || !checkConfigEnable(tag)) {
+            return false;
+        }
         synchronized (configSync) {
             switch (tag) {
                 case UVCConfig.TAG_AUTO_FOCUS_AUTO:
@@ -369,16 +393,19 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
                     return uvcCamera.getWhiteBalanceAuto();
                 case UVCConfig.TAG_AUTO_WHITE_BALANCE_COMPONENT_AUTO:
                     return uvcCamera.getWhiteBalanceComponentAuto();
+                default:
+                    return false;
             }
         }
-        return false;
     }
 
     /**
      * 设置自动类调节参数当前状态
      */
     public void setAuto(String tag, boolean value) {
-        if (!isOpened() || !checkConfigEnable(tag)) return;
+        if (!isOpened() || !checkConfigEnable(tag)) {
+            return;
+        }
         synchronized (configSync) {
             switch (tag) {
                 case UVCConfig.TAG_AUTO_FOCUS_AUTO:
@@ -393,6 +420,8 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
                 case UVCConfig.TAG_AUTO_WHITE_BALANCE_COMPONENT_AUTO:
                     uvcCamera.setWhiteBalanceComponentAuto(value);
                     break;
+                default:
+                    break;
             }
         }
     }
@@ -401,7 +430,9 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
      * 重置自动类调节参数为默认
      */
     public void resetAuto(String tag) {
-        if (!isOpened() || !checkConfigEnable(tag)) return;
+        if (!isOpened() || !checkConfigEnable(tag)) {
+            return;
+        }
         synchronized (configSync) {
             switch (tag) {
                 case UVCConfig.TAG_AUTO_FOCUS_AUTO:
@@ -416,6 +447,8 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
                 case UVCConfig.TAG_AUTO_WHITE_BALANCE_COMPONENT_AUTO:
                     uvcCamera.resetWhiteBalanceComponentAuto();
                     break;
+                default:
+                    break;
             }
         }
     }
@@ -424,7 +457,9 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
      * 获取数值类参数当前数值
      */
     public int getParam(String tag) {
-        if (!isOpened() || !checkConfigEnable(tag)) return 0;
+        if (!isOpened() || !checkConfigEnable(tag)) {
+            return 0;
+        }
         synchronized (configSync) {
             switch (tag) {
                 case UVCConfig.TAG_PARAM_SCANNING_MODE:
@@ -489,16 +524,19 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
                     return uvcCamera.getAnalogVideoStandard();
                 case UVCConfig.TAG_PARAM_ANALOG_VIDEO_LOCK_STATUS:
                     return uvcCamera.getAnalogVideoLockStatus();
+                default:
+                    return 0;
             }
         }
-        return 0;
     }
 
     /**
      * 设置数值类参数为指定数值
      */
     public void setParam(String tag, int value) {
-        if (!isOpened() || !checkConfigEnable(tag)) return;
+        if (!isOpened() || !checkConfigEnable(tag)) {
+            return;
+        }
         synchronized (configSync) {
             switch (tag) {
                 case UVCConfig.TAG_PARAM_SCANNING_MODE:
@@ -594,6 +632,8 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
                 case UVCConfig.TAG_PARAM_ANALOG_VIDEO_LOCK_STATUS:
                     uvcCamera.setAnalogVideoLockStatus(value);
                     break;
+                default:
+                    break;
             }
         }
     }
@@ -602,7 +642,9 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
      * 重置数值类参数为默认
      */
     public void resetParam(String tag) {
-        if (!isOpened() || !checkConfigEnable(tag)) return;
+        if (!isOpened() || !checkConfigEnable(tag)) {
+            return;
+        }
         synchronized (configSync) {
             switch (tag) {
                 case UVCConfig.TAG_PARAM_SCANNING_MODE:
@@ -698,6 +740,8 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
                 case UVCConfig.TAG_PARAM_ANALOG_VIDEO_LOCK_STATUS:
                     uvcCamera.resetAnalogVideoLockStatus();
                     break;
+                default:
+                    break;
             }
         }
     }
@@ -766,7 +810,9 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
      * 打开相机后，更新当前预览分辨率
      */
     private void refreshPreviewSize() {
-        if (uvcCamera == null) return;
+        if (uvcCamera == null) {
+            return;
+        }
         Size size = getCurPreviewSize();
         if (size != null) {
             previewWidth = size.width;
@@ -800,7 +846,9 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
      * @param height 分辨率高
      */
     private boolean isSizeSupported(int width, int height) {
-        if (supportedSizeList == null || supportedSizeList.isEmpty()) return false;
+        if (supportedSizeList == null || supportedSizeList.isEmpty()) {
+            return false;
+        }
         for (int i = 0; i < supportedSizeList.size(); i++) {
             Size size = supportedSizeList.get(i);
             if (size.width == width && size.height == height) {

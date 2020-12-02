@@ -81,6 +81,8 @@ public class ConfigComLayout extends ConfigBaseLayout implements ConfigSeekBarLa
                     onComConfigListener.onComConfigReset(this);
                 }
                 break;
+            default:
+                break;
         }
     }
 

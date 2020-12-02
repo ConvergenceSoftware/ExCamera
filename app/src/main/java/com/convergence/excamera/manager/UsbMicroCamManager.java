@@ -126,7 +126,9 @@ public class UsbMicroCamManager implements CamManager, MirrorFlipLayout.OnMirror
     @Override
     public void showResolutionSelection() {
         UsbCameraSetting usbCameraSetting = UsbCameraSetting.getInstance();
-        if (!isPreviewing() || !usbCameraSetting.isAvailable()) return;
+        if (!isPreviewing() || !usbCameraSetting.isAvailable()) {
+            return;
+        }
         UsbCameraResolution usbCameraResolution = usbCameraSetting.getUsbCameraResolution();
         List<UsbCameraResolution.Resolution> resolutionList = usbCameraResolution.getResolutionList();
         List<ResolutionOption> optionList = new ArrayList<>();
@@ -162,11 +164,15 @@ public class UsbMicroCamManager implements CamManager, MirrorFlipLayout.OnMirror
      * 重置所有参数布局
      */
     private void resetConfigLayout() {
-        if (configLayout == null) return;
+        if (configLayout == null) {
+            return;
+        }
         UsbCameraSP.Editor editor = UsbCameraSP.getEditor(context);
         MirrorFlipLayout itemFlip = configLayout.getItemFlip();
         itemFlip.initSwitch(editor.isFlipHorizontal(), editor.isFlipVertical());
-        if (!isPreviewing()) return;
+        if (!isPreviewing()) {
+            return;
+        }
         resetFocusLayout();
         resetWhiteBalanceLayout();
         resetExposureLayout();
@@ -369,6 +375,8 @@ public class UsbMicroCamManager implements CamManager, MirrorFlipLayout.OnMirror
             case Exposure:
                 setConfigParam(UVCConfig.TAG_PARAM_EXPOSURE_MODE, isAuto ? EXPOSURE_MODE_AUTO : EXPOSURE_MODE_MANUAL);
                 break;
+            default:
+                break;
         }
     }
 
@@ -384,6 +392,8 @@ public class UsbMicroCamManager implements CamManager, MirrorFlipLayout.OnMirror
             case Exposure:
                 setConfigParam(UVCConfig.TAG_PARAM_EXPOSURE, value);
                 break;
+            default:
+                break;
         }
     }
 
@@ -398,6 +408,8 @@ public class UsbMicroCamManager implements CamManager, MirrorFlipLayout.OnMirror
                 break;
             case Exposure:
                 resetConfigParam(UVCConfig.TAG_PARAM_EXPOSURE, view::setSeekBarValue);
+                break;
+            default:
                 break;
         }
     }
@@ -426,6 +438,8 @@ public class UsbMicroCamManager implements CamManager, MirrorFlipLayout.OnMirror
             case Gain:
                 setConfigParam(UVCConfig.TAG_PARAM_GAIN, value);
                 break;
+            default:
+                break;
         }
     }
 
@@ -452,6 +466,8 @@ public class UsbMicroCamManager implements CamManager, MirrorFlipLayout.OnMirror
                 break;
             case Gain:
                 resetConfigParam(UVCConfig.TAG_PARAM_GAIN, view::setSeekBarValue);
+                break;
+            default:
                 break;
         }
     }
@@ -548,6 +564,11 @@ public class UsbMicroCamManager implements CamManager, MirrorFlipLayout.OnMirror
 
     private interface OnConfigResetListener {
 
+        /**
+         * 重置完成回调
+         *
+         * @param value 重置后数值
+         */
         void onResetDone(int value);
     }
 }

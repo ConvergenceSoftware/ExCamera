@@ -78,37 +78,65 @@ public abstract class WifiConfig {
     public static final String ID_GAIN = "9963795";
     public static final String ID_SHARPNESS = "9963803";
     public static final String ID_BACKLIGHT_COMPENSATION = "9963804";
-    public static final String ID_POWER_LINE_Frequency = "9963800";
+    public static final String ID_POWER_LINE_FREQUENCY = "9963800";
     public static final String ID_JPEG_QUALITY = "1";
 
-    //ID——Tag对应表
+    /**
+     * ID——Tag对应表
+     */
     private static Map<String, String> idTagMap;
 
-    //参数类型标识Tag
+    /**
+     * 参数类型标识Tag
+     */
     protected String tag;
-    //参数id（网络数据提供）
+    /**
+     * 参数id（网络数据提供）
+     */
     protected String id;
-    //参数名称（网络数据提供）
+    /**
+     * 参数名称（网络数据提供）
+     */
     protected String name;
-    //最小值（网络数据提供）
+    /**
+     * 最小值（网络数据提供）
+     */
     protected int min;
-    //最大值（网络数据提供）
+    /**
+     * 最大值（网络数据提供）
+     */
     protected int max;
-    //默认值（网络数据提供）
+    /**
+     * 默认值（网络数据提供）
+     */
     protected int def;
-    //当前值（网络数据提供）
+    /**
+     * 当前值（网络数据提供）
+     */
     protected int cur;
-    //类别（网络数据提供）
+    /**
+     * 类别（网络数据提供）
+     */
     protected int type;
-    //参数调整步长（网络数据提供）
+    /**
+     * 参数调整步长（网络数据提供）
+     */
     protected int step;
-    //dest（网络数据提供）
+    /**
+     * dest（网络数据提供）
+     */
     protected int dest;
-    //flag（网络数据提供）
+    /**
+     * flag（网络数据提供）
+     */
     protected int flag;
-    //group（网络数据提供）
+    /**
+     * group（网络数据提供）
+     */
     protected int group;
-    //更新值
+    /**
+     * 更新值
+     */
     protected int update;
 
     static {
@@ -127,7 +155,7 @@ public abstract class WifiConfig {
         idTagMap.put(ID_GAIN, TAG_PARAM_GAIN);
         idTagMap.put(ID_SHARPNESS, TAG_PARAM_SHARPNESS);
         idTagMap.put(ID_BACKLIGHT_COMPENSATION, TAG_PARAM_BACKLIGHT_COMPENSATION);
-        idTagMap.put(ID_POWER_LINE_Frequency, TAG_PARAM_POWER_LINE_Frequency);
+        idTagMap.put(ID_POWER_LINE_FREQUENCY, TAG_PARAM_POWER_LINE_Frequency);
         idTagMap.put(ID_JPEG_QUALITY, TAG_PARAM_JPEG_QUALITY);
     }
 

@@ -134,7 +134,9 @@ public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener,
      * 重新获取图像数据流
      */
     public void retryStream() {
-        if (isWaitingRetry || isReleased) return;
+        if (isWaitingRetry || isReleased) {
+            return;
+        }
         isWaitingRetry = true;
         boolean isStopSteam = ImageStream.getInstance() != null;
         ImageStream.closeInstance();
@@ -178,7 +180,9 @@ public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener,
      * @param isReset 是否需要重置相关UI（一般仅开启推流时需重置）
      */
     public void loadConfig(boolean isReset) {
-        if (!isPrepared()) return;
+        if (!isPrepared()) {
+            return;
+        }
         netWork.loadConfig(new ComNetCallback<NConfigList>(new ComNetCallback.OnResultListener<NConfigList>() {
             @Override
             public void onStart() {
@@ -214,7 +218,9 @@ public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener,
      * 获取单帧图片
      */
     public void loadOneFrame(OnLoadOneFrameListener listener) {
-        if (!isPrepared()) return;
+        if (!isPrepared()) {
+            return;
+        }
         netWork.loadFrame(new ComNetCallback<ResponseBody>(new ComNetCallback.OnResultListener<ResponseBody>() {
             @Override
             public void onStart() {
@@ -251,7 +257,9 @@ public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener,
      * 获取自动类配置信息
      */
     public WifiAutoConfig getAutoConfig(String tag) {
-        if (!isParamAvailable() || !WifiAutoConfig.isTagSupport(tag)) return null;
+        if (!isParamAvailable() || !WifiAutoConfig.isTagSupport(tag)) {
+            return null;
+        }
         WifiConfig wifiConfig = cameraSetting.getWifiCameraParam().getConfig(tag);
         if (wifiConfig instanceof WifiAutoConfig) {
             return (WifiAutoConfig) wifiConfig;
@@ -264,7 +272,9 @@ public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener,
      * 获取参数类配置信息
      */
     public WifiParamConfig getParamConfig(String tag) {
-        if (!isParamAvailable() || !WifiParamConfig.isTagSupport(tag)) return null;
+        if (!isParamAvailable() || !WifiParamConfig.isTagSupport(tag)) {
+            return null;
+        }
         WifiConfig wifiConfig = cameraSetting.getWifiCameraParam().getConfig(tag);
         if (wifiConfig instanceof WifiParamConfig) {
             return (WifiParamConfig) wifiConfig;
@@ -277,7 +287,9 @@ public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener,
      * 获取是否自动
      */
     public boolean getAuto(String tag) {
-        if (!isParamAvailable()) return false;
+        if (!isParamAvailable()) {
+            return false;
+        }
         WifiAutoConfig wifiAutoConfig = getAutoConfig(tag);
         return wifiAutoConfig != null && wifiAutoConfig.isAuto();
     }
@@ -286,7 +298,9 @@ public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener,
      * 获取参数值
      */
     public int getParam(String tag) {
-        if (!isParamAvailable()) return 0;
+        if (!isParamAvailable()) {
+            return 0;
+        }
         WifiParamConfig wifiParamConfig = getParamConfig(tag);
         return wifiParamConfig != null ? wifiParamConfig.getCur() : 0;
     }
@@ -302,9 +316,13 @@ public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener,
      * 设置自动
      */
     public void setAuto(String tag, boolean isAuto, OnConfigCommandListener listener) {
-        if (!isParamAvailable()) return;
+        if (!isParamAvailable()) {
+            return;
+        }
         WifiAutoConfig wifiAutoConfig = getAutoConfig(tag);
-        if (wifiAutoConfig == null) return;
+        if (wifiAutoConfig == null) {
+            return;
+        }
         wifiAutoConfig.setAuto(isAuto);
         requestComCommand(wifiAutoConfig, listener);
     }
@@ -320,9 +338,13 @@ public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener,
      * 设置参数
      */
     public void setParam(String tag, int value, OnConfigCommandListener listener) {
-        if (!isParamAvailable()) return;
+        if (!isParamAvailable()) {
+            return;
+        }
         WifiParamConfig wifiParamConfig = getParamConfig(tag);
-        if (wifiParamConfig == null) return;
+        if (wifiParamConfig == null) {
+            return;
+        }
         wifiParamConfig.setParam(value);
         requestComCommand(wifiParamConfig, listener);
     }
@@ -339,9 +361,13 @@ public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener,
      * 重置参数
      */
     public void resetConfig(String tag, OnConfigCommandListener listener) {
-        if (!isParamAvailable()) return;
+        if (!isParamAvailable()) {
+            return;
+        }
         WifiConfig wifiConfig = cameraSetting.getWifiCameraParam().getConfig(tag);
-        if (wifiConfig == null) return;
+        if (wifiConfig == null) {
+            return;
+        }
         wifiConfig.reset();
         requestComCommand(wifiConfig, listener);
     }
@@ -431,7 +457,9 @@ public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener,
      * 更新当前WiFi相机状态
      */
     private void updateState(WifiCameraState state) {
-        if (curState == state) return;
+        if (curState == state) {
+            return;
+        }
         cameraLogger.LogD("WiFi State update : " + curState + " ==> " + state);
         curState = state;
         if (onCommandListener != null) {
@@ -528,7 +556,9 @@ public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener,
      */
     private int getResolutionPosition(int width, int height) {
         WifiCameraParam wifiCameraParam = cameraSetting.getWifiCameraParam();
-        if (!wifiCameraParam.isAvailable()) return -1;
+        if (!wifiCameraParam.isAvailable()) {
+            return -1;
+        }
         WifiCameraResolution wifiCameraResolution = wifiCameraParam.getWifiCameraResolution();
         WifiCameraResolution.Resolution resolution = wifiCameraResolution.findResolution(width, height);
         return resolution != null ? resolution.getPosition() : -1;
@@ -585,7 +615,9 @@ public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener,
 
     @Override
     public void onLooping() {
-        if (curState == WifiCameraState.Free || isReleased) return;
+        if (curState == WifiCameraState.Free || isReleased) {
+            return;
+        }
         loadFrameFromStream();
     }
 

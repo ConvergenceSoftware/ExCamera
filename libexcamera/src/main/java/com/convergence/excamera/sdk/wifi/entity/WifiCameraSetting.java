@@ -1,7 +1,5 @@
 package com.convergence.excamera.sdk.wifi.entity;
 
-import android.content.Context;
-
 import com.convergence.excamera.sdk.wifi.net.bean.NConfigList;
 
 /**
@@ -20,11 +18,11 @@ public class WifiCameraSetting {
     }
 
     public static WifiCameraSetting getInstance() {
-        return SingletonHolder.instance;
+        return SingletonHolder.INSTANCE;
     }
 
     private static class SingletonHolder {
-        private static final WifiCameraSetting instance = new WifiCameraSetting();
+        private static final WifiCameraSetting INSTANCE = new WifiCameraSetting();
     }
 
     public void updateParam(NConfigList data) {

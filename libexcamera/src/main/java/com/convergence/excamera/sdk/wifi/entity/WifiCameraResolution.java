@@ -26,24 +26,36 @@ public class WifiCameraResolution {
      * curResolution = <7>1280 * 720
      */
 
-    //分辨率列表
+    /**
+     * 分辨率列表
+     */
     private List<Resolution> resolutionList;
-    //当前分辨率
+    /**
+     * 当前分辨率
+     */
     private Resolution curResolution;
-    //是否可用
+    /**
+     * 是否可用
+     */
     private boolean isAvailable = false;
 
     public WifiCameraResolution(NConfigList.FormatsBean formatsBean) {
         resolutionList = new ArrayList<>();
         Map<Integer, String> resolutionDesMap = formatsBean.getResolutions();
-        if (resolutionDesMap == null || resolutionDesMap.isEmpty()) return;
+        if (resolutionDesMap == null || resolutionDesMap.isEmpty()) {
+            return;
+        }
         for (int i = 0; i < resolutionDesMap.size(); i++) {
             String resolutionDes = resolutionDesMap.get(i);
-            if (resolutionDes == null || TextUtils.isEmpty(resolutionDes)) continue;
+            if (resolutionDes == null || TextUtils.isEmpty(resolutionDes)) {
+                continue;
+            }
             Resolution resolution = new Resolution(resolutionDes, i);
             resolutionList.add(resolution);
         }
-        if (resolutionList.isEmpty()) return;
+        if (resolutionList.isEmpty()) {
+            return;
+        }
         Collections.sort(resolutionList, (o1, o2) -> {
             if (o1.getWidth() == o2.getWidth()) {
                 return o1.getHeight() - o2.getHeight();

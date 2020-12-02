@@ -113,6 +113,8 @@ public class WifiTeleCamActivity extends AppCompatActivity {
             case R.id.iv_resolution_activity_wifi_tele_camera:
                 camManager.showResolutionSelection();
                 break;
+            default:
+                break;
         }
     }
 }

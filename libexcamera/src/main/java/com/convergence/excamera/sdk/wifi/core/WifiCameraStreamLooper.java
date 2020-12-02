@@ -36,7 +36,9 @@ public class WifiCameraStreamLooper {
      * 开始轮询
      */
     public void startLoop() {
-        if (isLooping()) return;
+        if (isLooping()) {
+            return;
+        }
         isLooping = true;
         onLoopListener.onStartLoop();
         disposable = observable.subscribe(aLong -> {

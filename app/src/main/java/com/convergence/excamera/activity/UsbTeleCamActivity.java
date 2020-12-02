@@ -113,6 +113,8 @@ public class UsbTeleCamActivity extends AppCompatActivity {
             case R.id.iv_resolution_activity_usb_tele_camera:
                 camManager.showResolutionSelection();
                 break;
+            default:
+                break;
         }
     }
 }

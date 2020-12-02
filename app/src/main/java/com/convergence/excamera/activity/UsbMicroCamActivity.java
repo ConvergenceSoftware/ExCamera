@@ -113,6 +113,8 @@ public class UsbMicroCamActivity extends AppCompatActivity {
             case R.id.iv_resolution_activity_usb_micro_camera:
                 camManager.showResolutionSelection();
                 break;
+            default:
+                break;
         }
     }
 }

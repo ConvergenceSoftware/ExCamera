@@ -69,7 +69,7 @@ public class BitmapUtil {
      */
     public static Bitmap getBitmapByNV21(Context context, byte[] nv21, int width, int height) {
         Bitmap outputBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        if (nv21 == null || nv21.length == 0) return outputBitmap;
+        if (nv21 == null || nv21.length == 0) {return outputBitmap;}
         RenderScript renderScript = RenderScript.create(context);
         ScriptIntrinsicYuvToRGB yuvScript = ScriptIntrinsicYuvToRGB.create(renderScript, Element.U8_4(renderScript));
 

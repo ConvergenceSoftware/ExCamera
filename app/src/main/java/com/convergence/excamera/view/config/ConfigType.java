@@ -9,25 +9,76 @@ package com.convergence.excamera.view.config;
  */
 public enum ConfigType {
 
-    Unknown("Unknown"),//未设定
-    Focus("Focus"),//对焦
-    WhiteBalance("WhiteBalance"),//白平衡
-    Exposure("Exposure"),//曝光
-    Brightness("Brightness"),//亮度
-    Contrast("Contrast"),//对比度
-    Hue("Hue"),//色调
-    Saturation("Saturation"),//饱和度
-    Sharpness("Sharpness"),//锐度
-    Gamma("Gamma"),//伽马
-    Gain("Gain"),//增益
+    /*
+    未设定
+     */
+    Unknown("Unknown"),
+    /*
+    对焦
+     */
+    Focus("Focus"),
+    /*
+    白平衡
+     */
+    WhiteBalance("WhiteBalance"),
+    /*
+    曝光
+     */
+    Exposure("Exposure"),
+    /*
+    亮度
+     */
+    Brightness("Brightness"),
+    /*
+    对比度
+     */
+    Contrast("Contrast"),
+    /*
+    色调
+     */
+    Hue("Hue"),
+    /*
+    饱和度
+     */
+    Saturation("Saturation"),
+    /*
+    锐度
+     */
+    Sharpness("Sharpness"),
+    /*
+    伽马
+     */
+    Gamma("Gamma"),
+    /*
+    增益
+     */
+    Gain("Gain"),
 
-    Iris("Iris"),//可变光圈
-    Zoom("Zoom"),//缩放
-    Roll("Roll"),//滚动（镜像翻转）
-    Pan("Pan"),//平移
-    Tilt("Tilt"),//倾斜
+    /*
+    可变光圈
+     */
+    Iris("Iris"),
+    /*
+    缩放
+     */
+    Zoom("Zoom"),
+    /*
+    滚动（镜像翻转）
+     */
+    Roll("Roll"),
+    /*
+    平移
+     */
+    Pan("Pan"),
+    /*
+    倾斜
+     */
+    Tilt("Tilt"),
 
-    Quality("Quality");//图片质量
+    /*
+    图片质量
+     */
+    Quality("Quality");
 
     private String name;
 

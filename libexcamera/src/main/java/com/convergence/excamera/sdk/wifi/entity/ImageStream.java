@@ -69,7 +69,9 @@ public class ImageStream extends DataInputStream implements Serializable {
      * 关闭流并释放Stream流对象
      */
     public static void closeInstance() {
-        if (stream == null) return;
+        if (stream == null) {
+            return;
+        }
         try {
             stream.close();
         } catch (Exception e) {
@@ -105,14 +107,16 @@ public class ImageStream extends DataInputStream implements Serializable {
     private int getEndOfSequence(DataInputStream in, int[] sequence) throws IOException {
         int seqIndex = 0;
         int c;
-        for (int i = 0; i < FRAME_MAX_LENGTH; i++) {// 0 1 2 3
+        for (int i = 0; i < FRAME_MAX_LENGTH; i++) {
             c = in.readUnsignedByte();
             if (c == sequence[seqIndex]) {
                 seqIndex++;
-                if (seqIndex == sequence.length)//2
-                    return i + 1;//3
-            } else
+                if (seqIndex == sequence.length) {
+                    return i + 1;
+                }
+            } else {
                 seqIndex = 0;
+            }
         }
         return -1;
     }

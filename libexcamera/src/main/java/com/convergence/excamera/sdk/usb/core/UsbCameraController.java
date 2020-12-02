@@ -174,6 +174,7 @@ public class UsbCameraController implements Handler.Callback, UsbCameraCommand.O
                 }
                 break;
             case Photographing:
+            default:
                 break;
             case Recording:
                 if (onCameraPhotographListener != null) {
@@ -220,6 +221,7 @@ public class UsbCameraController implements Handler.Callback, UsbCameraCommand.O
                 }
                 break;
             case Recording:
+            default:
                 break;
         }
     }
@@ -337,7 +339,9 @@ public class UsbCameraController implements Handler.Callback, UsbCameraCommand.O
      */
     public void setParamPercent(String tag, int percent) {
         UVCParamConfig uvcParamConfig = getParamConfig(tag);
-        if (uvcParamConfig == null) return;
+        if (uvcParamConfig == null) {
+            return;
+        }
         setParam(tag, uvcParamConfig.getValueByPercent(percent));
     }
 
@@ -346,7 +350,9 @@ public class UsbCameraController implements Handler.Callback, UsbCameraCommand.O
      */
     public void setParamPercentQuadratic(String tag, int percent) {
         UVCParamConfig uvcParamConfig = getParamConfig(tag);
-        if (uvcParamConfig == null) return;
+        if (uvcParamConfig == null) {
+            return;
+        }
         setParam(tag, uvcParamConfig.getValueByPercentQuadratic(percent));
     }
 
@@ -372,7 +378,9 @@ public class UsbCameraController implements Handler.Callback, UsbCameraCommand.O
      * 更新当前功能状态
      */
     private void updateActionState(ActionState state) {
-        if (curActionState == state) return;
+        if (curActionState == state) {
+            return;
+        }
         cameraLogger.LogD("Action State Update : " + curActionState + " ==> " + state);
         curActionState = state;
         if (onControlListener != null) {
@@ -522,7 +530,7 @@ public class UsbCameraController implements Handler.Callback, UsbCameraCommand.O
     }
 
     @Override
-    public void onFPSObserve(int instantFPS, float averageFPS) {
+    public void onObserveFPS(int instantFPS, float averageFPS) {
         if (UsbCameraConstant.IS_LOG_FPS) {
             cameraLogger.LogD("FPS : instant = " + instantFPS + " , average = " + averageFPS);
         }
@@ -546,6 +554,8 @@ public class UsbCameraController implements Handler.Callback, UsbCameraCommand.O
                 if (onControlListener != null) {
                     onControlListener.onPreviewStop();
                 }
+                break;
+            default:
                 break;
         }
         return false;

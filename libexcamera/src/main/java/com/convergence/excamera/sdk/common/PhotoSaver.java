@@ -45,7 +45,9 @@ public class PhotoSaver implements Handler.Callback {
     public void run() {
         isRunning = true;
         observable.subscribe(bitmap -> {
-            if (!isRunning) return;
+            if (!isRunning) {
+                return;
+            }
             if (!saveTaskQueue.isEmpty()) {
                 String path = saveTaskQueue.poll();
                 boolean result = BitmapUtil.saveBitmap(bitmap, path);
@@ -69,12 +71,16 @@ public class PhotoSaver implements Handler.Callback {
     }
 
     public void addTask(String path) {
-        if (!isRunning) return;
+        if (!isRunning) {
+            return;
+        }
         saveTaskQueue.offer(path);
     }
 
     public void provideFrame(Bitmap bitmap) {
-        if (!isRunning || saveTaskQueue.isEmpty()) return;
+        if (!isRunning || saveTaskQueue.isEmpty()) {
+            return;
+        }
         emitter.onNext(bitmap);
     }
 
@@ -87,14 +93,24 @@ public class PhotoSaver implements Handler.Callback {
             case MSG_SAVE_PHOTO_FAIL:
                 listener.onSavePhotoFail();
                 break;
+            default:
+                break;
         }
         return false;
     }
 
     public interface OnPhotoSaverListener {
 
+        /**
+         * 保存图片成功
+         *
+         * @param path 保存路径
+         */
         void onSavePhotoSuccess(String path);
 
+        /**
+         * 保存图片失败
+         */
         void onSavePhotoFail();
     }
 }

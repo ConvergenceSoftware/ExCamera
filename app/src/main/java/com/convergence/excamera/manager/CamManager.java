@@ -64,11 +64,15 @@ public interface CamManager {
 
     /**
      * 是否预览中
+     *
+     * @return 是否预览中
      */
     boolean isPreviewing();
 
     /**
      * 是否录像中
+     *
+     * @return 是否录像中
      */
     boolean isRecording();
 }

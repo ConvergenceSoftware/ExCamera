@@ -16,18 +16,46 @@ import com.serenegiant.usb.config.base.UVCConfig;
  */
 public class TeleFocusHelper {
 
-    private static final long ACTION_DELAY_TIME = 1000L;        //延时调焦时间
+    /**
+     * 延时调焦时间
+     */
+    private static final long ACTION_DELAY_TIME = 1000L;
 
-    private static final int VALUE_FOCUS_BACK_DOWN = 10;        //向后调焦按下
-    private static final int VALUE_FOCUS_BACK_UP = 20;          //向后调焦抬起
-    private static final int VALUE_FOCUS_BACK_DELAY = 15;       //向后调焦延时
+    /**
+     * 向后调焦按下
+     */
+    private static final int VALUE_FOCUS_BACK_DOWN = 10;
+    /**
+     * 向后调焦抬起
+     */
+    private static final int VALUE_FOCUS_BACK_UP = 20;
+    /**
+     * 向后调焦延时
+     */
+    private static final int VALUE_FOCUS_BACK_DELAY = 15;
 
-    private static final int VALUE_FOCUS_FRONT_DOWN = 90;       //向前调焦按下
-    private static final int VALUE_FOCUS_FRONT_UP = 80;         //向前调焦抬起
-    private static final int VALUE_FOCUS_FRONT_DELAY = 85;      //向前调焦延时
+    /**
+     * 向前调焦按下
+     */
+    private static final int VALUE_FOCUS_FRONT_DOWN = 90;
+    /**
+     * 向前调焦抬起
+     */
+    private static final int VALUE_FOCUS_FRONT_UP = 80;
+    /**
+     * 向前调焦延时
+     */
+    private static final int VALUE_FOCUS_FRONT_DELAY = 85;
 
     private enum Type {
-        USB, WIFI
+        /*
+        USB调焦
+         */
+        USB,
+        /*
+        WiFi调焦
+         */
+        WIFI
     }
 
     private Type type;
@@ -62,6 +90,8 @@ public class TeleFocusHelper {
             case WIFI:
                 setWifiFocus(value);
                 break;
+            default:
+                break;
         }
         delayActionRunnable = new DelayActionRunnable(isBack);
         handler.postDelayed(delayActionRunnable, ACTION_DELAY_TIME);
@@ -80,6 +110,8 @@ public class TeleFocusHelper {
                 break;
             case WIFI:
                 setWifiFocus(value);
+                break;
+            default:
                 break;
         }
         if (delayActionRunnable != null) {
@@ -130,6 +162,8 @@ public class TeleFocusHelper {
                     break;
                 case WIFI:
                     setWifiFocus(value);
+                    break;
+                default:
                     break;
             }
         }

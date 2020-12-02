@@ -352,7 +352,9 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
      */
     public void setParamPercent(String tag, int percent) {
         WifiParamConfig wifiParamConfig = getParamConfig(tag);
-        if (wifiParamConfig == null) return;
+        if (wifiParamConfig == null) {
+            return;
+        }
         setParam(tag, wifiParamConfig.getValueByPercent(percent));
     }
 
@@ -361,7 +363,9 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
      */
     public void setParamPercentQuadratic(String tag, int percent) {
         WifiParamConfig wifiParamConfig = getParamConfig(tag);
-        if (wifiParamConfig == null) return;
+        if (wifiParamConfig == null) {
+            return;
+        }
         setParam(tag, wifiParamConfig.getValueByPercentQuadratic(percent));
     }
 
@@ -420,7 +424,9 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
      * 更新当前功能状态
      */
     private void updateActionState(ActionState state) {
-        if (curActionState == state) return;
+        if (curActionState == state) {
+            return;
+        }
         cameraLogger.LogD("Action State Update : " + curActionState + " ==> " + state);
         curActionState = state;
         if (onControlListener != null) {
@@ -552,7 +558,7 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
     }
 
     @Override
-    public void onFPSObserve(int instantFPS, float averageFPS) {
+    public void onObserveFPS(int instantFPS, float averageFPS) {
         if (WifiCameraConstant.IS_LOG_FPS) {
             cameraLogger.LogD("FPS : instant = " + instantFPS + " , average = " + averageFPS);
         }
@@ -566,8 +572,6 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
 
     @Override
     public boolean handleMessage(@NonNull Message msg) {
-        switch (msg.what) {
-        }
         return false;
     }
 

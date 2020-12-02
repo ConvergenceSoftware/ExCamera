@@ -16,11 +16,15 @@ public interface NetCallback {
 
     /**
      * 网络通信完成
+     *
+     * @param result 请求结果对象
      */
     void onDone(Object result);
 
     /**
      * 网络通信出错
+     *
+     * @param error 异常
      */
     void onError(Throwable error);
 }

@@ -113,6 +113,8 @@ public class WifiMicroCamActivity extends AppCompatActivity {
             case R.id.iv_resolution_activity_wifi_micro_camera:
                 camManager.showResolutionSelection();
                 break;
+            default:
+                break;
         }
     }
 }
