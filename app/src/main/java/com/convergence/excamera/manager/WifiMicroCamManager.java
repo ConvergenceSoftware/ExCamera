@@ -13,7 +13,6 @@ import com.convergence.excamera.sdk.common.ActionState;
 import com.convergence.excamera.sdk.common.OutputUtil;
 import com.convergence.excamera.sdk.common.callback.OnCameraPhotographListener;
 import com.convergence.excamera.sdk.common.callback.OnCameraRecordListener;
-import com.convergence.excamera.sdk.usb.entity.UsbCameraSP;
 import com.convergence.excamera.sdk.wifi.WifiCameraState;
 import com.convergence.excamera.sdk.wifi.config.base.WifiAutoConfig;
 import com.convergence.excamera.sdk.wifi.config.base.WifiConfig;
@@ -31,7 +30,6 @@ import com.convergence.excamera.view.config.component.ConfigMixLayout;
 import com.convergence.excamera.view.config.component.MirrorFlipLayout;
 import com.convergence.excamera.view.resolution.ResolutionDialog;
 import com.convergence.excamera.view.resolution.ResolutionOption;
-import com.serenegiant.usb.config.base.UVCConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -127,14 +125,16 @@ public class WifiMicroCamManager implements CamManager, MirrorFlipLayout.OnMirro
     @Override
     public void showResolutionSelection() {
         WifiCameraSetting wifiCameraSetting = WifiCameraSetting.getInstance();
-        if (!isPreviewing() || !wifiCameraSetting.isAvailable()) {return;}
+        if (!isPreviewing() || !wifiCameraSetting.isAvailable()) {
+            return;
+        }
         WifiCameraResolution wifiCameraResolution = wifiCameraSetting.getWifiCameraParam().getWifiCameraResolution();
         List<WifiCameraResolution.Resolution> resolutionList = wifiCameraResolution.getResolutionList();
         List<ResolutionOption> optionList = new ArrayList<>();
         WifiCameraResolution.Resolution curResolution = wifiCameraResolution.getCurResolution();
         Size curSize = new Size(curResolution.getWidth(), curResolution.getHeight());
         for (WifiCameraResolution.Resolution resolution : resolutionList) {
-            ResolutionOption option = new ResolutionOption(resolution);
+            ResolutionOption option = new ResolutionOption(resolution.getWidth(), resolution.getHeight());
             option.setSelect(option.equals(curSize.getWidth(), curSize.getHeight()));
             option.setDefault(resolution.isDefault());
             optionList.add(option);
@@ -183,21 +183,25 @@ public class WifiMicroCamManager implements CamManager, MirrorFlipLayout.OnMirro
      * 重置所有参数布局
      */
     private void resetConfigLayout() {
-        if (configLayout == null) {return;}
-        UsbCameraSP.Editor editor = UsbCameraSP.getEditor(context);
+        if (configLayout == null) {
+            return;
+        }
+        WifiCameraSP.Editor editor = WifiCameraSP.getEditor(context);
         MirrorFlipLayout itemFlip = configLayout.getItemFlip();
         itemFlip.initSwitch(editor.isFlipHorizontal(), editor.isFlipVertical());
-        if (!isPreviewing()) {return;}
+        if (!isPreviewing()) {
+            return;
+        }
         resetFocusLayout();
         resetWhiteBalanceLayout();
         resetExposureLayout();
-        resetConfigComLayout(configLayout.getItemBrightness(), UVCConfig.TAG_PARAM_BRIGHTNESS);
-        resetConfigComLayout(configLayout.getItemContrast(), UVCConfig.TAG_PARAM_CONTRAST);
-        resetConfigComLayout(configLayout.getItemHue(), UVCConfig.TAG_PARAM_HUE);
-        resetConfigComLayout(configLayout.getItemSaturation(), UVCConfig.TAG_PARAM_SATURATION);
-        resetConfigComLayout(configLayout.getItemSharpness(), UVCConfig.TAG_PARAM_SHARPNESS);
-        resetConfigComLayout(configLayout.getItemGamma(), UVCConfig.TAG_PARAM_GAMMA);
-        resetConfigComLayout(configLayout.getItemGain(), UVCConfig.TAG_PARAM_GAIN);
+        resetConfigComLayout(configLayout.getItemBrightness(), WifiConfig.TAG_PARAM_BRIGHTNESS);
+        resetConfigComLayout(configLayout.getItemContrast(), WifiConfig.TAG_PARAM_CONTRAST);
+        resetConfigComLayout(configLayout.getItemHue(), WifiConfig.TAG_PARAM_HUE);
+        resetConfigComLayout(configLayout.getItemSaturation(), WifiConfig.TAG_PARAM_SATURATION);
+        resetConfigComLayout(configLayout.getItemSharpness(), WifiConfig.TAG_PARAM_SHARPNESS);
+        resetConfigComLayout(configLayout.getItemGamma(), WifiConfig.TAG_PARAM_GAMMA);
+        resetConfigComLayout(configLayout.getItemGain(), WifiConfig.TAG_PARAM_GAIN);
         resetConfigComLayout(configLayout.getItemQuality(), WifiConfig.TAG_PARAM_JPEG_QUALITY);
     }
 
@@ -558,15 +562,5 @@ public class WifiMicroCamManager implements CamManager, MirrorFlipLayout.OnMirro
         public WifiMicroCamManager build() {
             return new WifiMicroCamManager(this);
         }
-    }
-
-    private interface OnConfigResetListener {
-
-        /**
-         * 重置完成回调
-         *
-         * @param value 重置后数值
-         */
-        void onResetDone(int value);
     }
 }

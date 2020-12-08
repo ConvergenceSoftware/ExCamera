@@ -137,7 +137,7 @@ public class UsbTeleCamManager implements CamManager, MirrorFlipLayout.OnMirrorF
         UsbCameraResolution.Resolution curResolution = usbCameraResolution.getCurResolution();
         Size curSize = new Size(curResolution.getWidth(), curResolution.getHeight());
         for (UsbCameraResolution.Resolution resolution : resolutionList) {
-            ResolutionOption option = new ResolutionOption(resolution);
+            ResolutionOption option = new ResolutionOption(resolution.getWidth(), resolution.getHeight());
             option.setSelect(option.equals(curSize.getWidth(), curSize.getHeight()));
             option.setDefault(resolution.isDefault());
             optionList.add(option);
@@ -559,15 +559,5 @@ public class UsbTeleCamManager implements CamManager, MirrorFlipLayout.OnMirrorF
         public UsbTeleCamManager build() {
             return new UsbTeleCamManager(this);
         }
-    }
-
-    private interface OnConfigResetListener {
-
-        /**
-         * 重置完成回调
-         *
-         * @param value 重置后数值
-         */
-        void onResetDone(int value);
     }
 }

@@ -16,7 +16,18 @@ import androidx.core.math.MathUtils;
 public class PreviewTransformInfo {
 
     public enum TouchState {
-        Normal, Zoom, Move
+        /*
+        默认状态
+         */
+        Normal,
+        /*
+        缩放状态
+         */
+        Zoom,
+        /*
+        单独拖动状态
+         */
+        Move
     }
 
     public static final float ZOOM_DEFAULT = 1.0f;

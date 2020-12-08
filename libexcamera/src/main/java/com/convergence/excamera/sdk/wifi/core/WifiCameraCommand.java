@@ -10,6 +10,7 @@ import android.os.Message;
 import androidx.annotation.NonNull;
 
 import com.convergence.excamera.sdk.common.CameraLogger;
+import com.convergence.excamera.sdk.common.FrameLooper;
 import com.convergence.excamera.sdk.wifi.WifiCameraConstant;
 import com.convergence.excamera.sdk.wifi.WifiCameraState;
 import com.convergence.excamera.sdk.wifi.config.base.WifiAutoConfig;
@@ -37,7 +38,7 @@ import okhttp3.ResponseBody;
  * @CreateDate 2020-11-11
  * @Organization Convergence Ltd.
  */
-public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener, Handler.Callback {
+public class WifiCameraCommand implements FrameLooper.OnLoopListener, Handler.Callback {
 
     private static final int MSG_START_STREAM = 100;
     private static final int MSG_STOP_STREAM = 101;
@@ -51,7 +52,7 @@ public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener,
     private WifiCameraView wifiCameraView;
     private Handler handler;
     private WifiCameraSetting cameraSetting;
-    private WifiCameraStreamLooper streamLooper;
+    private WifiCameraFrameLooper streamLooper;
     private WifiCameraState curState = WifiCameraState.Free;
 
     private Bitmap latestBitmap;
@@ -66,7 +67,7 @@ public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener,
         this.wifiCameraView = wifiCameraView;
         handler = new Handler(this);
         cameraSetting = WifiCameraSetting.getInstance();
-        streamLooper = new WifiCameraStreamLooper(this);
+        streamLooper = new WifiCameraFrameLooper(this);
         isReleased = false;
     }
 
@@ -427,11 +428,13 @@ public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener,
 
     /**
      * 从图像数据流中获取图像Bitmap
+     *
+     * @return 是否成功获取数据帧
      */
-    private void loadFrameFromStream() {
+    private boolean loadFrameFromStream() {
         if (!isPrepared()) {
             retryStream();
-            return;
+            return false;
         }
         Bitmap frame = null;
         try {
@@ -446,11 +449,12 @@ public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener,
                 retryTimes = 0;
                 retryStream();
             }
-            return;
+            return false;
         }
         latestBitmap = flipBitmap(frame);
         updateState(WifiCameraState.Previewing);
         handler.sendEmptyMessage(MSG_LOAD_FRAME);
+        return true;
     }
 
     /**
@@ -618,7 +622,12 @@ public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener,
         if (curState == WifiCameraState.Free || isReleased) {
             return;
         }
-        loadFrameFromStream();
+        long startTime = System.currentTimeMillis();
+        boolean result = loadFrameFromStream();
+        long costTime = System.currentTimeMillis() - startTime;
+        if (result && WifiCameraConstant.IS_LOG_FRAME_DATA) {
+            cameraLogger.LogD("load one frame cost time : " + costTime);
+        }
     }
 
     @Override
@@ -649,6 +658,8 @@ public class WifiCameraCommand implements WifiCameraStreamLooper.OnLoopListener,
                 if (onCommandListener != null) {
                     onCommandListener.onLoadFrame(latestBitmap);
                 }
+                break;
+            default:
                 break;
         }
         return false;

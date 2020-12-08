@@ -101,6 +101,8 @@ public class ConfigSeekBarLayout extends LinearLayout implements SeekBar.OnSeekB
             case PercentQuadratic:
                 sbLayoutConfigSeekBar.setProgress(getPercentByValueQuadratic(cur));
                 break;
+            default:
+                break;
         }
     }
 
@@ -113,6 +115,8 @@ public class ConfigSeekBarLayout extends LinearLayout implements SeekBar.OnSeekB
                 break;
             case PercentQuadratic:
                 sbLayoutConfigSeekBar.setProgress(getPercentByValueQuadratic(cur));
+                break;
+            default:
                 break;
         }
     }
@@ -154,6 +158,8 @@ public class ConfigSeekBarLayout extends LinearLayout implements SeekBar.OnSeekB
                     break;
                 case PercentQuadratic:
                     cur = getValueByPercentQuadratic(progress);
+                    break;
+                default:
                     break;
             }
             tvCurLayoutConfigSeekBar.setText(cur + "");

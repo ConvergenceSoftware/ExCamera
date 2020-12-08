@@ -17,6 +17,7 @@ import com.convergence.excamera.sdk.common.PhotoSaver;
 import com.convergence.excamera.sdk.common.TeleFocusHelper;
 import com.convergence.excamera.sdk.common.callback.OnCameraPhotographListener;
 import com.convergence.excamera.sdk.common.callback.OnCameraRecordListener;
+import com.convergence.excamera.sdk.common.video.ExCameraRecorder;
 import com.convergence.excamera.sdk.common.video.VideoCreator;
 import com.convergence.excamera.sdk.usb.UsbCameraConstant;
 import com.convergence.excamera.sdk.usb.UsbCameraState;
@@ -35,7 +36,7 @@ import com.serenegiant.usb.config.base.UVCParamConfig;
  * @Organization Convergence Ltd.
  */
 public class UsbCameraController implements Handler.Callback, UsbCameraCommand.OnConnectListener,
-        UsbCameraCommand.OnCommandListener, UsbCameraRecorder.OnRecordListener,
+        UsbCameraCommand.OnCommandListener, ExCameraRecorder.OnRecordListener,
         PhotoSaver.OnPhotoSaverListener, VideoCreator.DataProvider, FrameRateObserver.OnFrameRateListener {
 
     private static final int MSG_PREVIEW_START = 100;
@@ -64,7 +65,7 @@ public class UsbCameraController implements Handler.Callback, UsbCameraCommand.O
         usbCameraCommand = new UsbCameraCommand(context, usbCameraView);
         usbCameraRecorder = new UsbCameraRecorder(context, this, this);
         photoSaver = new PhotoSaver(this);
-        teleFocusHelper = new TeleFocusHelper(this);
+        teleFocusHelper = new UsbTeleFocusHelper(this);
         handler = new Handler(this);
         mediaScanner = new MediaScanner(context);
         frameRateObserver = new FrameRateObserver(this);
@@ -534,7 +535,9 @@ public class UsbCameraController implements Handler.Callback, UsbCameraCommand.O
         if (UsbCameraConstant.IS_LOG_FPS) {
             cameraLogger.LogD("FPS : instant = " + instantFPS + " , average = " + averageFPS);
         }
-        onControlListener.onLoadFPS(instantFPS, averageFPS);
+        if (onControlListener != null) {
+            onControlListener.onLoadFPS(instantFPS, averageFPS);
+        }
     }
 
     @Override

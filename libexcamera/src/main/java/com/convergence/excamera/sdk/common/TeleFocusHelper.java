@@ -14,7 +14,7 @@ import com.serenegiant.usb.config.base.UVCConfig;
  * @CreateDate 2020-11-25
  * @Organization Convergence Ltd.
  */
-public class TeleFocusHelper {
+public abstract class TeleFocusHelper {
 
     /**
      * 延时调焦时间
@@ -47,32 +47,10 @@ public class TeleFocusHelper {
      */
     private static final int VALUE_FOCUS_FRONT_DELAY = 85;
 
-    private enum Type {
-        /*
-        USB调焦
-         */
-        USB,
-        /*
-        WiFi调焦
-         */
-        WIFI
-    }
-
-    private Type type;
     private Handler handler;
-    private UsbCameraController usbCameraController;
-    private WifiCameraController wifiCameraController;
     private DelayActionRunnable delayActionRunnable;
 
-    public TeleFocusHelper(UsbCameraController usbCameraController) {
-        this.usbCameraController = usbCameraController;
-        type = Type.USB;
-        handler = new Handler();
-    }
-
-    public TeleFocusHelper(WifiCameraController wifiCameraController) {
-        this.wifiCameraController = wifiCameraController;
-        type = Type.WIFI;
+    protected TeleFocusHelper() {
         handler = new Handler();
     }
 
@@ -83,16 +61,7 @@ public class TeleFocusHelper {
      */
     public void startPress(boolean isBack) {
         int value = isBack ? VALUE_FOCUS_BACK_DOWN : VALUE_FOCUS_FRONT_DOWN;
-        switch (type) {
-            case USB:
-                setUsbFocus(value);
-                break;
-            case WIFI:
-                setWifiFocus(value);
-                break;
-            default:
-                break;
-        }
+        setFocus(value);
         delayActionRunnable = new DelayActionRunnable(isBack);
         handler.postDelayed(delayActionRunnable, ACTION_DELAY_TIME);
     }
@@ -104,16 +73,7 @@ public class TeleFocusHelper {
      */
     public void stopPress(boolean isBack) {
         int value = isBack ? VALUE_FOCUS_BACK_UP : VALUE_FOCUS_FRONT_UP;
-        switch (type) {
-            case USB:
-                setUsbFocus(value);
-                break;
-            case WIFI:
-                setWifiFocus(value);
-                break;
-            default:
-                break;
-        }
+        setFocus(value);
         if (delayActionRunnable != null) {
             handler.removeCallbacks(delayActionRunnable);
             delayActionRunnable = null;
@@ -121,26 +81,11 @@ public class TeleFocusHelper {
     }
 
     /**
-     * 设置USB调焦
+     * 设置调焦
      *
      * @param value 调焦值
      */
-    private void setUsbFocus(int value) {
-        if (usbCameraController != null && usbCameraController.isPreviewing()) {
-            usbCameraController.setParam(UVCConfig.TAG_PARAM_FOCUS, value);
-        }
-    }
-
-    /**
-     * 设置WiFi调焦
-     *
-     * @param value 调焦值
-     */
-    private void setWifiFocus(int value) {
-        if (wifiCameraController != null && wifiCameraController.isPreviewing()) {
-            wifiCameraController.setParam(WifiConfig.TAG_PARAM_FOCUS, value);
-        }
-    }
+    protected abstract void setFocus(int value);
 
     /**
      * 延时调焦
@@ -156,16 +101,7 @@ public class TeleFocusHelper {
         @Override
         public void run() {
             int value = isBack ? VALUE_FOCUS_BACK_DELAY : VALUE_FOCUS_FRONT_DELAY;
-            switch (type) {
-                case USB:
-                    setUsbFocus(value);
-                    break;
-                case WIFI:
-                    setWifiFocus(value);
-                    break;
-                default:
-                    break;
-            }
+            setFocus(value);
         }
     }
 }

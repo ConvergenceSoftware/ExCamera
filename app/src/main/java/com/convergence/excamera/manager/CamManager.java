@@ -75,4 +75,14 @@ public interface CamManager {
      * @return 是否录像中
      */
     boolean isRecording();
+
+    interface OnConfigResetListener {
+
+        /**
+         * 重置完成回调
+         *
+         * @param value 重置后数值
+         */
+        void onResetDone(int value);
+    }
 }

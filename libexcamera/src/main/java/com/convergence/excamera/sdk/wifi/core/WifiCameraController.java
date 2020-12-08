@@ -15,8 +15,9 @@ import com.convergence.excamera.sdk.common.MediaScanner;
 import com.convergence.excamera.sdk.common.OutputUtil;
 import com.convergence.excamera.sdk.common.PhotoSaver;
 import com.convergence.excamera.sdk.common.TeleFocusHelper;
-import com.convergence.excamera.sdk.common.callback.OnCameraRecordListener;
 import com.convergence.excamera.sdk.common.callback.OnCameraPhotographListener;
+import com.convergence.excamera.sdk.common.callback.OnCameraRecordListener;
+import com.convergence.excamera.sdk.common.video.ExCameraRecorder;
 import com.convergence.excamera.sdk.common.video.VideoCreator;
 import com.convergence.excamera.sdk.wifi.WifiCameraConstant;
 import com.convergence.excamera.sdk.wifi.WifiCameraState;
@@ -36,7 +37,7 @@ import com.convergence.excamera.sdk.wifi.entity.WifiCameraSetting;
  * @Organization Convergence Ltd.
  */
 public class WifiCameraController implements Handler.Callback, WifiCameraCommand.OnCommandListener,
-        WifiCameraRecorder.OnRecordListener, PhotoSaver.OnPhotoSaverListener,
+        ExCameraRecorder.OnRecordListener, PhotoSaver.OnPhotoSaverListener,
         VideoCreator.DataProvider, FrameRateObserver.OnFrameRateListener {
 
     private CameraLogger cameraLogger = WifiCameraConstant.GetLogger();
@@ -62,7 +63,7 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
         wifiCameraCommand = new WifiCameraCommand(context, wifiCameraView);
         wifiCameraRecorder = new WifiCameraRecorder(context, this, this);
         photoSaver = new PhotoSaver(this);
-        teleFocusHelper = new TeleFocusHelper(this);
+        teleFocusHelper = new WifiTeleFocusHelper(this);
         handler = new Handler(this);
         mediaScanner = new MediaScanner(context);
         frameRateObserver = new FrameRateObserver(this);
@@ -201,9 +202,12 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
                     case NetworkRequest:
                         networkPhotograph(path);
                         break;
+                    default:
+                        break;
                 }
                 break;
             case Photographing:
+            default:
                 break;
             case Recording:
                 if (onCameraPhotographListener != null) {
@@ -250,6 +254,7 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
                 }
                 break;
             case Recording:
+            default:
                 break;
         }
     }
@@ -562,7 +567,9 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
         if (WifiCameraConstant.IS_LOG_FPS) {
             cameraLogger.LogD("FPS : instant = " + instantFPS + " , average = " + averageFPS);
         }
-        onControlListener.onLoadFPS(instantFPS, averageFPS);
+        if (onControlListener != null) {
+            onControlListener.onLoadFPS(instantFPS, averageFPS);
+        }
     }
 
     @Override
