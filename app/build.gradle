@@ -7,8 +7,8 @@ android {
         applicationId "com.convergence.excamera"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 2
-        versionName '1.0.1'
+        versionCode 3
+        versionName '1.0.2'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -48,6 +48,7 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.3'
 
     implementation project(path: ':libexcamera')
+//    implementation 'com.convergence:excamera:1.0.2'
 
     implementation 'com.permissionx.guolindev:permissionx:1.4.0'
 
