@@ -20,7 +20,9 @@ Anyway, "***Talk is cheap, show me the code***".
 
 ### 1. Setup
 
-#### Step 1.
+#### Ⅰ Import library moudle (Recommand)
+
+- Step 1.
 
 Add the following Gradle configuration to your Android project. In your root `build.gradle` file:
 
@@ -34,13 +36,13 @@ allprojects {
 }
 ```
 
-#### Step 2.
+- Step 2.
 
 Import the folder `libexcamera` as the module to your project.
 
 ***Note:*** To support **Android 10** devices using USB Connection, you need to keep your `targetSdkVersion` below `27` (27 is ok). For more information, you can see [UVCPermissionTest][UVCPermissionTest.link] and [this issue][UVCPermissionTest_Issue.link]
 
-#### Step 3.
+- Step 3.
 
 Add the module `libexcamera` as a dependency to your app `build.gradle` file:
 
@@ -48,7 +50,34 @@ Add the module `libexcamera` as a dependency to your app `build.gradle` file:
 implementation project(path: ':libexcamera')
 ```
 
-Now, you are able to use ExCamera SDK in your project. :)
+#### Ⅱ Import Gradle
+
+- Step 1.
+
+Add the following Gradle configuration to your Android project. In your root `build.gradle` file:
+
+```
+allprojects {
+    repositories {
+        maven {
+            url 'https://gitee.com/wang_ziheng/libcommon/raw/master/repository/'
+        }
+        maven {
+            url  "https://convergence.bintray.com/github"
+        }
+    }
+}
+```
+
+- Step 2.
+
+Add the dependency to your app `build.gradle` file:
+
+```
+implementation 'com.convergence:excamera:1.0.2'
+```
+
+***Now, you are able to use ExCamera SDK in your project. :)***
 
 ------------
 

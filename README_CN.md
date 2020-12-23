@@ -20,7 +20,9 @@ Android SDK 和 Demo，适用于肯维捷斯（武汉）科技有限公司出品
 
 ### 1. 安装
 
-#### 步骤 1.
+#### Ⅰ 导入Module（推荐）
+
+- 步骤 1.
 
 添加下列的Gradle配置到你的Android项目。在里你的根目录 `build.gradle`文件中：
 
@@ -34,13 +36,13 @@ allprojects {
 }
 ```
 
-#### 步骤 2.
+- 步骤 2.
 
 将文件夹`libexcamera`作为module导入你的项目。
 
 ***注意：*** 为了支持 **Android 10** 设备使用 USB 连接，你需要保持你的 `targetSdkVersion` 低于 `27`（27可以）。 更多相关信息，你可以看 [UVCPermissionTest][UVCPermissionTest.link] 和 [这一篇Issue][UVCPermissionTest_Issue.link]
 
-#### 步骤 3.
+- 步骤 3.
 
 将 module `libexcamera` 作为依赖添加到你的 app `build.gradle` 文件：
 
@@ -48,7 +50,34 @@ allprojects {
 implementation project(path: ':libexcamera')
 ```
 
-现在你就可以在你的项目中使用 ExCamera SDK 了。 :)
+#### Ⅱ 导入依赖
+
+- 步骤 1.
+
+添加下列的Gradle配置到你的Android项目。在里你的根目录 `build.gradle`文件中：
+
+```
+allprojects {
+    repositories {
+        maven {
+            url 'https://gitee.com/wang_ziheng/libcommon/raw/master/repository/'
+        }
+        maven {
+            url  "https://convergence.bintray.com/github"
+        }
+    }
+}
+```
+
+- 步骤 2.
+
+将依赖添加到你的 app `build.gradle` 文件：
+
+```
+implementation 'com.convergence:excamera:1.0.2'
+```
+
+***现在你就可以在你的项目中使用 ExCamera SDK 了。 :)***
 
 ------------
 
