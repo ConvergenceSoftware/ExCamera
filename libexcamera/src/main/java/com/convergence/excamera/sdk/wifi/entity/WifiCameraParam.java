@@ -31,20 +31,24 @@ public class WifiCameraParam {
     }
 
     public void updateData(NConfigList data) {
-        if (data == null) return;
+        if (data == null) {
+            return;
+        }
         this.data = data;
         configMap.clear();
         List<NConfigList.ControlsBean> controlList = data.getControls();
         for (int i = 0; i < controlList.size(); i++) {
             NConfigList.ControlsBean controlsBean = controlList.get(i);
             WifiConfig wifiConfig = WifiConfigCreator.create(controlsBean);
-            if (wifiConfig == null) continue;
+            if (wifiConfig == null) {
+                continue;
+            }
             configMap.put(wifiConfig.getTag(), wifiConfig);
         }
         List<NConfigList.FormatsBean> formatsBeanList = data.getFormats();
         for (int i = 0; i < formatsBeanList.size(); i++) {
             NConfigList.FormatsBean formatsBean = formatsBeanList.get(i);
-            if (formatsBean.getId().equals("0")) {
+            if ("0".equals(formatsBean.getId())) {
                 wifiCameraResolution = new WifiCameraResolution(formatsBean);
                 break;
             }

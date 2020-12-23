@@ -120,6 +120,8 @@ public abstract class ConfigBaseLayout extends LinearLayout {
             case TYPE_CONFIG_QUALITY:
                 configType = ConfigType.Quality;
                 break;
+            default:
+                break;
         }
         typedArray.recycle();
     }
@@ -129,8 +131,18 @@ public abstract class ConfigBaseLayout extends LinearLayout {
         ButterKnife.bind(this, view);
     }
 
+    /**
+     * 设置布局资源文件
+     *
+     * @return layout ID
+     */
     protected abstract int bindLayoutId();
 
+    /**
+     * 获取参数类型
+     *
+     * @return 参数类型枚举
+     */
     public ConfigType getConfigType() {
         return configType;
     }

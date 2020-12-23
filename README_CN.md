@@ -1,30 +1,30 @@
 # ExCamera
 
-## English | [中文文档][Doc_Chinese.link]
+## [English][Doc_English.link] | 中文文档
 
-Android SDK and Demo for products (MicroScope CAM, TeleScope CAM) designed by Convergence Ltd.
+Android SDK 和 Demo，适用于肯维捷斯（武汉）科技有限公司出品的产品（显微相机、望远相机）。
 
-With ExCamera SDK, you are able to have an simple way to connect our products, and you can also develop more interesting and creative features by yourself.
+通过ExCamera SDK，你可以方便快捷地连接和控制我们的产品，另外你也可以在这基础上自由发挥，开发更多好玩有趣的功能。
 
-## What we provide ?
+## 我们提供什么？
 
-First, we provide simple ways to connect our device, and encapsulates some popular functions, such as taking photos, taking videos, mirror flip, zoom, FPS calculation and so on.
+首先，我们提供简单的方式来连接我们的设备，并且封装了一些普遍实用的功能，如拍照、录像、镜像翻转、缩放、FPS计算等等。
 
-Moreover, configurations (like focus, exposure, brightness, sharpness and so on) are controllable with our SDK，only if the hardware support them.
+然后，一些设备图像参数（如对焦、曝光、亮度、锐度等）可以通过我们的SDK控制，只要是硬件设备支持的参数。
 
-Finally, our demo will tell you how to use the SDK, almost all of the functions mentioned above are shown clearly (just having a look at [CamManager][CamManager.dir] will be enough).
+最后，我们的Demo会教你怎么使用SDK，上面提及的大多数功能使用方法都被清楚地写在Demo里了（主要看 [CamManager][CamManager.dir] ）。
 
-Anyway, "***Talk is cheap, show me the code***".
+总而言之，“~~屁话少说，放码过来~~”***“代码胜于雄辩”***。
 
-## Usage
+## 使用方法
 
-### 1. Setup
+### 1. 安装
 
-#### Ⅰ Import library moudle (Recommand)
+#### Ⅰ 导入Module（推荐）
 
-- Step 1.
+- 步骤 1.
 
-Add the following Gradle configuration to your Android project. In your root `build.gradle` file:
+添加下列的Gradle配置到你的Android项目。在里你的根目录 `build.gradle`文件中：
 
 ```
 allprojects {
@@ -36,25 +36,25 @@ allprojects {
 }
 ```
 
-- Step 2.
+- 步骤 2.
 
-Import the folder `libexcamera` as the module to your project.
+将文件夹`libexcamera`作为module导入你的项目。
 
-***Note:*** To support **Android 10** devices using USB Connection, you need to keep your `targetSdkVersion` below `27` (27 is ok). For more information, you can see [UVCPermissionTest][UVCPermissionTest.link] and [this issue][UVCPermissionTest_Issue.link]
+***注意：*** 为了支持 **Android 10** 设备使用 USB 连接，你需要保持你的 `targetSdkVersion` 低于 `27`（27可以）。 更多相关信息，你可以看 [UVCPermissionTest][UVCPermissionTest.link] 和 [这一篇Issue][UVCPermissionTest_Issue.link]
 
-- Step 3.
+- 步骤 3.
 
-Add the module `libexcamera` as a dependency to your app `build.gradle` file:
+将 module `libexcamera` 作为依赖添加到你的 app `build.gradle` 文件：
 
 ```
 implementation project(path: ':libexcamera')
 ```
 
-#### Ⅱ Import Gradle
+#### Ⅱ 导入依赖
 
-- Step 1.
+- 步骤 1.
 
-Add the following Gradle configuration to your Android project. In your root `build.gradle` file:
+添加下列的Gradle配置到你的Android项目。在里你的根目录 `build.gradle`文件中：
 
 ```
 allprojects {
@@ -69,37 +69,37 @@ allprojects {
 }
 ```
 
-- Step 2.
+- 步骤 2.
 
-Add the dependency to your app `build.gradle` file:
+将依赖添加到你的 app `build.gradle` 文件：
 
 ```
 implementation 'com.convergence:excamera:1.0.2'
 ```
 
-***Now, you are able to use ExCamera SDK in your project. :)***
+***现在你就可以在你的项目中使用 ExCamera SDK 了。 :)***
 
 ------------
 
-### 2. Connect and start preview
+### 2. 连接并预览
 
-#### USB Connection
+#### USB 连接
 
-**USB Connection SDK** is developed based on the [saki4510t/UVCCamera][UVCCamera.link]. Before connecting to our device by USB, please make sure the OTG is open on your phone/pad device.
+**USB 连接 SDK** 是基于 [saki4510t/UVCCamera][UVCCamera.link] 开发的。在通过USB连接你的相机设备之前，请确保你的手机/平板已经打开了OTG功能。
 
-1. We need to register a broadcast to find OTG connection by `USBMonitor`, and we usually register on `onStart` and unregister on `onStop` in activity lifecycle.
+1. 我们需要通过`USBMonitor`注册一个广播来监听OTG连接，并且我们通常在Activity生命周期的`onStart`中注册和在`onStop`中注销。
 
-2. After USB device is found by broadcast, we will request permission to exchange data with the USB device. It is only when we gain this permission that the USB device are actually connected.
+2. 在通过广播发现USB设备后，我们要请求权限和USB设备进行数据交换。只有在获取到这个权限后，我们才是真正和USB设备连接上。
 
-3. After permission is granted, we try to open the UVC Camera and start preview.
+3. 在权限被允许后，我们尝试打开UVC Camera和开始预览。
 
-4. Preview is need to be restored when you come back after leaving the preview page, so we start preview on `onResume` and stop preview on `onPause` in activity lifecycle.
+4. 在离开预览页面后，我们需要在重新回到页面是恢复预览，所以我们在Activity生命周期的`onResume`中开始预览和`onPause`中结束预览。
 
-5. When the USB device is disconnected or the activity is going to destroy, we need to stop preview and release the UVC Camera, so release on `onDestory` in the activity lifecycle is needed.
+5. 当USB连接断开或者Activity要销毁的时候，我们需要停止预览并释放UVC Camera资源，所以需要在Activity生命周期的`onDestory`中释放资源。
 
-6. For more details, you can have a look at [UsbCameraCommand][UsbCameraCommand.java].
+6. 更多信息，你可以看一看 [UsbCameraCommand][UsbCameraCommand.java].
 
-As mentioned above, the process of USB connection is complicated, but all you need to do is to initialize the [UsbCameraController][UsbCameraController.java] and bind it with [UsbCameraView][UsbCameraView.java]. Take the Demo codes in [UsbMicroCamManager][UsbMicroCamManager.java] as an example:
+正如上述所说，USB连接的过程比较复杂，但是你需要做的仅仅是初始化 [UsbCameraController][UsbCameraController.java] 并将它和 [UsbCameraView][UsbCameraView.java] 进行绑定。以Demo中的 [UsbMicroCamManager][UsbMicroCamManager.java] 代码为例：
 
 ```
     private UsbCameraController usbCameraController;
@@ -130,27 +130,27 @@ As mentioned above, the process of USB connection is complicated, but all you ne
     }
 ```
 
-Well, you are able to preview on you own application by USB Connection now.
+OK，现在你就可以在你自己的应用中进行USB连接的预览了。
 
-#### WiFi Connection
+#### WiFi 连接
 
-**WiFi Connection SDK** serves for our camera device that connected to **WiFi Box (V2 and above)**, and we develop the SDK with [Retrofit2][Retrofit.link] + [OkHttp3][OkHttp.link] + [RxAndroid][RxAndroid.link], so you need to **pay attention to dependencies conflicts**. Before connecting to our device by WiFi, please make sure your phone/pad device is connected to the wireless hotspot issued by WiFi Box, like `ScopeCAM_V2_XXXXXXXX`
+**WiFi 连接 SDK** 是为连接到我们 **WiFi Box (V2版本及以上)** 的相机设备服务的，并且我们基于 [Retrofit2][Retrofit.link] + [OkHttp3][OkHttp.link] + [RxAndroid][RxAndroid.link] 开发的SDK，所以你需要**注意依赖冲突**。在通过WiFi连接到我们的相机设备之前，请确保你的手机/平板设备连接到WiFi Box创建的无线热点，如`ScopeCAM_V2_XXXXXXXX`。
 
-**ps.** The IP address to control the WiFi Box is `http://192.168.8.10:8080/`, and you can find the network API from [ApiService][ApiService.java]
+**ps.** 控制WiFi Box的IP地址为`http://192.168.8.10:8080/`, 并且你可以在 [ApiService][ApiService.java] 中找到网络请求API。
 
-1. First, we request the `?action=stream` API to get InputStream by network, from which we can decode and generate frame bitmap. The InputStream should be single instance, or it may cause large memory footprint or OOM. Just request the stream on `onStart` and release it on `onStop` in activity lifecycle.
+1. 首先，我们通过网络请求`?action=stream`接口获取图像数据流InputStream，通过数据流我们可以解析成图像Bitmap。InputStream应写成单例模式，否则可能导致超大内存占用或者内存溢出。总之，在Activity生命周期`onStart`中请求图像数据流并在`onStop`中释放资源。
 
-2. After load stream success, the next step is to request `input.json` for wifi camera configurations. It is important because we need them to update its configuration too.
+2. 在获取图像数据流成功后，下一步是请求`input.json`获取相机参数。这至关重要，因为我们也需要它们来更新相关参数。
 
-3. Preview is need to be restored when you come back after leaving the preview page, so we start preview on `onResume` and stop preview on `onPause` in activity lifecycle.
+3. 在离开预览页面后，我们需要在重新回到页面是恢复预览，所以我们在Activity生命周期的`onResume`中开始预览和`onPause`中结束预览。
 
-4. Sometimes, we may lost the wireless connection or meet other troubles, so it is necessary to have a retry mechanism. Well, we already provided the retry mechanism for you don't have to consider about it.
+4. 有时候，我们可能会断开无线连接或者遇到其他问题，所以有一个重试机制非常重要。好吧，我们已经在SDK中写好了重试机制所以你不需要担心这些问题。
 
-5. Similarly, please release on `onDestroy` in the activity lifecycle.
+5. 同样的，请在Activity生命周期`onDestroy`中释放资源。
 
-6. For more details, you can have a look at [WifiCameraCommand][WifiCameraCommand.java].
+6. 更多信息，你可以看一看 [WifiCameraCommand][WifiCameraCommand.java]。
 
-Similarly, we also provide simple way for you to complete the complicated process, just initialize the [WifiCameraController][WifiCameraController.java] and bind it with [WifiCameraView][WifiCameraView.java]. Take the Demo codes in [WifiMicroCamManager][WifiMicroCamManager.java] as an example:
+同样的，我们也提供了简单的方式来完成这个复杂的过程，仅需要初始化 [WifiCameraController][WifiCameraController.java] 并将它和[WifiCameraView][WifiCameraView.java] 进行绑定。以Demo中的 [WifiMicroCamManager][WifiMicroCamManager.java] 代码为例：
 
 ```
     private WifiCameraController wifiCameraController;
@@ -181,43 +181,43 @@ Similarly, we also provide simple way for you to complete the complicated proces
     }
 ```
 
-Well, you are able to preview on you own application by WiFi Connection now.
+OK，现在你就可以在你自己的应用中进行WiFi连接的预览了。
 
 ------------
 
-### 3. Basic action
+### 3. 基础功能
 
-|Action|USB Connection|WiFi Connection|
+|功能|USB 连接|WiFi 连接|
 | :------------: | :------------: | :------------: |
-|**Update Resolution**|UsbCameraController.updateResolution(int width, int height)|WifiCameraController.updateResolution(int width, int height)|
-|**Flip Horizontal**|UsbCameraSP.setIsFlipHorizontal(boolean value)|WifiCameraSP.setIsFlipHorizontal(boolean value)|
-|**Flip Vertical**|UsbCameraSP.setIsFlipVertical(boolean value)|WifiCameraSP.setIsFlipVertical(boolean value)|
-|**Take Photo(Default Path)**|UsbCameraController.takePhoto()|WifiCameraController.takePhoto()|
-|**Take Photo(Custom Path)**|UsbCameraController.takePhoto(String path)|WifiCameraController.takePhoto(String path)|
-|**Start Record(Default Path)**|UsbCameraController.startRecord()|WifiCameraController.startRecord()|
-|**Start Record(Custom Path)**|UsbCameraController.startRecord(String path)|WifiCameraController.startRecord(String path)|
-|**Stop Record**|UsbCameraController.stopRecord()|WifiCameraController.stopRecord()|
+|**更新分辨率**|UsbCameraController.updateResolution(int width, int height)|WifiCameraController.updateResolution(int width, int height)|
+|**水平翻转**|UsbCameraSP.setIsFlipHorizontal(boolean value)|WifiCameraSP.setIsFlipHorizontal(boolean value)|
+|**垂直翻转**|UsbCameraSP.setIsFlipVertical(boolean value)|WifiCameraSP.setIsFlipVertical(boolean value)|
+|**拍照（默认路径）**|UsbCameraController.takePhoto()|WifiCameraController.takePhoto()|
+|**拍照（自定义路径）**|UsbCameraController.takePhoto(String path)|WifiCameraController.takePhoto(String path)|
+|**开始录像（默认路径）**|UsbCameraController.startRecord()|WifiCameraController.startRecord()|
+|**开始录像（自定义路径）**|UsbCameraController.startRecord(String path)|WifiCameraController.startRecord(String path)|
+|**停止录像**|UsbCameraController.stopRecord()|WifiCameraController.stopRecord()|
 
 ------------
 
-### 4. Configuration
+### 4. 参数
 
-#### USB Connection
+#### USB 连接
 
-For USB Connection, all configurations are saved as [UVCConfig][UVCConfig.java] from [UVCCamera][UVCCamera.java], and are divided into two types: **Auto** and **Param**.
+对应USB连接，所有的参数都会由 [UVCCamera][UVCCamera.java] 以 [UVCConfig][UVCConfig.java] 对象保存下来，并且被区分为两种类型： **Auto** 和 **Param**.
 
-##### Auto Config
+##### Auto 参数
 
-|Configuration|TAG(UVCConfig)|TAG(UVCCamera)|MicroScope CAM|
+|参数|标识（UVCConfig）|标识（UVCCamera）|显微相机|
 | :------------: | :------------: | :------------: | :------------: |
 |**FocusAuto**|TAG_AUTO_FOCUS_AUTO|CTRL_FOCUS_AUTO|✔|
 |Privacy|TAG_AUTO_PRIVACY|CTRL_PRIVACY|✖|
 |**WhiteBalanceAuto**|TAG_AUTO_WHITE_BALANCE_AUTO|PU_WB_TEMP_AUTO|✔|
 |WhiteBalanceComponentAuto|TAG_AUTO_WHITE_BALANCE_COMPONENT_AUTO|PU_WB_COMPO_AUTO|✖|
 
-##### Param Config
+##### Param 参数
 
-|Configuration|TAG(UVCConfig)|TAG(UVCCamera)|MicroScope CAM|
+|参数|标识（UVCConfig）|标识（UVCCamera）|显微相机|
 | :------------: | :------------: | :------------: | :------------: |
 |ScanningMode|TAG_PARAM_SCANNING_MODE|CTRL_SCANNING|✖|
 |**ExposureMode**|TAG_PARAM_EXPOSURE_MODE|CTRL_AE|✔|
@@ -251,73 +251,73 @@ For USB Connection, all configurations are saved as [UVCConfig][UVCConfig.java] 
 |AnalogVideoStandard|TAG_PARAM_ANALOG_VIDEO_STANDARD|PU_AVIDEO_STD|✖|
 |AnalogVideoLockStatus|TAG_PARAM_ANALOG_VIDEO_LOCK_STATUS|PU_AVIDEO_LOCK|✖|
 
-##### Usage
+##### 使用方法
 
-Use methods in `UsbCameraController`, and tag from `UVCConfig`:
+使用 `UsbCameraController` 中的方法，和 `UVCConfig` 中的标识:
 
 - **public UVCAutoConfig getAutoConfig(String tag)**
 
-	Get the auto config entity with the tag
+	通过标识获取自动类参数实体
 
 - **public UVCParamConfig getParamConfig(String tag)**
 
-	Get the param config entity with the tag
+	通过标识获取数值类参数实体
 
 - **public boolean checkConfigEnable(String tag)**
 
-	Check is config with the tag available
+	检测标识对应参数是否可用
 
 - **public boolean getAuto(String tag)**
 
-	get is auto config with tag auto now
+	获取标识对应的自动类参数当前是否自动
 
 - **public void setAuto(String tag, boolean value)**
 
-	set auto config with tag to be auto or not
+	设置标识对应的自动类参数为自动或手动
 
 - **public void resetAuto(String tag)**
 
-	reset auto config with tag
+	重置标识对应的自动类参数
 
 - **public int getParam(String tag)**
 
-	get value of param config with tag
+	获取标识对应的数值类参数的当前数值
 
 - **public void setParam(String tag, int param)**
 
-	set value of param config with tag
+	设置标识对应的数值类参数的数值
 
 - **public void resetParam(String tag)**
 
-	reset param config with tag
+	重置标识对应的数值类参数
 
 - **public void startTeleFocus(boolean isBack)**
 
-	start adjusting the telescope CAM focus and it is usually called when button is pressed down
+	开始调整望远相机对焦，它通常在对焦按钮按下时调用
 
 - **public void stopTeleFocus(boolean isBack)**
 
-	stop adjusting the telescope CAM focus and it is usually called when button is pressed up or cancel
+	结束调整望远相机对焦，它通常在对焦按钮抬起或移开时调用
 
 **Note:**
 
-For `Exposure` of **MicroScope CAM**, it will be **Auto** when `ExposureMode = 8` and be **Manual** when `ExposureMode = 1`
+对于**显微相机**的`Exposure`（曝光），它在`ExposureMode = 8`时是**自动**且在`ExposureMode = 1`时是**手动**。
 
-#### WiFi Connection
+#### WiFi 连接
 
-Similarly, for WiFi Connection, all configurations are saved as [WifiConfig][WifiConfig.java] from result json, and are divided into two types: **Auto** and **Param**.
+同样的，对应WiFi连接，所有的参数都会由网络请求结果 json 以 [WifiConfig][WifiConfig.java] 对象保存下来，并且被区分为两种类型： **Auto** 和 **Param**。
 
-##### Auto Config
+##### Auto 参数
 
-|Configuration|TAG(WifiConfig)|ID|MicroScope CAM|
+|参数|标识（WifiConfig）|ID|显微相机|
 | :------------: | :------------: | :------------: |:------------: |
 |**FocusAuto**|TAG_AUTO_FOCUS_AUTO|10094860|✔|
 |**WhiteBalanceAuto**|TAG_AUTO_WHITE_BALANCE_AUTO|9963788|✔|
 |**ExposureAuto**|TAG_AUTO_EXPOSURE_AUTO|10094849|✔|
 
-##### Param Config
+##### Param 参数
 
-|Configuration|TAG(WifiConfig)|ID|MicroScope CAM|
+|参数|标识（WifiConfig）|ID|显微相机|
 | :------------: | :------------: | :------------: |:------------: |
 |**Focus**|TAG_PARAM_FOCUS|10094858|✔|
 |**WhiteBalance**|TAG_PARAM_WHITE_BALANCE|9963802|✔|
@@ -335,160 +335,159 @@ Similarly, for WiFi Connection, all configurations are saved as [WifiConfig][Wif
 
 ##### Usage
 
-Use methods in `WifiCameraController`, and tag from `WifiConfig`:
+使用 `WifiCameraController` 中的方法，和 `WifiConfig` 中的标识:
 
 - **public WifiAutoConfig getAutoConfig(String tag)**
 
-	Get the auto config entity with the tag
+	通过标识获取自动类参数实体
 
 - **public WifiParamConfig getParamConfig(String tag)**
 
-	Get the param config entity with the tag
+	通过标识获取数值类参数实体
 
 - **public boolean resetConfig(String tag)**
 
-	reset the config with the tag
+	重置标识对应的参数
 
 - **public boolean getAuto(String tag)**
 
-	get is auto config with tag auto now
+	获取标识对应的自动类参数当前是否自动
 
 - **public void setAuto(String tag, boolean value)**
 
-	set auto config with tag to be auto or not
+	设置标识对应的自动类参数为自动或手动
 
 - **public int getParam(String tag)**
 
-	get value of param config with tag
+	获取标识对应的数值类参数的当前数值
 
 - **public void setParam(String tag, int param)**
 
-	set value of param config with tag
+	设置标识对应的数值类参数的数值
 
 - **public void startTeleFocus(boolean isBack)**
 
-	start adjusting the telescope CAM focus and it is usually called when button is pressed down
+	开始调整望远相机对焦，它通常在对焦按钮按下时调用
 
 - **public void stopTeleFocus(boolean isBack)**
 
-	stop adjusting the telescope CAM focus and it is usually called when button is pressed up or cancel
+	结束调整望远相机对焦，它通常在对焦按钮抬起或移开时调用
 
 **Note:**
 
-For `Focus` of **MicroScope CAM**, it will be **Auto** when `FocusAuto = 1` and be **Manual** when `FocusAuto = 0`
+对于**显微相机**的`Focus`（对焦），它在`FocusAuto = 1`时是**自动**且在`FocusAuto = 0`时是**手动**。
 
-For `WhiteBalance` of **MicroScope CAM**, it will be **Auto** when `WhiteBalanceAuto = 1` and be **Manual** when `WhiteBalanceAuto = 0`
+对于**显微相机**的`WhiteBalance`（白平衡），它在`WhiteBalanceAuto = 1`时是**自动**且在`WhiteBalanceAuto = 0`时是**手动**。
 
-For `Exposure` of **MicroScope CAM**, it will be **Auto** when `ExposureAuto = 3` and be **Manual** when `ExposureAuto = 1`
+对于**显微相机**的`Exposure`（曝光），它在`ExposureMode = 3`时是**自动**且在`ExposureMode = 1`时是**手动**。
 
 ------------
 
-### 5. Callback
+### 5. 回调
 
-#### USB Connection
+#### USB 连接
 
 `UsbCameraController.OnControlListener`
 
 - **void onUsbConnect()**
 
-	It will be called when the USB device is connected and permission is granted
+	当USB设备连接并成功获取权限时调用
 
 - **void onUsbDisConnect()**
 
-	It will be called when the USB device is disconnected
+	当USB设备断开连接时调用
 
 - **void onCameraOpen()**
 
-	It will be called when the UVC Camera is opened
+	当UVC Camera打开时调用
 
 - **void onCameraClose()**
 
-	It will be called when the UVC Camera is closed
+	当UVC Camera关闭时调用
 
 - **void onPreviewStart()**
 
-	It will be called when the preview start
+	当预览开始时调用
 
 - **void onPreviewStop()**
 
-	It will be called when the preview stop
+	当预览停止时调用
 
 - **void onUsbStateUpdate(UsbCameraState state)**
 
-	It will be called when [UsbCameraState][UsbCameraState.java] update
+	当USB相机状态 [UsbCameraState][UsbCameraState.java] 更新时调用
 
 - **void onActionStateUpdate(ActionState state)**
 
-	It will be called when [ActionState][ActionState.java] update
+	当操作状态 [ActionState][ActionState.java] 更新时调用
 
 - **void onLoadFrame(Bitmap bitmap)**
 
-	You can get every frame from this callback
+	你可以通过这个回调获取每一帧的图像Bitmap
 
 - **void onLoadFPS(int instantFPS, float averageFPS)**
 
-	You can get current FPS from this callback
+	你可以通过这个回调获取图像FPS
 
-#### WiFi Connection
+#### WiFi 连接
 
 `WifiCameraController.OnControlListener`
 
 - **void onStreamStart(boolean isRetry)**
 
-	It will be call when the stream start and preview correctly, and isRetry will be ture if restored from Retrying state
+	当成功获取图像数据并正确预览时调用，如果从重试状态中恢复，isRetry将会是true
 
 - **void onStreamStop(boolean isRetry)**
 
-	It will be call when the stream stop, and isRetry will be ture if current state become Retrying
+	当停止获取结束获取图像数据时调用，如果当前状态变成重试状态，isRetry将会是true
 
 - **void onWifiStateUpdate(WifiCameraState state)**
 
-	It will be called when [WifiCameraState][WifiCameraState.java] update
+	当WiFi相机状态 [WifiCameraState][WifiCameraState.java] 更新时调用
 
 - **void onActionStateUpdate(ActionState state)**
 
-	It will be called when [ActionState][ActionState.java] update
+	当操作状态 [ActionState][ActionState.java] 更新时调用
 
 - **void onParamUpdate(WifiCameraParam param, boolean isReset)**
 
-	It will be called when configuration is loaded success from network, and isReset will be true if the stream is just started
+	当网络请求相机参数成功时调用，如果是刚开始获取图像数据时请求的相机参数，isReset将会是true
 
 - **void onLoadFrame(Bitmap bitmap)**
 
-	You can get every frame from this callback
+	你可以通过这个回调获取每一帧的图像Bitmap
 
 - **void onLoadFPS(int instantFPS, float averageFPS)**
 
-	You can get every frame from this callback
+	你可以通过这个回调获取图像FPS
 
 ------------
 
-### 6. Default Setting
+### 6. 默认配置
 
-Default setting for USB Connection : [UsbCameraConstant][UsbCameraConstant.java]
+USB 连接默认配置 : [UsbCameraConstant][UsbCameraConstant.java]
 
-Default setting for WiFi Connection : [WifiCameraConstant][WifiCameraConstant.java]
+WiFi 连接默认配置 : [WifiCameraConstant][WifiCameraConstant.java]
 
-Default output path : [OutputUtil][OutputUtil.java]
+默认输出路径 : [OutputUtil][OutputUtil.java]
 
 ------------
 
-## Thanks
+## 感谢
 
-[UVCCamera][UVCCamera.link] , [AndroidUSBCamera][AndroidUSBCamera.link] , [
-mjpg-streamer][mjpg-streamer.link]
+[UVCCamera][UVCCamera.link] , [AndroidUSBCamera][AndroidUSBCamera.link] , [mjpg-streamer][mjpg-streamer.link]
 
-Dependencies used in ExCamera SDK and Demo :
+在ExCamera SDK 和 Demo 中使用的第三方库:
 
 [Retrofit][Retrofit.link] , [OkHttp][OkHttp.link] , [RxAndroid][RxAndroid.link] , [ButterKnife][ButterKnife.link] , [PermissionX][PermissionX.link] , [ImmersionBar][ImmersionBar.link]
 
-## Contact us
+## 联系我们
 
-**Email :**
+**邮箱：**
 
 software@cvgc.cn
 
-**Official Website :**
+**官方网站**
 
 [www.cvgc.cn][cvgc.link]
 
@@ -496,7 +495,7 @@ software@cvgc.cn
 
 [www.tinyscope.com][tinyscope.link]
 
-## License
+## 开源许可
 
 ```
 Copyright © 2020 Convergence Ltd.

@@ -7,8 +7,8 @@ android {
         applicationId "com.convergence.excamera"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 1
-        versionName '1.0.0'
+        versionCode 3
+        versionName '1.0.2'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -38,6 +38,7 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
@@ -47,6 +48,7 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.3'
 
     implementation project(path: ':libexcamera')
+//    implementation 'com.convergence:excamera:1.0.2'
 
     implementation 'com.permissionx.guolindev:permissionx:1.4.0'
 

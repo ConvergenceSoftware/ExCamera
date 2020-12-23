@@ -35,6 +35,8 @@ public abstract class BaseExCameraView extends TextureView implements Handler.Ca
 
     private static final int MSG_SET_TRANSFORM = 100;
 
+    private static final int THRESHOLD_ZOOM = 20;
+
     protected Context context;
     protected Handler handler;
     protected PreviewTransformInfo transformInfo;
@@ -88,10 +90,14 @@ public abstract class BaseExCameraView extends TextureView implements Handler.Ca
     }
 
     public void setBitmap(Bitmap bitmap) {
-        if (bitmap == null) return;
+        if (bitmap == null) {
+            return;
+        }
         handler.post(() -> {
             Canvas canvas = lockCanvas();
-            if (canvas == null) return;
+            if (canvas == null) {
+                return;
+            }
             canvas.drawPaint(cleanPaint);
             srcRect.set(0, 0, bitmap.getWidth(), bitmap.getHeight());
             dstRect.set(0, 0, getWidth(), getHeight());
@@ -105,7 +111,9 @@ public abstract class BaseExCameraView extends TextureView implements Handler.Ca
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (!isAvailable()) return false;
+        if (!isAvailable()) {
+            return false;
+        }
         if (event.getPointerCount() >= 2) {
             gestureDetector.onTouchEvent(event);
         } else {
@@ -124,6 +132,8 @@ public abstract class BaseExCameraView extends TextureView implements Handler.Ca
                         transformInfo.resetCenter(event.getX() - touchPoint.x, event.getY() - touchPoint.y);
                     }
                     touchState = PreviewTransformInfo.TouchState.Normal;
+                    break;
+                default:
                     break;
             }
         }
@@ -165,8 +175,9 @@ public abstract class BaseExCameraView extends TextureView implements Handler.Ca
     /**
      * 是否控件可用
      */
+    @Override
     public boolean isAvailable() {
-        return isSurfaceAvailable;
+        return isSurfaceAvailable && super.isAvailable();
     }
 
     /**
@@ -180,12 +191,14 @@ public abstract class BaseExCameraView extends TextureView implements Handler.Ca
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             float spanChange = detector.getCurrentSpan() - originSpan;
-            if (originZoom <= 0.0f) return false;
+            if (originZoom <= 0) {
+                return false;
+            }
             float zoomResult = originZoom;
             float minZoom = PreviewTransformInfo.ZOOM_MIN;
             float maxZoom = PreviewTransformInfo.ZOOM_MAX;
             float ratio = (maxZoom - minZoom) * 30;
-            if (spanChange < -20 || spanChange > 20) {
+            if (spanChange < -THRESHOLD_ZOOM || spanChange > THRESHOLD_ZOOM) {
                 zoomResult = originZoom + spanChange / ratio;
             }
             zoomResult = MathUtils.clamp(zoomResult, minZoom, maxZoom);

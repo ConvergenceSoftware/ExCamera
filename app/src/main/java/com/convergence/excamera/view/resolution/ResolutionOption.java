@@ -17,14 +17,9 @@ public class ResolutionOption {
     private boolean isDefault = false;
     private boolean isSelect = false;
 
-    public ResolutionOption(UsbCameraResolution.Resolution resolution) {
-        width = resolution.getWidth();
-        height = resolution.getHeight();
-    }
-
-    public ResolutionOption(WifiCameraResolution.Resolution resolution){
-        width = resolution.getWidth();
-        height = resolution.getHeight();
+    public ResolutionOption(int width, int height) {
+        this.width = width;
+        this.height = height;
     }
 
     public boolean equals(int width, int height) {

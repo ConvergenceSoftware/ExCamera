@@ -1,8 +1,8 @@
 package com.convergence.excamera.sdk.wifi.core;
 
 import android.content.Context;
-import android.util.Size;
 
+import com.convergence.excamera.sdk.common.video.ExCameraRecorder;
 import com.convergence.excamera.sdk.common.video.VideoCreator;
 
 /**
@@ -12,89 +12,16 @@ import com.convergence.excamera.sdk.common.video.VideoCreator;
  * @CreateDate 2020-11-11
  * @Organization Convergence Ltd.
  */
-public class WifiCameraRecorder implements VideoCreator.OnCreateVideoListener {
+public class WifiCameraRecorder extends ExCameraRecorder {
 
-    private Context context;
-    private OnRecordListener listener;
-    private VideoCreator videoCreator;
+    protected WifiCameraRecorder(Context context, VideoCreator.DataProvider dataProvider, OnRecordListener listener) {
+        super(context, dataProvider, listener);
+    }
 
-    public WifiCameraRecorder(Context context, VideoCreator.DataProvider dataProvider, OnRecordListener listener) {
-        this.context = context;
-        this.listener = listener;
-        videoCreator = new VideoCreator.Builder(context, dataProvider, this)
+    @Override
+    protected VideoCreator bindVideoCreator() {
+        return new VideoCreator.Builder(context, dataProvider, this)
                 .setFrame(VideoCreator.FRAME_STANDARD_RECORD)
                 .build();
-    }
-
-    public void setup(String videoPath, Size videoSize) {
-        videoCreator.setup(videoPath, videoSize);
-    }
-
-    public void start() {
-        videoCreator.start();
-    }
-
-    public void stop() {
-        videoCreator.stop();
-    }
-
-    public boolean isRecording() {
-        return videoCreator.isRunning();
-    }
-
-    @Override
-    public void onStateChange(VideoCreator.State state) {
-    }
-
-    @Override
-    public void onSetupSuccess() {
-        listener.onSetupRecordSuccess();
-    }
-
-    @Override
-    public void onSetupError(String error) {
-        listener.onSetupRecordError();
-    }
-
-    @Override
-    public void onStartSuccess() {
-        listener.onStartRecordSuccess();
-    }
-
-    @Override
-    public void onStartError(String error) {
-        listener.onStartRecordError();
-    }
-
-    @Override
-    public void onRunning(int runSeconds) {
-        listener.onRecordProgress(runSeconds);
-    }
-
-    @Override
-    public void onCreateVideoSuccess(String path) {
-        listener.onRecordSuccess(path);
-    }
-
-    @Override
-    public void onCreateVideoError(String error) {
-        listener.onRecordError();
-    }
-
-    public interface OnRecordListener {
-
-        void onSetupRecordSuccess();
-
-        void onSetupRecordError();
-
-        void onStartRecordSuccess();
-
-        void onStartRecordError();
-
-        void onRecordProgress(int recordTime);
-
-        void onRecordSuccess(String videoPath);
-
-        void onRecordError();
     }
 }

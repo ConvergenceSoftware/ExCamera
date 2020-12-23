@@ -16,7 +16,18 @@ import androidx.core.math.MathUtils;
 public class PreviewTransformInfo {
 
     public enum TouchState {
-        Normal, Zoom, Move
+        /*
+        默认状态
+         */
+        Normal,
+        /*
+        缩放状态
+         */
+        Zoom,
+        /*
+        单独拖动状态
+         */
+        Move
     }
 
     public static final float ZOOM_DEFAULT = 1.0f;
@@ -50,7 +61,9 @@ public class PreviewTransformInfo {
     }
 
     private void init() {
-        if (!isPrepared()) return;
+        if (!isPrepared()) {
+            return;
+        }
         float scaleWidth = (float) viewSize.getWidth() / bitmapSize.getWidth();
         float scaleHeight = (float) viewSize.getHeight() / bitmapSize.getHeight();
         if (scaleWidth < scaleHeight) {
@@ -186,8 +199,6 @@ public class PreviewTransformInfo {
     }
 
     private float clampX(float pointX) {
-//        float minPointX = 0;
-//        float maxPointX = viewSize.getWidth();
         //防止镜像翻转后画面移出控件外
         float minPointX = isFlipHorizontal ? viewSize.getWidth() * 0.05f : 0;
         float maxPointX = isFlipHorizontal ? viewSize.getWidth() * 0.95f : viewSize.getWidth();
@@ -195,8 +206,6 @@ public class PreviewTransformInfo {
     }
 
     private float clampY(float pointY) {
-//        float minPointY = 0;
-//        float maxPointY = viewSize.getHeight();
         //防止镜像翻转后画面移出控件外
         float minPointY = isFlipVertical ? viewSize.getHeight() * 0.05f : 0;
         float maxPointY = isFlipVertical ? viewSize.getHeight() * 0.95f : viewSize.getHeight();
@@ -205,6 +214,11 @@ public class PreviewTransformInfo {
 
     public interface OnTransformListener {
 
+        /**
+         * 图像矩阵变换回调
+         *
+         * @param matrix 变换矩阵
+         */
         void onMatrixUpdate(Matrix matrix);
     }
 }

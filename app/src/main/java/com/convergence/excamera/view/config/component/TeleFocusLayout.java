@@ -45,7 +45,18 @@ public class TeleFocusLayout extends LinearLayout implements View.OnTouchListene
     FrameLayout itemFocusFrontLayoutTeleFocus;
 
     private enum PressState {
-        None, Back, Front;
+        /*
+        通常状态
+         */
+        None,
+        /*
+        向后调焦按钮按下
+         */
+        Back,
+        /*
+        向前调焦按钮按下
+         */
+        Front
     }
 
     private Context context;
@@ -95,7 +106,9 @@ public class TeleFocusLayout extends LinearLayout implements View.OnTouchListene
      * 更新按压状态
      */
     private void updatePressState(PressState state) {
-        if (curPressState == state) return;
+        if (curPressState == state) {
+            return;
+        }
         curPressState = state;
     }
 
@@ -105,7 +118,9 @@ public class TeleFocusLayout extends LinearLayout implements View.OnTouchListene
      * @param isBack 是否向后调焦
      */
     private void focusActionDown(boolean isBack) {
-        if (curPressState != PressState.None) return;
+        if (curPressState != PressState.None) {
+            return;
+        }
         if (isBack) {
             itemFocusBackLayoutTeleFocus.setBackgroundColor(getColor(R.color.colorPrimary));
             tvFocusBackLayoutTeleFocus.setTextColor(getColor(R.color.colorWhite));
@@ -129,12 +144,17 @@ public class TeleFocusLayout extends LinearLayout implements View.OnTouchListene
     private void focusActionUp(boolean isBack) {
         switch (curPressState) {
             case None:
+            default:
                 return;
             case Back:
-                if (!isBack) return;
+                if (!isBack) {
+                    return;
+                }
                 break;
             case Front:
-                if (isBack) return;
+                if (isBack) {
+                    return;
+                }
                 break;
         }
         if (isBack) {

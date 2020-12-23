@@ -1,7 +1,5 @@
 package com.convergence.excamera.sdk.usb.entity;
 
-import android.content.Context;
-
 import com.convergence.excamera.sdk.usb.core.UsbDevConnection;
 import com.serenegiant.usb.Size;
 
@@ -24,11 +22,11 @@ public class UsbCameraSetting {
     }
 
     public static UsbCameraSetting getInstance() {
-        return SingletonHolder.instance;
+        return SingletonHolder.INSTANCE;
     }
 
     private static class SingletonHolder {
-        private static final UsbCameraSetting instance = new UsbCameraSetting();
+        private static final UsbCameraSetting INSTANCE = new UsbCameraSetting();
     }
 
     public void initConnection(UsbDevConnection.ConnectionInfo connectionInfo) {
@@ -52,7 +50,9 @@ public class UsbCameraSetting {
     }
 
     public void refreshCurResolution(int width, int height) {
-        if (!isAvailable()) return;
+        if (!isAvailable()) {
+            return;
+        }
         List<UsbCameraResolution.Resolution> resolutionList = usbCameraResolution.getResolutionList();
         for (UsbCameraResolution.Resolution resolution : resolutionList) {
             if (resolution.getWidth() == width && resolution.getHeight() == height) {

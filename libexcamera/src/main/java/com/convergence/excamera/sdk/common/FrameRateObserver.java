@@ -25,12 +25,12 @@ public class FrameRateObserver {
     private boolean isObserving = false;
 
     private Queue<Long> markTimeQueue;
-    private Queue<Integer> instantFPSQueue;
+    private Queue<Integer> instantFpsQueue;
 
     public FrameRateObserver(OnFrameRateListener onFrameRateListener) {
         this.onFrameRateListener = onFrameRateListener;
         markTimeQueue = new LinkedList<>();
-        instantFPSQueue = new LinkedList<>();
+        instantFpsQueue = new LinkedList<>();
         observable = Observable.interval(FRAME_RATE_OBSERVE_PERIOD, TimeUnit.MILLISECONDS)
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .unsubscribeOn(AndroidSchedulers.mainThread())
@@ -41,10 +41,10 @@ public class FrameRateObserver {
      * 开始计算帧率
      */
     public void startObserve() {
-        if (isObserving()) return;
+        if (isObserving()) {return;}
         isObserving = true;
         markTimeQueue.clear();
-        instantFPSQueue.clear();
+        instantFpsQueue.clear();
         onFrameRateListener.onObserveStart();
         disposable = observable.subscribe(aLong -> calculateFrameRate());
     }
@@ -76,7 +76,7 @@ public class FrameRateObserver {
      * 计算当前帧率
      */
     private void calculateFrameRate() {
-        int instantFPS = 0;
+        int instantFps = 0;
         long curTime = System.currentTimeMillis();
         long threshold = curTime - 1000;
         while (!markTimeQueue.isEmpty()) {
@@ -84,20 +84,20 @@ public class FrameRateObserver {
             if (time <= threshold) {
                 markTimeQueue.remove();
             } else {
-                instantFPS = markTimeQueue.size();
+                instantFps = markTimeQueue.size();
                 break;
             }
         }
-        instantFPSQueue.offer(instantFPS);
+        instantFpsQueue.offer(instantFps);
         int size = (int) (1000L / FRAME_RATE_OBSERVE_PERIOD);
-        if (instantFPSQueue.size() > size) {
-            instantFPSQueue.remove();
+        if (instantFpsQueue.size() > size) {
+            instantFpsQueue.remove();
         }
-        float averageFPS = 0.0f;
-        for (int fps : instantFPSQueue) {
-            averageFPS += (float) fps / instantFPSQueue.size();
+        float averageFps = 0.0f;
+        for (int fps : instantFpsQueue) {
+            averageFps += (float) fps / instantFpsQueue.size();
         }
-        onFrameRateListener.onFPSObserve(instantFPS, Float.parseFloat(String.format("%.1f", averageFPS)));
+        onFrameRateListener.onObserveFPS(instantFps, Float.parseFloat(String.format("%.1f", averageFps)));
     }
 
     /**
@@ -120,7 +120,7 @@ public class FrameRateObserver {
          * @param instantFPS 即时帧率
          * @param averageFPS 平均帧率
          */
-        void onFPSObserve(int instantFPS, float averageFPS);
+        void onObserveFPS(int instantFPS, float averageFPS);
 
         /**
          * 结束计算帧率

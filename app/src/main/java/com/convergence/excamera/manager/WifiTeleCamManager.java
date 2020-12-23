@@ -13,7 +13,6 @@ import com.convergence.excamera.sdk.common.ActionState;
 import com.convergence.excamera.sdk.common.OutputUtil;
 import com.convergence.excamera.sdk.common.callback.OnCameraPhotographListener;
 import com.convergence.excamera.sdk.common.callback.OnCameraRecordListener;
-import com.convergence.excamera.sdk.usb.entity.UsbCameraSP;
 import com.convergence.excamera.sdk.wifi.WifiCameraState;
 import com.convergence.excamera.sdk.wifi.config.base.WifiAutoConfig;
 import com.convergence.excamera.sdk.wifi.config.base.WifiConfig;
@@ -129,14 +128,16 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
     @Override
     public void showResolutionSelection() {
         WifiCameraSetting wifiCameraSetting = WifiCameraSetting.getInstance();
-        if (!isPreviewing() || !wifiCameraSetting.isAvailable()) return;
+        if (!isPreviewing() || !wifiCameraSetting.isAvailable()) {
+            return;
+        }
         WifiCameraResolution wifiCameraResolution = wifiCameraSetting.getWifiCameraParam().getWifiCameraResolution();
         List<WifiCameraResolution.Resolution> resolutionList = wifiCameraResolution.getResolutionList();
         List<ResolutionOption> optionList = new ArrayList<>();
         WifiCameraResolution.Resolution curResolution = wifiCameraResolution.getCurResolution();
         Size curSize = new Size(curResolution.getWidth(), curResolution.getHeight());
         for (WifiCameraResolution.Resolution resolution : resolutionList) {
-            ResolutionOption option = new ResolutionOption(resolution);
+            ResolutionOption option = new ResolutionOption(resolution.getWidth(), resolution.getHeight());
             option.setSelect(option.equals(curSize.getWidth(), curSize.getHeight()));
             option.setDefault(resolution.isDefault());
             optionList.add(option);
@@ -185,11 +186,15 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
      * 重置所有参数布局
      */
     private void resetConfigLayout() {
-        if (configLayout == null) return;
-        UsbCameraSP.Editor editor = UsbCameraSP.getEditor(context);
+        if (configLayout == null) {
+            return;
+        }
+        WifiCameraSP.Editor editor = WifiCameraSP.getEditor(context);
         MirrorFlipLayout itemFlip = configLayout.getItemFlip();
         itemFlip.initSwitch(editor.isFlipHorizontal(), editor.isFlipVertical());
-        if (!isPreviewing()) return;
+        if (!isPreviewing()) {
+            return;
+        }
         resetFocusLayout();
         resetWhiteBalanceLayout();
         resetExposureLayout();
@@ -330,6 +335,8 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
             case Exposure:
                 setConfigAuto(WifiConfig.TAG_AUTO_EXPOSURE_AUTO, isAuto);
                 break;
+            default:
+                break;
         }
     }
 
@@ -342,6 +349,8 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
             case Exposure:
                 setConfigParam(WifiConfig.TAG_PARAM_EXPOSURE, value);
                 break;
+            default:
+                break;
         }
     }
 
@@ -353,6 +362,8 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
                 break;
             case Exposure:
                 resetConfigParam(WifiConfig.TAG_PARAM_EXPOSURE, view::setSeekBarValue);
+                break;
+            default:
                 break;
         }
     }
@@ -384,6 +395,8 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
             case Quality:
                 setConfigParam(WifiConfig.TAG_PARAM_JPEG_QUALITY, value);
                 break;
+            default:
+                break;
         }
     }
 
@@ -413,6 +426,8 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
                 break;
             case Quality:
                 resetConfigParam(WifiConfig.TAG_PARAM_JPEG_QUALITY, view::setSeekBarValue);
+                break;
+            default:
                 break;
         }
     }
@@ -551,10 +566,5 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
         public WifiTeleCamManager build() {
             return new WifiTeleCamManager(this);
         }
-    }
-
-    private interface OnConfigResetListener {
-
-        void onResetDone(int value);
     }
 }

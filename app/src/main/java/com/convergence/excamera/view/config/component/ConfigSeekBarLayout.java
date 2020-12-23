@@ -35,7 +35,14 @@ public class ConfigSeekBarLayout extends LinearLayout implements SeekBar.OnSeekB
     TextView tvMaxLayoutConfigSeekBar;
 
     public enum Type {
-        Percent, PercentQuadratic
+        /*
+        百分比
+         */
+        Percent,
+        /*
+        一元二次方程对应百分比
+         */
+        PercentQuadratic
     }
 
     private Context context;
@@ -94,6 +101,8 @@ public class ConfigSeekBarLayout extends LinearLayout implements SeekBar.OnSeekB
             case PercentQuadratic:
                 sbLayoutConfigSeekBar.setProgress(getPercentByValueQuadratic(cur));
                 break;
+            default:
+                break;
         }
     }
 
@@ -106,6 +115,8 @@ public class ConfigSeekBarLayout extends LinearLayout implements SeekBar.OnSeekB
                 break;
             case PercentQuadratic:
                 sbLayoutConfigSeekBar.setProgress(getPercentByValueQuadratic(cur));
+                break;
+            default:
                 break;
         }
     }
@@ -147,6 +158,8 @@ public class ConfigSeekBarLayout extends LinearLayout implements SeekBar.OnSeekB
                     break;
                 case PercentQuadratic:
                     cur = getValueByPercentQuadratic(progress);
+                    break;
+                default:
                     break;
             }
             tvCurLayoutConfigSeekBar.setText(cur + "");

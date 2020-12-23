@@ -39,9 +39,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         ImmersionBar.with(this)
-                .transparentBar() //透明状态栏和导航栏，不写默认状态栏为透明色，导航栏为黑色（设置此方法，fullScreen()方法自动为true）
-                .statusBarDarkFont(true)   //状态栏字体是深色，不写默认为亮色
-                .navigationBarDarkIcon(true) //导航栏图标是深色，不写默认为亮色
+                //透明状态栏和导航栏，不写默认状态栏为透明色，导航栏为黑色（设置此方法，fullScreen()方法自动为true）
+                .transparentBar()
+                //状态栏字体是深色，不写默认为亮色
+                .statusBarDarkFont(true)
+                //导航栏图标是深色，不写默认为亮色
+                .navigationBarDarkIcon(true)
                 .init();
     }
 
@@ -73,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.tv_tele_wifi_connect_activity_main:
                 startActivity(WifiTeleCamActivity.class);
+                break;
+            default:
                 break;
         }
     }

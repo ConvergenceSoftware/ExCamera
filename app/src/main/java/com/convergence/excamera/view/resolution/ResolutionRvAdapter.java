@@ -80,6 +80,12 @@ public class ResolutionRvAdapter extends RecyclerView.Adapter<ResolutionRvAdapte
 
     public interface OnItemClickListener {
 
+        /**
+         * 按钮点击
+         *
+         * @param option   分辨率选项
+         * @param position 序号
+         */
         void onItemClick(ResolutionOption option, int position);
     }
 }

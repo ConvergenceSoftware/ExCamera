@@ -46,11 +46,11 @@ public class WifiCameraNetWork {
     }
 
     public static WifiCameraNetWork getInstance() {
-        return SingletonHolder.instance;
+        return SingletonHolder.INSTANCE;
     }
 
     private static class SingletonHolder {
-        private static final WifiCameraNetWork instance = new WifiCameraNetWork();
+        private static final WifiCameraNetWork INSTANCE = new WifiCameraNetWork();
     }
 
     /**************************************以上是单例模块*******************************************/

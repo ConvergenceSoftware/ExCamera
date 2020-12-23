@@ -20,11 +20,17 @@ import java.util.List;
  */
 public class UsbCameraResolution {
 
-    //分辨率列表
+    /**
+     * 分辨率列表
+     */
     private List<Resolution> resolutionList;
-    //当前分辨率
+    /**
+     * 当前分辨率
+     */
     private Resolution curResolution;
-    //是否可用
+    /**
+     * 是否可用
+     */
     private boolean isAvailable = false;
 
     public UsbCameraResolution() {
@@ -33,7 +39,9 @@ public class UsbCameraResolution {
 
     public void initData(List<Size> supportSizes) {
         resolutionList.clear();
-        if (supportSizes == null || supportSizes.isEmpty()) return;
+        if (supportSizes == null || supportSizes.isEmpty()) {
+            return;
+        }
         List<String> sizeStrings = new ArrayList<>();
         for (int i = 0; i < supportSizes.size(); i++) {
             Resolution resolution = new Resolution(supportSizes.get(i));

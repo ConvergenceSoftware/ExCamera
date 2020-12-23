@@ -88,6 +88,12 @@ public class RatioFrameLayout extends FrameLayout {
 
     public interface OnSizeChangeListener {
 
+        /**
+         * 尺寸变化回调
+         *
+         * @param width  宽度（px）
+         * @param height 高度（px）
+         */
         void onRflSizeChanged(int width, int height);
     }
 }
