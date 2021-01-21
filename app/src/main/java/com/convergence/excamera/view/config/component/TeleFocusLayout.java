@@ -21,6 +21,7 @@ import com.convergence.excamera.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * 望远相机调焦控件
@@ -31,6 +32,8 @@ import butterknife.ButterKnife;
  */
 public class TeleFocusLayout extends LinearLayout implements View.OnTouchListener {
 
+    @BindView(R.id.tv_auto_focus_layout_tele_focus)
+    TextView tvAutoFocusLayoutTeleFocus;
     @BindView(R.id.tv_focus_back_layout_tele_focus)
     TextView tvFocusBackLayoutTeleFocus;
     @BindView(R.id.iv_focus_back_layout_tele_focus)
@@ -44,6 +47,8 @@ public class TeleFocusLayout extends LinearLayout implements View.OnTouchListene
     @BindView(R.id.item_focus_front_layout_tele_focus)
     FrameLayout itemFocusFrontLayoutTeleFocus;
 
+    private boolean isAFClickable = true;
+
     private enum PressState {
         /*
         通常状态
@@ -56,7 +61,11 @@ public class TeleFocusLayout extends LinearLayout implements View.OnTouchListene
         /*
         向前调焦按钮按下
          */
-        Front
+        Front,
+        /*
+        自动对焦中
+         */
+        AutoFocus
     }
 
     private Context context;
@@ -100,6 +109,23 @@ public class TeleFocusLayout extends LinearLayout implements View.OnTouchListene
      */
     public void setOnTeleFocusListener(OnTeleFocusListener onTeleFocusListener) {
         this.onTeleFocusListener = onTeleFocusListener;
+    }
+
+    /**
+     * 更新自动对焦状态
+     *
+     * @param isAFRunning 当前是否正在自动对焦
+     */
+    public void updateAFState(boolean isAFRunning) {
+        if (isAFRunning){
+            updatePressState(PressState.AutoFocus);
+            tvAutoFocusLayoutTeleFocus.setTextColor(getColor(R.color.colorWhite));
+            tvAutoFocusLayoutTeleFocus.setBackgroundColor(getColor(R.color.colorPrimary));
+        }else {
+            updatePressState(PressState.None);
+            tvAutoFocusLayoutTeleFocus.setTextColor(getColor(R.color.colorPrimary));
+            tvAutoFocusLayoutTeleFocus.setBackgroundColor(getColor(R.color.colorWhite));
+        }
     }
 
     /**
@@ -212,10 +238,32 @@ public class TeleFocusLayout extends LinearLayout implements View.OnTouchListene
         }
     }
 
+    @OnClick({R.id.tv_auto_focus_layout_tele_focus})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.tv_auto_focus_layout_tele_focus:
+                if (isAFClickable && curPressState != PressState.Back && curPressState != PressState.Front) {
+                    isAFClickable = false;
+                    postDelayed(() -> isAFClickable = true, 1000);
+                    if (onTeleFocusListener != null) {
+                        onTeleFocusListener.onTeleAFClick();
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
     /**
      * 望远相机调焦按钮监听
      */
     public interface OnTeleFocusListener {
+
+        /**
+         * 自动调焦按钮点击
+         */
+        void onTeleAFClick();
 
         /**
          * 调焦按钮按下

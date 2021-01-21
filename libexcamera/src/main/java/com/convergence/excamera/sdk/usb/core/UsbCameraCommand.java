@@ -247,6 +247,7 @@ public class UsbCameraCommand implements IFrameCallback, Handler.Callback {
             case Opened:
                 updateSize = new android.util.Size(width, height);
                 startPreview();
+                break;
             case Previewing:
                 stopPreview();
                 updateSize = new android.util.Size(width, height);

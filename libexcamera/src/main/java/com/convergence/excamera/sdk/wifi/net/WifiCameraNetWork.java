@@ -7,6 +7,7 @@ import com.convergence.excamera.sdk.wifi.net.bean.NConfigList;
 import com.convergence.excamera.sdk.wifi.net.bean.NCommandResult;
 import com.convergence.excamera.sdk.wifi.net.callback.NetCallback;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -19,6 +20,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -181,6 +184,52 @@ public class WifiCameraNetWork {
         Observable<NCommandResult> observable = getApiService().updateResolution(position);
         subscribe(observable, netCallback);
     }
+
+    /**
+     * 同步网络请求更新对焦
+     *
+     * @param focus 参数
+     */
+    public boolean updateFocusExecute(int focus) {
+        Call<NCommandResult> call = getApiService().updateFocusExecute(focus);
+        try {
+            Response<NCommandResult> response = call.execute();
+            NCommandResult result = response.body();
+            if (result != null) {
+                return result.isSuccess();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+//    /**
+//     * 同步网络请求更新对焦
+//     *
+//     * @param focus 参数
+//     */
+//    public boolean updateFocusExecute(int focus) {
+//        String url = WifiCameraConstant.DEFAULT_BASE_URL +
+//                "?action=command&id=10094858&plugin=0&dest=0&group=1&value=" + focus;
+//        Call call = okHttpClient.newCall(new Request.Builder()
+//                .url(url)
+//                .build());
+//        try {
+//            Response responseBody = call.execute();
+//            if (responseBody.isSuccessful()) {
+//                ResponseBody body = responseBody.body();
+//                if (body != null) {
+//                    Gson gson = new Gson();
+//                    NCommandResult result = gson.fromJson(body.string(), NCommandResult.class);
+//                    return result.isSuccess();
+//                }
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        return false;
+//    }
 
     /**
      * 根据参数对应的配置封装类创建请求表

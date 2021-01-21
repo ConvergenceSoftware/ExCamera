@@ -8,6 +8,7 @@ import java.util.Map;
 
 import io.reactivex.rxjava3.core.Observable;
 import okhttp3.ResponseBody;
+import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
@@ -64,4 +65,12 @@ public interface ApiService {
      */
     @GET("?action=command&dest=0plugin=0&id=0&group=2")
     Observable<NCommandResult> updateResolution(@Query("value") int position);
+
+    /**
+     * 同步网络请求更改调焦值
+     * @param focus 调焦值
+     * @return NCommandResult
+     */
+    @GET("?action=command&id=10094858&plugin=0&dest=0&group=1")
+    Call<NCommandResult> updateFocusExecute(@Query("value") int focus);
 }

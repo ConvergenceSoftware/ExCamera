@@ -22,6 +22,18 @@
         android:layout_height="40dp"
         android:orientation="horizontal">
 
+        <TextView
+            android:id="@+id/tv_auto_focus_layout_tele_focus"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:paddingStart="25dp"
+            android:paddingEnd="25dp"
+            android:text="AF"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
         <FrameLayout
             android:id="@+id/item_focus_back_layout_tele_focus"
             android:layout_width="0dp"

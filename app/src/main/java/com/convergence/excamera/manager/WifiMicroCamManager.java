@@ -189,7 +189,7 @@ public class WifiMicroCamManager implements CamManager, MirrorFlipLayout.OnMirro
         WifiCameraSP.Editor editor = WifiCameraSP.getEditor(context);
         MirrorFlipLayout itemFlip = configLayout.getItemFlip();
         itemFlip.initSwitch(editor.isFlipHorizontal(), editor.isFlipVertical());
-        if (!isPreviewing()) {
+        if (!WifiCameraSetting.getInstance().isAvailable()) {
             return;
         }
         resetFocusLayout();
@@ -273,7 +273,7 @@ public class WifiMicroCamManager implements CamManager, MirrorFlipLayout.OnMirro
      * @param isAuto 是否自动
      */
     private void setConfigAuto(String tag, boolean isAuto) {
-        if (isPreviewing()) {
+        if (WifiCameraSetting.getInstance().isAvailable()) {
             wifiCameraController.setAuto(tag, isAuto);
         }
     }
@@ -285,7 +285,7 @@ public class WifiMicroCamManager implements CamManager, MirrorFlipLayout.OnMirro
      * @param value 参数值
      */
     private void setConfigParam(String tag, int value) {
-        if (isPreviewing()) {
+        if (WifiCameraSetting.getInstance().isAvailable()) {
             wifiCameraController.setParam(tag, value);
         }
     }
@@ -297,7 +297,7 @@ public class WifiMicroCamManager implements CamManager, MirrorFlipLayout.OnMirro
      * @param listener 重置监听
      */
     private void resetConfigParam(String tag, @Nullable OnConfigResetListener listener) {
-        if (isPreviewing()) {
+        if (WifiCameraSetting.getInstance().isAvailable()) {
             wifiCameraController.resetConfig(tag);
             int value = wifiCameraController.getParam(tag);
             if (listener != null) {

@@ -13,6 +13,7 @@ import com.convergence.excamera.sdk.common.ActionState;
 import com.convergence.excamera.sdk.common.OutputUtil;
 import com.convergence.excamera.sdk.common.callback.OnCameraPhotographListener;
 import com.convergence.excamera.sdk.common.callback.OnCameraRecordListener;
+import com.convergence.excamera.sdk.common.callback.OnTeleAFListener;
 import com.convergence.excamera.sdk.usb.UsbCameraState;
 import com.convergence.excamera.sdk.usb.core.UsbCameraController;
 import com.convergence.excamera.sdk.usb.core.UsbCameraView;
@@ -42,7 +43,7 @@ import java.util.List;
 public class UsbTeleCamManager implements CamManager, MirrorFlipLayout.OnMirrorFlipListener,
         TeleFocusLayout.OnTeleFocusListener, ConfigMixLayout.OnMixConfigListener,
         ConfigComLayout.OnComConfigListener, UsbCameraController.OnControlListener,
-        OnCameraPhotographListener, OnCameraRecordListener {
+        OnCameraPhotographListener, OnCameraRecordListener, OnTeleAFListener {
 
     private static final int EXPOSURE_MODE_AUTO = 8;
     private static final int EXPOSURE_MODE_MANUAL = 1;
@@ -69,6 +70,7 @@ public class UsbTeleCamManager implements CamManager, MirrorFlipLayout.OnMirrorF
         usbCameraController.setOnControlListener(this);
         usbCameraController.setOnCameraPhotographListener(this);
         usbCameraController.setOnCameraRecordListener(this);
+        usbCameraController.setOnTeleAFListener(this);
         if (configLayout != null) {
             configLayout.setOnMirrorFlipListener(this);
             configLayout.setOnTeleFocusListener(this);
@@ -326,6 +328,9 @@ public class UsbTeleCamManager implements CamManager, MirrorFlipLayout.OnMirrorF
 
     @Override
     public void onPreviewStop() {
+        if (usbCameraController.isTeleAFRunning()) {
+            usbCameraController.stopTeleAF();
+        }
         if (fpsText != null) {
             fpsText.setVisibility(View.GONE);
         }
@@ -359,6 +364,18 @@ public class UsbTeleCamManager implements CamManager, MirrorFlipLayout.OnMirrorF
         editor.setIsFlipHorizontal(isFlipHorizontal);
         editor.setIsFlipVertical(isFlipVertical);
         usbCameraController.updateFlip();
+    }
+
+    @Override
+    public void onTeleAFClick() {
+        if (!isPreviewing()) {
+            return;
+        }
+        if (usbCameraController.isTeleAFRunning()) {
+            usbCameraController.stopTeleAF();
+        } else {
+            usbCameraController.startTeleAF();
+        }
     }
 
     @Override
@@ -526,6 +543,16 @@ public class UsbTeleCamManager implements CamManager, MirrorFlipLayout.OnMirrorF
         if (recordTimeText != null) {
             recordTimeText.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void onStartTeleAF(boolean isRunningReset) {
+        configLayout.getItemFocus().updateAFState(true);
+    }
+
+    @Override
+    public void onStopTeleAF() {
+        configLayout.getItemFocus().updateAFState(false);
     }
 
     public static class Builder {

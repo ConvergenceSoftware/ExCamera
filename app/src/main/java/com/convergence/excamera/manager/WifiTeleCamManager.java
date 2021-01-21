@@ -13,6 +13,7 @@ import com.convergence.excamera.sdk.common.ActionState;
 import com.convergence.excamera.sdk.common.OutputUtil;
 import com.convergence.excamera.sdk.common.callback.OnCameraPhotographListener;
 import com.convergence.excamera.sdk.common.callback.OnCameraRecordListener;
+import com.convergence.excamera.sdk.common.callback.OnTeleAFListener;
 import com.convergence.excamera.sdk.wifi.WifiCameraState;
 import com.convergence.excamera.sdk.wifi.config.base.WifiAutoConfig;
 import com.convergence.excamera.sdk.wifi.config.base.WifiConfig;
@@ -45,7 +46,7 @@ import java.util.List;
 public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirrorFlipListener,
         TeleFocusLayout.OnTeleFocusListener, ConfigMixLayout.OnMixConfigListener,
         ConfigComLayout.OnComConfigListener, WifiCameraController.OnControlListener,
-        OnCameraPhotographListener, OnCameraRecordListener {
+        OnCameraPhotographListener, OnCameraRecordListener, OnTeleAFListener {
 
     private Context context;
     private WifiCameraView wifiCameraView;
@@ -69,6 +70,7 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
         wifiCameraController.setOnControlListener(this);
         wifiCameraController.setOnCameraPhotographListener(this);
         wifiCameraController.setOnCameraRecordListener(this);
+        wifiCameraController.setOnTeleAFListener(this);
         if (configLayout != null) {
             configLayout.setOnMirrorFlipListener(this);
             configLayout.setOnTeleFocusListener(this);
@@ -192,7 +194,7 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
         WifiCameraSP.Editor editor = WifiCameraSP.getEditor(context);
         MirrorFlipLayout itemFlip = configLayout.getItemFlip();
         itemFlip.initSwitch(editor.isFlipHorizontal(), editor.isFlipVertical());
-        if (!isPreviewing()) {
+        if (!WifiCameraSetting.getInstance().isAvailable()) {
             return;
         }
         resetFocusLayout();
@@ -276,7 +278,7 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
      * @param isAuto 是否自动
      */
     private void setConfigAuto(String tag, boolean isAuto) {
-        if (isPreviewing()) {
+        if (WifiCameraSetting.getInstance().isAvailable()) {
             wifiCameraController.setAuto(tag, isAuto);
         }
     }
@@ -288,7 +290,7 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
      * @param value 参数值
      */
     private void setConfigParam(String tag, int value) {
-        if (isPreviewing()) {
+        if (WifiCameraSetting.getInstance().isAvailable()) {
             wifiCameraController.setParam(tag, value);
         }
     }
@@ -300,7 +302,7 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
      * @param listener 重置监听
      */
     private void resetConfigParam(String tag, @Nullable OnConfigResetListener listener) {
-        if (isPreviewing()) {
+        if (WifiCameraSetting.getInstance().isAvailable()) {
             wifiCameraController.resetConfig(tag);
             int value = wifiCameraController.getParam(tag);
             if (listener != null) {
@@ -314,6 +316,18 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
         WifiCameraSP.Editor editor = WifiCameraSP.getEditor(context);
         editor.setIsFlipHorizontal(isFlipHorizontal);
         editor.setIsFlipVertical(isFlipVertical);
+    }
+
+    @Override
+    public void onTeleAFClick() {
+        if (!isPreviewing()) {
+            return;
+        }
+        if (wifiCameraController.isTeleAFRunning()) {
+            wifiCameraController.stopTeleAF();
+        } else {
+            wifiCameraController.startTeleAF();
+        }
     }
 
     @Override
@@ -443,6 +457,9 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
 
     @Override
     public void onStreamStop(boolean isRetry) {
+        if (wifiCameraController.isTeleAFRunning()) {
+            wifiCameraController.stopTeleAF();
+        }
         if (fpsText != null) {
             fpsText.setVisibility(View.GONE);
         }
@@ -533,6 +550,16 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
         if (recordTimeText != null) {
             recordTimeText.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void onStartTeleAF(boolean isRunningReset) {
+        configLayout.getItemFocus().updateAFState(true);
+    }
+
+    @Override
+    public void onStopTeleAF() {
+        configLayout.getItemFocus().updateAFState(false);
     }
 
     public static class Builder {

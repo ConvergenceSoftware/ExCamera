@@ -14,11 +14,13 @@ import com.convergence.excamera.sdk.common.FrameRateObserver;
 import com.convergence.excamera.sdk.common.MediaScanner;
 import com.convergence.excamera.sdk.common.OutputUtil;
 import com.convergence.excamera.sdk.common.PhotoSaver;
-import com.convergence.excamera.sdk.common.TeleFocusHelper;
 import com.convergence.excamera.sdk.common.callback.OnCameraPhotographListener;
 import com.convergence.excamera.sdk.common.callback.OnCameraRecordListener;
+import com.convergence.excamera.sdk.common.callback.OnTeleAFListener;
 import com.convergence.excamera.sdk.common.video.ExCameraRecorder;
 import com.convergence.excamera.sdk.common.video.VideoCreator;
+import com.convergence.excamera.sdk.tele.TeleFocusHelper;
+import com.convergence.excamera.sdk.tele.UsbTeleFocusHelper;
 import com.convergence.excamera.sdk.usb.UsbCameraConstant;
 import com.convergence.excamera.sdk.usb.UsbCameraState;
 import com.convergence.excamera.sdk.usb.entity.UsbCameraResolution;
@@ -37,7 +39,8 @@ import com.serenegiant.usb.config.base.UVCParamConfig;
  */
 public class UsbCameraController implements Handler.Callback, UsbCameraCommand.OnConnectListener,
         UsbCameraCommand.OnCommandListener, ExCameraRecorder.OnRecordListener,
-        PhotoSaver.OnPhotoSaverListener, VideoCreator.DataProvider, FrameRateObserver.OnFrameRateListener {
+        PhotoSaver.OnPhotoSaverListener, VideoCreator.DataProvider, TeleFocusHelper.TeleFocusCallback,
+        FrameRateObserver.OnFrameRateListener {
 
     private static final int MSG_PREVIEW_START = 100;
     private static final int MSG_PREVIEW_STOP = 101;
@@ -58,6 +61,7 @@ public class UsbCameraController implements Handler.Callback, UsbCameraCommand.O
     private OnControlListener onControlListener;
     private OnCameraPhotographListener onCameraPhotographListener;
     private OnCameraRecordListener onCameraRecordListener;
+    private OnTeleAFListener onTeleAFListener;
 
     public UsbCameraController(Context context, UsbCameraView usbCameraView) {
         this.context = context;
@@ -129,6 +133,13 @@ public class UsbCameraController implements Handler.Callback, UsbCameraCommand.O
      */
     public void setOnCameraRecordListener(OnCameraRecordListener onCameraRecordListener) {
         this.onCameraRecordListener = onCameraRecordListener;
+    }
+
+    /**
+     * 设置望远自动调焦监听
+     */
+    public void setOnTeleAFListener(OnTeleAFListener onTeleAFListener) {
+        this.onTeleAFListener = onTeleAFListener;
     }
 
     /**
@@ -236,10 +247,31 @@ public class UsbCameraController implements Handler.Callback, UsbCameraCommand.O
     }
 
     /**
+     * 开始望远自动对焦
+     */
+    public void startTeleAF() {
+        teleFocusHelper.startAutoFocus();
+    }
+
+    /**
+     * 停止望远自动对焦
+     */
+    public void stopTeleAF() {
+        teleFocusHelper.stopAutoFocus();
+    }
+
+    /**
      * 是否正在预览
      */
     public boolean isPreviewing() {
         return usbCameraCommand.isPreviewing();
+    }
+
+    /**
+     * 是否正在望远自动对焦
+     */
+    public boolean isTeleAFRunning() {
+        return teleFocusHelper.isAFRunning();
     }
 
     /**
@@ -523,6 +555,27 @@ public class UsbCameraController implements Handler.Callback, UsbCameraCommand.O
     @Override
     public Bitmap provideBitmap() {
         return usbCameraCommand.getLatestBitmap();
+    }
+
+    @Override
+    public Bitmap provideAFBitmap() {
+        return usbCameraCommand.getLatestBitmap();
+    }
+
+    @Override
+    public void onAFStart(boolean isRunningReset) {
+        cameraLogger.LogD("Start Tele AF");
+        if (onTeleAFListener != null) {
+            onTeleAFListener.onStartTeleAF(isRunningReset);
+        }
+    }
+
+    @Override
+    public void onAFStop() {
+        cameraLogger.LogD("Stop Tele AF");
+        if (onTeleAFListener != null) {
+            onTeleAFListener.onStopTeleAF();
+        }
     }
 
     @Override

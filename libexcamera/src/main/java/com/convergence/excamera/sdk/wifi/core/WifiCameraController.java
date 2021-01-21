@@ -14,11 +14,13 @@ import com.convergence.excamera.sdk.common.FrameRateObserver;
 import com.convergence.excamera.sdk.common.MediaScanner;
 import com.convergence.excamera.sdk.common.OutputUtil;
 import com.convergence.excamera.sdk.common.PhotoSaver;
-import com.convergence.excamera.sdk.common.TeleFocusHelper;
 import com.convergence.excamera.sdk.common.callback.OnCameraPhotographListener;
 import com.convergence.excamera.sdk.common.callback.OnCameraRecordListener;
+import com.convergence.excamera.sdk.common.callback.OnTeleAFListener;
 import com.convergence.excamera.sdk.common.video.ExCameraRecorder;
 import com.convergence.excamera.sdk.common.video.VideoCreator;
+import com.convergence.excamera.sdk.tele.TeleFocusHelper;
+import com.convergence.excamera.sdk.tele.WifiTeleFocusHelper;
 import com.convergence.excamera.sdk.wifi.WifiCameraConstant;
 import com.convergence.excamera.sdk.wifi.WifiCameraState;
 import com.convergence.excamera.sdk.wifi.config.base.WifiAutoConfig;
@@ -38,7 +40,7 @@ import com.convergence.excamera.sdk.wifi.entity.WifiCameraSetting;
  */
 public class WifiCameraController implements Handler.Callback, WifiCameraCommand.OnCommandListener,
         ExCameraRecorder.OnRecordListener, PhotoSaver.OnPhotoSaverListener,
-        VideoCreator.DataProvider, FrameRateObserver.OnFrameRateListener {
+        VideoCreator.DataProvider, TeleFocusHelper.TeleFocusCallback, FrameRateObserver.OnFrameRateListener {
 
     private CameraLogger cameraLogger = WifiCameraConstant.GetLogger();
 
@@ -56,6 +58,7 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
     private OnControlListener onControlListener;
     private OnCameraPhotographListener onCameraPhotographListener;
     private OnCameraRecordListener onCameraRecordListener;
+    private OnTeleAFListener onTeleAFListener;
 
     public WifiCameraController(Context context, WifiCameraView wifiCameraView) {
         this.context = context;
@@ -136,6 +139,13 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
     }
 
     /**
+     * 设置望远自动调焦监听
+     */
+    public void setOnTeleAFListener(OnTeleAFListener onTeleAFListener) {
+        this.onTeleAFListener = onTeleAFListener;
+    }
+
+    /**
      * 更新分辨率
      *
      * @param width  分辨率宽
@@ -160,6 +170,18 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
             return;
         }
         wifiCameraCommand.updateResolution(width, height, listener);
+    }
+
+    /**
+     * 同步网络请求更新对焦
+     *
+     * @param focus 参数
+     */
+    public boolean updateFocusExecute(int focus) {
+        if (!isPreviewing()) {
+            return false;
+        }
+        return wifiCameraCommand.updateFocusExecute(focus);
     }
 
     /**
@@ -267,10 +289,31 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
     }
 
     /**
+     * 开始望远自动对焦
+     */
+    public void startTeleAF() {
+        teleFocusHelper.startAutoFocus();
+    }
+
+    /**
+     * 停止望远自动对焦
+     */
+    public void stopTeleAF() {
+        teleFocusHelper.stopAutoFocus();
+    }
+
+    /**
      * 是否正在预览
      */
     public boolean isPreviewing() {
         return wifiCameraCommand.isPreviewing();
+    }
+
+    /**
+     * 是否正在望远自动对焦
+     */
+    public boolean isTeleAFRunning() {
+        return teleFocusHelper.isAFRunning();
     }
 
     /**
@@ -555,6 +598,27 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
     @Override
     public Bitmap provideBitmap() {
         return wifiCameraCommand.getLatestBitmap();
+    }
+
+    @Override
+    public Bitmap provideAFBitmap() {
+        return wifiCameraCommand.getLatestBitmap();
+    }
+
+    @Override
+    public void onAFStart(boolean isRunningReset) {
+        cameraLogger.LogD("Start Tele AF");
+        if (onTeleAFListener != null) {
+            onTeleAFListener.onStartTeleAF(isRunningReset);
+        }
+    }
+
+    @Override
+    public void onAFStop() {
+        cameraLogger.LogD("Stop Tele AF");
+        if (onTeleAFListener != null) {
+            onTeleAFListener.onStopTeleAF();
+        }
     }
 
     @Override

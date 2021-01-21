@@ -204,6 +204,7 @@ public class WifiCameraCommand implements FrameLooper.OnLoopListener, Handler.Ca
                     wifiCameraView.resize(resolution.getWidth(), resolution.getHeight());
                 }
                 if (onCommandListener != null) {
+                    cameraLogger.LogD("load config success : isReset = " + isReset);
                     onCommandListener.onParamUpdate(wifiCameraParam, isReset);
                 }
             }
@@ -424,6 +425,27 @@ public class WifiCameraCommand implements FrameLooper.OnLoopListener, Handler.Ca
                 }
             }
         }));
+    }
+
+    /**
+     * 同步网络请求更新对焦
+     *
+     * @param focus 参数
+     */
+    public boolean updateFocusExecute(int focus) {
+        if (!isParamAvailable()) {
+            return false;
+        }
+        WifiParamConfig wifiParamConfig = getParamConfig(WifiConfig.TAG_PARAM_FOCUS);
+        if (wifiParamConfig == null) {
+            return false;
+        }
+        wifiParamConfig.setParam(focus);
+        boolean result = netWork.updateFocusExecute(focus);
+        if (result) {
+            refreshConfig(wifiParamConfig);
+        }
+        return result;
     }
 
     /**
