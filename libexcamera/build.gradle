@@ -46,7 +46,7 @@ dependencies {
 }
 
 publish {
-    userOrg = 'convergence'
+    userOrg = 'cvgc'
     repoName = 'github'
     groupId = 'com.convergence'
     artifactId = 'excamera'

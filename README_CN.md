@@ -63,7 +63,7 @@ allprojects {
             url 'https://gitee.com/wang_ziheng/libcommon/raw/master/repository/'
         }
         maven {
-            url  "https://convergence.bintray.com/github"
+            url  "https://dl.bintray.com/cvgc/github"
         }
     }
 }
