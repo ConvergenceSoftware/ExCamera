@@ -14,13 +14,12 @@ import com.convergence.excamera.sdk.common.FrameRateObserver;
 import com.convergence.excamera.sdk.common.MediaScanner;
 import com.convergence.excamera.sdk.common.OutputUtil;
 import com.convergence.excamera.sdk.common.PhotoSaver;
+import com.convergence.excamera.sdk.common.TeleFocusHelper;
+import com.convergence.excamera.sdk.common.callback.ImgProvider;
 import com.convergence.excamera.sdk.common.callback.OnCameraPhotographListener;
 import com.convergence.excamera.sdk.common.callback.OnCameraRecordListener;
 import com.convergence.excamera.sdk.common.callback.OnTeleAFListener;
 import com.convergence.excamera.sdk.common.video.ExCameraRecorder;
-import com.convergence.excamera.sdk.common.video.VideoCreator;
-import com.convergence.excamera.sdk.tele.TeleFocusHelper;
-import com.convergence.excamera.sdk.tele.UsbTeleFocusHelper;
 import com.convergence.excamera.sdk.usb.UsbCameraConstant;
 import com.convergence.excamera.sdk.usb.UsbCameraState;
 import com.convergence.excamera.sdk.usb.entity.UsbCameraResolution;
@@ -37,9 +36,9 @@ import com.serenegiant.usb.config.base.UVCParamConfig;
  * @CreateDate 2020-11-06
  * @Organization Convergence Ltd.
  */
-public class UsbCameraController implements Handler.Callback, UsbCameraCommand.OnConnectListener,
+public class UsbCameraController implements Handler.Callback, ImgProvider, UsbCameraCommand.OnConnectListener,
         UsbCameraCommand.OnCommandListener, ExCameraRecorder.OnRecordListener,
-        PhotoSaver.OnPhotoSaverListener, VideoCreator.DataProvider, TeleFocusHelper.TeleFocusCallback,
+        PhotoSaver.OnPhotoSaverListener, TeleFocusHelper.TeleAFCallback,
         FrameRateObserver.OnFrameRateListener {
 
     private static final int MSG_PREVIEW_START = 100;
@@ -558,11 +557,6 @@ public class UsbCameraController implements Handler.Callback, UsbCameraCommand.O
     }
 
     @Override
-    public Bitmap provideAFBitmap() {
-        return usbCameraCommand.getLatestBitmap();
-    }
-
-    @Override
     public void onAFStart(boolean isRunningReset) {
         cameraLogger.LogD("Start Tele AF");
         if (onTeleAFListener != null) {
@@ -576,6 +570,11 @@ public class UsbCameraController implements Handler.Callback, UsbCameraCommand.O
         if (onTeleAFListener != null) {
             onTeleAFListener.onStopTeleAF();
         }
+    }
+
+    @Override
+    public void onAFError(String error) {
+        cameraLogger.LogD(error);
     }
 
     @Override

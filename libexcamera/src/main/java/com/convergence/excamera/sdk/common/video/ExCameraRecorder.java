@@ -3,6 +3,8 @@ package com.convergence.excamera.sdk.common.video;
 import android.content.Context;
 import android.util.Size;
 
+import com.convergence.excamera.sdk.common.callback.ImgProvider;
+
 
 /**
  * 通用的ExCamera录像工具基类
@@ -15,12 +17,12 @@ public abstract class ExCameraRecorder implements VideoCreator.OnCreateVideoList
 
     protected Context context;
     protected OnRecordListener listener;
-    protected VideoCreator.DataProvider dataProvider;
+    protected ImgProvider imgProvider;
     protected VideoCreator videoCreator;
 
-    protected ExCameraRecorder(Context context, VideoCreator.DataProvider dataProvider, OnRecordListener listener) {
+    protected ExCameraRecorder(Context context, ImgProvider imgProvider, OnRecordListener listener) {
         this.context = context;
-        this.dataProvider = dataProvider;
+        this.imgProvider = imgProvider;
         this.listener = listener;
         videoCreator = bindVideoCreator();
     }

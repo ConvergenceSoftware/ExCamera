@@ -14,13 +14,12 @@ import com.convergence.excamera.sdk.common.FrameRateObserver;
 import com.convergence.excamera.sdk.common.MediaScanner;
 import com.convergence.excamera.sdk.common.OutputUtil;
 import com.convergence.excamera.sdk.common.PhotoSaver;
+import com.convergence.excamera.sdk.common.TeleFocusHelper;
+import com.convergence.excamera.sdk.common.callback.ImgProvider;
 import com.convergence.excamera.sdk.common.callback.OnCameraPhotographListener;
 import com.convergence.excamera.sdk.common.callback.OnCameraRecordListener;
 import com.convergence.excamera.sdk.common.callback.OnTeleAFListener;
 import com.convergence.excamera.sdk.common.video.ExCameraRecorder;
-import com.convergence.excamera.sdk.common.video.VideoCreator;
-import com.convergence.excamera.sdk.tele.TeleFocusHelper;
-import com.convergence.excamera.sdk.tele.WifiTeleFocusHelper;
 import com.convergence.excamera.sdk.wifi.WifiCameraConstant;
 import com.convergence.excamera.sdk.wifi.WifiCameraState;
 import com.convergence.excamera.sdk.wifi.config.base.WifiAutoConfig;
@@ -38,9 +37,9 @@ import com.convergence.excamera.sdk.wifi.entity.WifiCameraSetting;
  * @CreateDate 2020-11-11
  * @Organization Convergence Ltd.
  */
-public class WifiCameraController implements Handler.Callback, WifiCameraCommand.OnCommandListener,
+public class WifiCameraController implements Handler.Callback, ImgProvider, WifiCameraCommand.OnCommandListener,
         ExCameraRecorder.OnRecordListener, PhotoSaver.OnPhotoSaverListener,
-        VideoCreator.DataProvider, TeleFocusHelper.TeleFocusCallback, FrameRateObserver.OnFrameRateListener {
+        TeleFocusHelper.TeleAFCallback, FrameRateObserver.OnFrameRateListener {
 
     private CameraLogger cameraLogger = WifiCameraConstant.GetLogger();
 
@@ -601,11 +600,6 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
     }
 
     @Override
-    public Bitmap provideAFBitmap() {
-        return wifiCameraCommand.getLatestBitmap();
-    }
-
-    @Override
     public void onAFStart(boolean isRunningReset) {
         cameraLogger.LogD("Start Tele AF");
         if (onTeleAFListener != null) {
@@ -619,6 +613,11 @@ public class WifiCameraController implements Handler.Callback, WifiCameraCommand
         if (onTeleAFListener != null) {
             onTeleAFListener.onStopTeleAF();
         }
+    }
+
+    @Override
+    public void onAFError(String error) {
+        cameraLogger.LogD(error);
     }
 
     @Override

@@ -7,6 +7,7 @@ import android.os.Message;
 import android.util.Size;
 
 import com.convergence.excamera.sdk.common.MediaScanner;
+import com.convergence.excamera.sdk.common.callback.ImgProvider;
 
 import java.io.File;
 import java.util.Queue;
@@ -52,7 +53,7 @@ public class VideoCreator implements Handler.Callback {
     }
 
     private Context context;
-    private DataProvider dataProvider;
+    private ImgProvider imgProvider;
     private int frame;
     private OnCreateVideoListener listener;
 
@@ -68,7 +69,7 @@ public class VideoCreator implements Handler.Callback {
 
     private VideoCreator(Builder builder) {
         this.context = builder.context;
-        this.dataProvider = builder.dataProvider;
+        this.imgProvider = builder.imgProvider;
         this.frame = builder.frame;
         this.listener = builder.listener;
         mediaScanner = new MediaScanner(context);
@@ -261,7 +262,7 @@ public class VideoCreator implements Handler.Callback {
         @Override
         public void run() {
             long startTime = System.currentTimeMillis();
-            offerBitmap(dataProvider.provideBitmap());
+            offerBitmap(imgProvider.provideBitmap());
             long costTime = System.currentTimeMillis() - startTime;
             if (frameProvideDelay > costTime) {
                 handler.postDelayed(this, frameProvideDelay - costTime);
@@ -330,13 +331,13 @@ public class VideoCreator implements Handler.Callback {
     public static class Builder {
 
         private Context context;
-        private DataProvider dataProvider;
+        private ImgProvider imgProvider;
         private int frame = 30;
         private OnCreateVideoListener listener;
 
-        public Builder(Context context, DataProvider dataProvider, OnCreateVideoListener listener) {
+        public Builder(Context context, ImgProvider imgProvider, OnCreateVideoListener listener) {
             this.context = context;
-            this.dataProvider = dataProvider;
+            this.imgProvider = imgProvider;
             this.listener = listener;
         }
 
@@ -350,19 +351,6 @@ public class VideoCreator implements Handler.Callback {
         public VideoCreator build() {
             return new VideoCreator(this);
         }
-    }
-
-    /**
-     * 视频合成数据源
-     */
-    public interface DataProvider {
-
-        /**
-         * 提供图像Bitmap
-         *
-         * @return 图像Bitmap
-         */
-        Bitmap provideBitmap();
     }
 
     /**

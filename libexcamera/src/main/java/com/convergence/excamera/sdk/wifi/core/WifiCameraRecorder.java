@@ -2,6 +2,7 @@ package com.convergence.excamera.sdk.wifi.core;
 
 import android.content.Context;
 
+import com.convergence.excamera.sdk.common.callback.ImgProvider;
 import com.convergence.excamera.sdk.common.video.ExCameraRecorder;
 import com.convergence.excamera.sdk.common.video.VideoCreator;
 
@@ -14,13 +15,13 @@ import com.convergence.excamera.sdk.common.video.VideoCreator;
  */
 public class WifiCameraRecorder extends ExCameraRecorder {
 
-    protected WifiCameraRecorder(Context context, VideoCreator.DataProvider dataProvider, OnRecordListener listener) {
-        super(context, dataProvider, listener);
+    protected WifiCameraRecorder(Context context, ImgProvider imgProvider, OnRecordListener listener) {
+        super(context, imgProvider, listener);
     }
 
     @Override
     protected VideoCreator bindVideoCreator() {
-        return new VideoCreator.Builder(context, dataProvider, this)
+        return new VideoCreator.Builder(context, imgProvider, this)
                 .setFrame(VideoCreator.FRAME_STANDARD_RECORD)
                 .build();
     }
