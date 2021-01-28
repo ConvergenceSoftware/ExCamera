@@ -74,7 +74,7 @@ allprojects {
 Add the dependency to your app `build.gradle` file:
 
 ```
-implementation 'com.convergence:excamera:1.0.3'
+implementation 'com.convergence:excamera:1.0.4'
 ```
 
 ***Now, you are able to use ExCamera SDK in your project. :)***
@@ -197,6 +197,9 @@ Well, you are able to preview on you own application by WiFi Connection now.
 |**Start Record(Default Path)**|UsbCameraController.startRecord()|WifiCameraController.startRecord()|
 |**Start Record(Custom Path)**|UsbCameraController.startRecord(String path)|WifiCameraController.startRecord(String path)|
 |**Stop Record**|UsbCameraController.stopRecord()|WifiCameraController.stopRecord()|
+|**Start Taking Denoised Photo(Default Path)**|UsbCameraController.startStackAvg()|WifiCameraController.startStackAvg()|
+|**Start Taking Denoised Photo(Custom Path)**|UsbCameraController.startStackAvg(String path)|WifiCameraController.startStackAvg(String path)|
+|**Cancel Take Denoised Photo**|UsbCameraController.cancelStackAvg()|WifiCameraController.cancelStackAvg()|
 |**Start Auto Focus(Telescope CAM)**|UsbCameraController.startTeleAF()|WifiCameraController.startTeleAF()|
 |**Stop Auto Focus(Telescope CAM)**|UsbCameraController.stopTeleAF()|WifiCameraController.stopTeleAF()|
 

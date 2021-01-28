@@ -74,7 +74,7 @@ allprojects {
 将依赖添加到你的 app `build.gradle` 文件：
 
 ```
-implementation 'com.convergence:excamera:1.0.3'
+implementation 'com.convergence:excamera:1.0.4'
 ```
 
 ***现在你就可以在你的项目中使用 ExCamera SDK 了。 :)***
@@ -197,6 +197,9 @@ OK，现在你就可以在你自己的应用中进行WiFi连接的预览了。
 |**开始录像（默认路径）**|UsbCameraController.startRecord()|WifiCameraController.startRecord()|
 |**开始录像（自定义路径）**|UsbCameraController.startRecord(String path)|WifiCameraController.startRecord(String path)|
 |**停止录像**|UsbCameraController.stopRecord()|WifiCameraController.stopRecord()|
+|**开始去噪拍照（默认路径）**|UsbCameraController.startStackAvg()|WifiCameraController.startStackAvg()|
+|**开始去噪拍照（自定义路径）**|UsbCameraController.startStackAvg(String path)|WifiCameraController.startStackAvg(String path)|
+|**取消去噪拍照**|UsbCameraController.cancelStackAvg()|WifiCameraController.cancelStackAvg()|
 |**开始自动对焦（望远相机）**|UsbCameraController.startTeleAF()|WifiCameraController.startTeleAF()|
 |**停止自动对焦（望远相机）**|UsbCameraController.stopTeleAF()|WifiCameraController.stopTeleAF()|
 
