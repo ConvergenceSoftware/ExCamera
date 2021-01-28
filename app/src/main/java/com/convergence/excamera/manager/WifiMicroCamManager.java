@@ -13,6 +13,7 @@ import com.convergence.excamera.sdk.common.ActionState;
 import com.convergence.excamera.sdk.common.OutputUtil;
 import com.convergence.excamera.sdk.common.callback.OnCameraPhotographListener;
 import com.convergence.excamera.sdk.common.callback.OnCameraRecordListener;
+import com.convergence.excamera.sdk.common.callback.OnCameraStackAvgListener;
 import com.convergence.excamera.sdk.wifi.WifiCameraState;
 import com.convergence.excamera.sdk.wifi.config.base.WifiAutoConfig;
 import com.convergence.excamera.sdk.wifi.config.base.WifiConfig;
@@ -43,7 +44,7 @@ import java.util.List;
  */
 public class WifiMicroCamManager implements CamManager, MirrorFlipLayout.OnMirrorFlipListener,
         ConfigMixLayout.OnMixConfigListener, ConfigComLayout.OnComConfigListener, WifiCameraController.OnControlListener,
-        OnCameraPhotographListener, OnCameraRecordListener {
+        OnCameraPhotographListener, OnCameraRecordListener, OnCameraStackAvgListener {
 
     private Context context;
     private WifiCameraView wifiCameraView;
@@ -67,6 +68,7 @@ public class WifiMicroCamManager implements CamManager, MirrorFlipLayout.OnMirro
         wifiCameraController.setOnControlListener(this);
         wifiCameraController.setOnCameraPhotographListener(this);
         wifiCameraController.setOnCameraRecordListener(this);
+        wifiCameraController.setOnCameraStackAvgListener(this);
         if (configLayout != null) {
             configLayout.setOnMirrorFlipListener(this);
             configLayout.setOnMixConfigListener(this);
@@ -120,6 +122,16 @@ public class WifiMicroCamManager implements CamManager, MirrorFlipLayout.OnMirro
     @Override
     public void stopRecord() {
         wifiCameraController.stopRecord();
+    }
+
+    @Override
+    public void startStackAvg() {
+        wifiCameraController.startStackAvg();
+    }
+
+    @Override
+    public void cancelStackAvg() {
+        wifiCameraController.cancelStackAvg();
     }
 
     @Override
@@ -529,6 +541,26 @@ public class WifiMicroCamManager implements CamManager, MirrorFlipLayout.OnMirro
         if (recordTimeText != null) {
             recordTimeText.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void onStackAvgStart() {
+        Toast.makeText(context, "Stack Avg Start", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onStackAvgCancel() {
+        Toast.makeText(context, "Stack Avg Cancel", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onStackAvgSuccess(Bitmap bitmap, String path) {
+        Toast.makeText(context, "Stack Avg Success : " + path, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onStackAvgError(String error) {
+        Toast.makeText(context, "Stack Avg Fail", Toast.LENGTH_SHORT).show();
     }
 
     public static class Builder {

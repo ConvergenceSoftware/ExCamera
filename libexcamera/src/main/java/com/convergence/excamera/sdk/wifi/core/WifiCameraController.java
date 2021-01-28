@@ -15,9 +15,11 @@ import com.convergence.excamera.sdk.common.MediaScanner;
 import com.convergence.excamera.sdk.common.OutputUtil;
 import com.convergence.excamera.sdk.common.PhotoSaver;
 import com.convergence.excamera.sdk.common.TeleFocusHelper;
+import com.convergence.excamera.sdk.common.algorithm.StackAvgOperator;
 import com.convergence.excamera.sdk.common.callback.ImgProvider;
 import com.convergence.excamera.sdk.common.callback.OnCameraPhotographListener;
 import com.convergence.excamera.sdk.common.callback.OnCameraRecordListener;
+import com.convergence.excamera.sdk.common.callback.OnCameraStackAvgListener;
 import com.convergence.excamera.sdk.common.callback.OnTeleAFListener;
 import com.convergence.excamera.sdk.common.video.ExCameraRecorder;
 import com.convergence.excamera.sdk.wifi.WifiCameraConstant;
@@ -39,7 +41,7 @@ import com.convergence.excamera.sdk.wifi.entity.WifiCameraSetting;
  */
 public class WifiCameraController implements Handler.Callback, ImgProvider, WifiCameraCommand.OnCommandListener,
         ExCameraRecorder.OnRecordListener, PhotoSaver.OnPhotoSaverListener,
-        TeleFocusHelper.TeleAFCallback, FrameRateObserver.OnFrameRateListener {
+        TeleFocusHelper.TeleAFCallback, FrameRateObserver.OnFrameRateListener, StackAvgOperator.OnStackAvgListener {
 
     private CameraLogger cameraLogger = WifiCameraConstant.GetLogger();
 
@@ -48,6 +50,7 @@ public class WifiCameraController implements Handler.Callback, ImgProvider, Wifi
     private WifiCameraCommand wifiCameraCommand;
     private WifiCameraRecorder wifiCameraRecorder;
     private PhotoSaver photoSaver;
+    private StackAvgOperator stackAvgOperator;
     private TeleFocusHelper teleFocusHelper;
     private Handler handler;
     private MediaScanner mediaScanner;
@@ -57,6 +60,7 @@ public class WifiCameraController implements Handler.Callback, ImgProvider, Wifi
     private OnControlListener onControlListener;
     private OnCameraPhotographListener onCameraPhotographListener;
     private OnCameraRecordListener onCameraRecordListener;
+    private OnCameraStackAvgListener onCameraStackAvgListener;
     private OnTeleAFListener onTeleAFListener;
 
     public WifiCameraController(Context context, WifiCameraView wifiCameraView) {
@@ -65,6 +69,9 @@ public class WifiCameraController implements Handler.Callback, ImgProvider, Wifi
         wifiCameraCommand = new WifiCameraCommand(context, wifiCameraView);
         wifiCameraRecorder = new WifiCameraRecorder(context, this, this);
         photoSaver = new PhotoSaver(this);
+        stackAvgOperator = new StackAvgOperator.Builder(context, this)
+                .setOnStackAvgListener(this)
+                .build();
         teleFocusHelper = new WifiTeleFocusHelper(this);
         handler = new Handler(this);
         mediaScanner = new MediaScanner(context);
@@ -135,6 +142,13 @@ public class WifiCameraController implements Handler.Callback, ImgProvider, Wifi
      */
     public void setOnCameraRecordListener(OnCameraRecordListener onCameraRecordListener) {
         this.onCameraRecordListener = onCameraRecordListener;
+    }
+
+    /**
+     * 设置叠加平均去噪监听
+     */
+    public void setOnCameraStackAvgListener(OnCameraStackAvgListener onCameraStackAvgListener) {
+        this.onCameraStackAvgListener = onCameraStackAvgListener;
     }
 
     /**
@@ -231,6 +245,7 @@ public class WifiCameraController implements Handler.Callback, ImgProvider, Wifi
             default:
                 break;
             case Recording:
+            case StackAvgRunning:
                 if (onCameraPhotographListener != null) {
                     onCameraPhotographListener.onTakePhotoFail();
                 }
@@ -270,6 +285,7 @@ public class WifiCameraController implements Handler.Callback, ImgProvider, Wifi
                 wifiCameraRecorder.setup(path, videoSize);
                 break;
             case Photographing:
+            case StackAvgRunning:
                 if (onCameraRecordListener != null) {
                     onCameraRecordListener.onRecordStartFail();
                 }
@@ -285,6 +301,47 @@ public class WifiCameraController implements Handler.Callback, ImgProvider, Wifi
      */
     public void stopRecord() {
         wifiCameraRecorder.stop();
+    }
+
+    /**
+     * 开始叠加平均去噪
+     */
+    public void startStackAvg() {
+        String path = OutputUtil.getRandomPicPath(WifiCameraSP.getEditor(context).getCameraOutputRootPath());
+        startStackAvg(path);
+    }
+
+    /**
+     * 开始叠加平均去噪（自定义路径）
+     */
+    public void startStackAvg(String path) {
+        if (!isPreviewing()) {
+            if (onCameraStackAvgListener != null) {
+                onCameraStackAvgListener.onStackAvgError("It is not previewing now");
+            }
+            return;
+        }
+        switch (curActionState) {
+            case Normal:
+                stackAvgOperator.start(path);
+                break;
+            case Photographing:
+            case Recording:
+                if (onCameraStackAvgListener != null) {
+                    onCameraStackAvgListener.onStackAvgError("Other task is working");
+                }
+                break;
+            case StackAvgRunning:
+            default:
+                break;
+        }
+    }
+
+    /**
+     * 取消正在进行的叠加平均去噪
+     */
+    public void cancelStackAvg(){
+        stackAvgOperator.cancel();
     }
 
     /**
@@ -591,6 +648,38 @@ public class WifiCameraController implements Handler.Callback, ImgProvider, Wifi
         updateActionState(ActionState.Normal);
         if (onCameraRecordListener != null) {
             onCameraRecordListener.onRecordFail();
+        }
+    }
+
+    @Override
+    public void onStackAvgStart() {
+        updateActionState(ActionState.StackAvgRunning);
+        if (onCameraStackAvgListener != null) {
+            onCameraStackAvgListener.onStackAvgStart();
+        }
+    }
+
+    @Override
+    public void onStackAvgCancel() {
+        updateActionState(ActionState.Normal);
+        if (onCameraStackAvgListener != null) {
+            onCameraStackAvgListener.onStackAvgCancel();
+        }
+    }
+
+    @Override
+    public void onStackAvgSuccess(Bitmap bitmap, String path) {
+        updateActionState(ActionState.Normal);
+        if (onCameraStackAvgListener != null) {
+            onCameraStackAvgListener.onStackAvgSuccess(bitmap, path);
+        }
+    }
+
+    @Override
+    public void onStackAvgError(String error) {
+        updateActionState(ActionState.Normal);
+        if (onCameraStackAvgListener != null) {
+            onCameraStackAvgListener.onStackAvgError(error);
         }
     }
 

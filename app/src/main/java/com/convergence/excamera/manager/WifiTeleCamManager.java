@@ -13,6 +13,7 @@ import com.convergence.excamera.sdk.common.ActionState;
 import com.convergence.excamera.sdk.common.OutputUtil;
 import com.convergence.excamera.sdk.common.callback.OnCameraPhotographListener;
 import com.convergence.excamera.sdk.common.callback.OnCameraRecordListener;
+import com.convergence.excamera.sdk.common.callback.OnCameraStackAvgListener;
 import com.convergence.excamera.sdk.common.callback.OnTeleAFListener;
 import com.convergence.excamera.sdk.wifi.WifiCameraState;
 import com.convergence.excamera.sdk.wifi.config.base.WifiAutoConfig;
@@ -46,7 +47,7 @@ import java.util.List;
 public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirrorFlipListener,
         TeleFocusLayout.OnTeleFocusListener, ConfigMixLayout.OnMixConfigListener,
         ConfigComLayout.OnComConfigListener, WifiCameraController.OnControlListener,
-        OnCameraPhotographListener, OnCameraRecordListener, OnTeleAFListener {
+        OnCameraPhotographListener, OnCameraRecordListener, OnCameraStackAvgListener, OnTeleAFListener {
 
     private Context context;
     private WifiCameraView wifiCameraView;
@@ -70,6 +71,7 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
         wifiCameraController.setOnControlListener(this);
         wifiCameraController.setOnCameraPhotographListener(this);
         wifiCameraController.setOnCameraRecordListener(this);
+        wifiCameraController.setOnCameraStackAvgListener(this);
         wifiCameraController.setOnTeleAFListener(this);
         if (configLayout != null) {
             configLayout.setOnMirrorFlipListener(this);
@@ -125,6 +127,16 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
     @Override
     public void stopRecord() {
         wifiCameraController.stopRecord();
+    }
+
+    @Override
+    public void startStackAvg() {
+        wifiCameraController.startStackAvg();
+    }
+
+    @Override
+    public void cancelStackAvg() {
+        wifiCameraController.cancelStackAvg();
     }
 
     @Override
@@ -550,6 +562,26 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
         if (recordTimeText != null) {
             recordTimeText.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void onStackAvgStart() {
+        Toast.makeText(context, "Stack Avg Start", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onStackAvgCancel() {
+        Toast.makeText(context, "Stack Avg Cancel", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onStackAvgSuccess(Bitmap bitmap, String path) {
+        Toast.makeText(context, "Stack Avg Success : " + path, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onStackAvgError(String error) {
+        Toast.makeText(context, "Stack Avg Fail", Toast.LENGTH_SHORT).show();
     }
 
     @Override

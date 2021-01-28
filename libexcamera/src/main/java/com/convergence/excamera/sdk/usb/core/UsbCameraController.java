@@ -15,9 +15,11 @@ import com.convergence.excamera.sdk.common.MediaScanner;
 import com.convergence.excamera.sdk.common.OutputUtil;
 import com.convergence.excamera.sdk.common.PhotoSaver;
 import com.convergence.excamera.sdk.common.TeleFocusHelper;
+import com.convergence.excamera.sdk.common.algorithm.StackAvgOperator;
 import com.convergence.excamera.sdk.common.callback.ImgProvider;
 import com.convergence.excamera.sdk.common.callback.OnCameraPhotographListener;
 import com.convergence.excamera.sdk.common.callback.OnCameraRecordListener;
+import com.convergence.excamera.sdk.common.callback.OnCameraStackAvgListener;
 import com.convergence.excamera.sdk.common.callback.OnTeleAFListener;
 import com.convergence.excamera.sdk.common.video.ExCameraRecorder;
 import com.convergence.excamera.sdk.usb.UsbCameraConstant;
@@ -39,7 +41,7 @@ import com.serenegiant.usb.config.base.UVCParamConfig;
 public class UsbCameraController implements Handler.Callback, ImgProvider, UsbCameraCommand.OnConnectListener,
         UsbCameraCommand.OnCommandListener, ExCameraRecorder.OnRecordListener,
         PhotoSaver.OnPhotoSaverListener, TeleFocusHelper.TeleAFCallback,
-        FrameRateObserver.OnFrameRateListener {
+        FrameRateObserver.OnFrameRateListener, StackAvgOperator.OnStackAvgListener {
 
     private static final int MSG_PREVIEW_START = 100;
     private static final int MSG_PREVIEW_STOP = 101;
@@ -51,6 +53,7 @@ public class UsbCameraController implements Handler.Callback, ImgProvider, UsbCa
     private UsbCameraCommand usbCameraCommand;
     private UsbCameraRecorder usbCameraRecorder;
     private PhotoSaver photoSaver;
+    private StackAvgOperator stackAvgOperator;
     private TeleFocusHelper teleFocusHelper;
     private Handler handler;
     private MediaScanner mediaScanner;
@@ -60,6 +63,7 @@ public class UsbCameraController implements Handler.Callback, ImgProvider, UsbCa
     private OnControlListener onControlListener;
     private OnCameraPhotographListener onCameraPhotographListener;
     private OnCameraRecordListener onCameraRecordListener;
+    private OnCameraStackAvgListener onCameraStackAvgListener;
     private OnTeleAFListener onTeleAFListener;
 
     public UsbCameraController(Context context, UsbCameraView usbCameraView) {
@@ -68,6 +72,9 @@ public class UsbCameraController implements Handler.Callback, ImgProvider, UsbCa
         usbCameraCommand = new UsbCameraCommand(context, usbCameraView);
         usbCameraRecorder = new UsbCameraRecorder(context, this, this);
         photoSaver = new PhotoSaver(this);
+        stackAvgOperator = new StackAvgOperator.Builder(context, this)
+                .setOnStackAvgListener(this)
+                .build();
         teleFocusHelper = new UsbTeleFocusHelper(this);
         handler = new Handler(this);
         mediaScanner = new MediaScanner(context);
@@ -135,6 +142,13 @@ public class UsbCameraController implements Handler.Callback, ImgProvider, UsbCa
     }
 
     /**
+     * 设置叠加平均去噪监听
+     */
+    public void setOnCameraStackAvgListener(OnCameraStackAvgListener onCameraStackAvgListener) {
+        this.onCameraStackAvgListener = onCameraStackAvgListener;
+    }
+
+    /**
      * 设置望远自动调焦监听
      */
     public void setOnTeleAFListener(OnTeleAFListener onTeleAFListener) {
@@ -188,6 +202,7 @@ public class UsbCameraController implements Handler.Callback, ImgProvider, UsbCa
             default:
                 break;
             case Recording:
+            case StackAvgRunning:
                 if (onCameraPhotographListener != null) {
                     onCameraPhotographListener.onTakePhotoFail();
                 }
@@ -227,6 +242,7 @@ public class UsbCameraController implements Handler.Callback, ImgProvider, UsbCa
                 usbCameraRecorder.setup(path, videoSize);
                 break;
             case Photographing:
+            case StackAvgRunning:
                 if (onCameraRecordListener != null) {
                     onCameraRecordListener.onRecordStartFail();
                 }
@@ -243,6 +259,47 @@ public class UsbCameraController implements Handler.Callback, ImgProvider, UsbCa
      */
     public void stopRecord() {
         usbCameraRecorder.stop();
+    }
+
+    /**
+     * 开始叠加平均去噪
+     */
+    public void startStackAvg() {
+        String path = OutputUtil.getRandomPicPath(UsbCameraSP.getEditor(context).getCameraOutputRootPath());
+        startStackAvg(path);
+    }
+
+    /**
+     * 开始叠加平均去噪（自定义路径）
+     */
+    public void startStackAvg(String path) {
+        if (!isPreviewing()) {
+            if (onCameraStackAvgListener != null) {
+                onCameraStackAvgListener.onStackAvgError("It is not previewing now");
+            }
+            return;
+        }
+        switch (curActionState) {
+            case Normal:
+                stackAvgOperator.start(path);
+                break;
+            case Photographing:
+            case Recording:
+                if (onCameraStackAvgListener != null) {
+                    onCameraStackAvgListener.onStackAvgError("Other task is working");
+                }
+                break;
+            case StackAvgRunning:
+            default:
+                break;
+        }
+    }
+
+    /**
+     * 取消正在进行的叠加平均去噪
+     */
+    public void cancelStackAvg() {
+        stackAvgOperator.cancel();
     }
 
     /**
@@ -548,6 +605,38 @@ public class UsbCameraController implements Handler.Callback, ImgProvider, UsbCa
         updateActionState(ActionState.Normal);
         if (onCameraRecordListener != null) {
             onCameraRecordListener.onRecordFail();
+        }
+    }
+
+    @Override
+    public void onStackAvgStart() {
+        updateActionState(ActionState.StackAvgRunning);
+        if (onCameraStackAvgListener != null) {
+            onCameraStackAvgListener.onStackAvgStart();
+        }
+    }
+
+    @Override
+    public void onStackAvgCancel() {
+        updateActionState(ActionState.Normal);
+        if (onCameraStackAvgListener != null) {
+            onCameraStackAvgListener.onStackAvgCancel();
+        }
+    }
+
+    @Override
+    public void onStackAvgSuccess(Bitmap bitmap, String path) {
+        updateActionState(ActionState.Normal);
+        if (onCameraStackAvgListener != null) {
+            onCameraStackAvgListener.onStackAvgSuccess(bitmap, path);
+        }
+    }
+
+    @Override
+    public void onStackAvgError(String error) {
+        updateActionState(ActionState.Normal);
+        if (onCameraStackAvgListener != null) {
+            onCameraStackAvgListener.onStackAvgError(error);
         }
     }
 

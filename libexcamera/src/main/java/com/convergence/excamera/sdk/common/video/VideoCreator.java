@@ -3,6 +3,7 @@ package com.convergence.excamera.sdk.common.video;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Message;
 import android.util.Size;
 
@@ -58,7 +59,9 @@ public class VideoCreator implements Handler.Callback {
     private OnCreateVideoListener listener;
 
     private MediaScanner mediaScanner;
-    private Handler handler;
+    private Handler mainHandler;
+    private Handler backgroundHandler;
+    private HandlerThread backgroundThread;
     private Mp4MediaMuxer mp4MediaMuxer;
     private Queue<Frame> frameQueue;
     private State curState;
@@ -74,7 +77,7 @@ public class VideoCreator implements Handler.Callback {
         this.listener = builder.listener;
         mediaScanner = new MediaScanner(context);
         mp4MediaMuxer = new Mp4MediaMuxer();
-        handler = new Handler(this);
+        mainHandler = new Handler(this);
         frameQueue = new LinkedTransferQueue<>();
         reset(true);
     }
@@ -90,6 +93,9 @@ public class VideoCreator implements Handler.Callback {
         this.videoPath = videoPath;
         this.videoSize = videoSize;
         frameProvideDelay = 1000L / frame;
+        backgroundThread = new HandlerThread("VideoCreator");
+        backgroundThread.start();
+        backgroundHandler = new Handler(backgroundThread.getLooper());
         fixPathDir(videoPath);
         mp4MediaMuxer.setup(videoSize, videoPath, frame, new Mp4MediaMuxer.OnSetupListener() {
             @Override
@@ -119,10 +125,10 @@ public class VideoCreator implements Handler.Callback {
             case Ready:
                 changeState(State.Running);
                 mp4MediaMuxer.start();
-                handler.postDelayed(timeRunnable, 1000);
-                handler.post(frameRunnable);
-                handler.post(compoundRunnable);
-                handler.post(decodeRunnable);
+                mainHandler.postDelayed(timeRunnable, 1000);
+                mainHandler.post(frameRunnable);
+                backgroundHandler.post(compoundRunnable);
+                backgroundHandler.post(decodeRunnable);
                 sendMsg(MSG_WHAT_START_SUCCESS);
                 break;
             default:
@@ -148,10 +154,23 @@ public class VideoCreator implements Handler.Callback {
      * 释放资源
      */
     private void release() {
-        handler.removeCallbacks(timeRunnable);
-        handler.removeCallbacks(frameRunnable);
-        handler.removeCallbacks(compoundRunnable);
-        handler.removeCallbacks(decodeRunnable);
+        mainHandler.removeCallbacks(timeRunnable);
+        mainHandler.removeCallbacks(frameRunnable);
+        if (backgroundHandler != null) {
+            backgroundHandler.removeCallbacks(compoundRunnable);
+            backgroundHandler.removeCallbacks(decodeRunnable);
+            backgroundHandler = null;
+        }
+        if (backgroundThread != null) {
+            try {
+                backgroundThread.quitSafely();
+                backgroundThread.join();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                backgroundThread = null;
+            }
+        }
         mp4MediaMuxer.release();
         reset(false);
     }
@@ -206,14 +225,14 @@ public class VideoCreator implements Handler.Callback {
     }
 
     private void sendMsg(int what) {
-        handler.sendEmptyMessage(what);
+        mainHandler.sendEmptyMessage(what);
     }
 
     private void sendMsg(int what, Object obj) {
         Message msg = new Message();
         msg.what = what;
         msg.obj = obj;
-        handler.sendMessage(msg);
+        mainHandler.sendMessage(msg);
     }
 
     public State getCurState() {
@@ -237,7 +256,8 @@ public class VideoCreator implements Handler.Callback {
     }
 
     public boolean isRunning() {
-        return curState == State.Running;
+        return curState == State.Running && backgroundThread != null && backgroundThread.isAlive()
+                && backgroundHandler != null;
     }
 
     /**
@@ -248,8 +268,8 @@ public class VideoCreator implements Handler.Callback {
         @Override
         public void run() {
             runTime++;
-            handler.sendEmptyMessage(MSG_WHAT_RUN_TIME);
-            handler.postDelayed(this, 1000);
+            mainHandler.sendEmptyMessage(MSG_WHAT_RUN_TIME);
+            mainHandler.postDelayed(this, 1000);
         }
     };
 
@@ -265,9 +285,9 @@ public class VideoCreator implements Handler.Callback {
             offerBitmap(imgProvider.provideBitmap());
             long costTime = System.currentTimeMillis() - startTime;
             if (frameProvideDelay > costTime) {
-                handler.postDelayed(this, frameProvideDelay - costTime);
+                mainHandler.postDelayed(this, frameProvideDelay - costTime);
             } else {
-                handler.post(this);
+                mainHandler.post(this);
             }
         }
     };
@@ -284,7 +304,7 @@ public class VideoCreator implements Handler.Callback {
                 mp4MediaMuxer.encodeData(frame.getBitmap(), frame.getTimeUS());
             }
             if (isRunning()) {
-                handler.postDelayed(this, 100);
+                mainHandler.postDelayed(this, 100);
             }
         }
     };
@@ -300,7 +320,7 @@ public class VideoCreator implements Handler.Callback {
                 return;
             }
             mp4MediaMuxer.decodeData();
-            handler.post(this);
+            mainHandler.post(this);
         }
     };
 
@@ -332,7 +352,7 @@ public class VideoCreator implements Handler.Callback {
 
         private Context context;
         private ImgProvider imgProvider;
-        private int frame = 30;
+        private int frame = FRAME_STANDARD_RECORD;
         private OnCreateVideoListener listener;
 
         public Builder(Context context, ImgProvider imgProvider, OnCreateVideoListener listener) {

@@ -18,6 +18,7 @@ import com.gyf.immersionbar.ImmersionBar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnLongClick;
 
 /**
  * 显微相机USB连接页面
@@ -112,6 +113,17 @@ public class UsbMicroCamActivity extends AppCompatActivity {
                 break;
             case R.id.iv_resolution_activity_usb_micro_camera:
                 camManager.showResolutionSelection();
+                break;
+            default:
+                break;
+        }
+    }
+
+    @OnLongClick({R.id.iv_take_photo_activity_usb_micro_camera})
+    public void onViewLongClicked(View view) {
+        switch (view.getId()) {
+            case R.id.iv_take_photo_activity_usb_micro_camera:
+                camManager.startStackAvg();
                 break;
             default:
                 break;

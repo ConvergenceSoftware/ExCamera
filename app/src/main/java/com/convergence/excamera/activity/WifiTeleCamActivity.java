@@ -18,6 +18,7 @@ import com.gyf.immersionbar.ImmersionBar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnLongClick;
 
 /**
  * 望远相机WiFi连接页面
@@ -112,6 +113,17 @@ public class WifiTeleCamActivity extends AppCompatActivity {
                 break;
             case R.id.iv_resolution_activity_wifi_tele_camera:
                 camManager.showResolutionSelection();
+                break;
+            default:
+                break;
+        }
+    }
+
+    @OnLongClick({R.id.iv_take_photo_activity_wifi_tele_camera})
+    public void onViewLongClicked(View view) {
+        switch (view.getId()) {
+            case R.id.iv_take_photo_activity_wifi_tele_camera:
+                camManager.startStackAvg();
                 break;
             default:
                 break;

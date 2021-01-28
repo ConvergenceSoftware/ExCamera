@@ -50,7 +50,7 @@ publish {
     repoName = 'github'
     groupId = 'com.convergence'
     artifactId = 'excamera'
-    publishVersion = '1.0.3'
+    publishVersion = '1.0.4'
     desc = 'Android SDK for devices designed by Convergence Ltd.'
     website = 'https://github.com/ConvergenceSoftware/ExCamera'
 }

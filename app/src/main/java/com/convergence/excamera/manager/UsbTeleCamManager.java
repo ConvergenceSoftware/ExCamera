@@ -13,6 +13,7 @@ import com.convergence.excamera.sdk.common.ActionState;
 import com.convergence.excamera.sdk.common.OutputUtil;
 import com.convergence.excamera.sdk.common.callback.OnCameraPhotographListener;
 import com.convergence.excamera.sdk.common.callback.OnCameraRecordListener;
+import com.convergence.excamera.sdk.common.callback.OnCameraStackAvgListener;
 import com.convergence.excamera.sdk.common.callback.OnTeleAFListener;
 import com.convergence.excamera.sdk.usb.UsbCameraState;
 import com.convergence.excamera.sdk.usb.core.UsbCameraController;
@@ -43,7 +44,7 @@ import java.util.List;
 public class UsbTeleCamManager implements CamManager, MirrorFlipLayout.OnMirrorFlipListener,
         TeleFocusLayout.OnTeleFocusListener, ConfigMixLayout.OnMixConfigListener,
         ConfigComLayout.OnComConfigListener, UsbCameraController.OnControlListener,
-        OnCameraPhotographListener, OnCameraRecordListener, OnTeleAFListener {
+        OnCameraPhotographListener, OnCameraRecordListener, OnCameraStackAvgListener, OnTeleAFListener {
 
     private static final int EXPOSURE_MODE_AUTO = 8;
     private static final int EXPOSURE_MODE_MANUAL = 1;
@@ -70,6 +71,7 @@ public class UsbTeleCamManager implements CamManager, MirrorFlipLayout.OnMirrorF
         usbCameraController.setOnControlListener(this);
         usbCameraController.setOnCameraPhotographListener(this);
         usbCameraController.setOnCameraRecordListener(this);
+        usbCameraController.setOnCameraStackAvgListener(this);
         usbCameraController.setOnTeleAFListener(this);
         if (configLayout != null) {
             configLayout.setOnMirrorFlipListener(this);
@@ -125,6 +127,16 @@ public class UsbTeleCamManager implements CamManager, MirrorFlipLayout.OnMirrorF
     @Override
     public void stopRecord() {
         usbCameraController.stopRecord();
+    }
+
+    @Override
+    public void startStackAvg() {
+        usbCameraController.startStackAvg();
+    }
+
+    @Override
+    public void cancelStackAvg() {
+        usbCameraController.cancelStackAvg();
     }
 
     @Override
@@ -543,6 +555,26 @@ public class UsbTeleCamManager implements CamManager, MirrorFlipLayout.OnMirrorF
         if (recordTimeText != null) {
             recordTimeText.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void onStackAvgStart() {
+        Toast.makeText(context, "Stack Avg Start", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onStackAvgCancel() {
+        Toast.makeText(context, "Stack Avg Cancel", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onStackAvgSuccess(Bitmap bitmap, String path) {
+        Toast.makeText(context, "Stack Avg Success : " + path, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onStackAvgError(String error) {
+        Toast.makeText(context, "Stack Avg Fail", Toast.LENGTH_SHORT).show();
     }
 
     @Override

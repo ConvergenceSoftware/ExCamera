@@ -50,6 +50,16 @@ public interface CamManager {
     void stopRecord();
 
     /**
+     * 开始叠加平均去噪操作
+     */
+    void startStackAvg();
+
+    /**
+     * 取消叠加平均去噪操作
+     */
+    void cancelStackAvg();
+
+    /**
      * 显示分辨率选择弹窗
      */
     void showResolutionSelection();
