@@ -14,6 +14,7 @@ import com.convergence.excamera.sdk.common.OutputUtil;
 import com.convergence.excamera.sdk.common.callback.OnCameraPhotographListener;
 import com.convergence.excamera.sdk.common.callback.OnCameraRecordListener;
 import com.convergence.excamera.sdk.common.callback.OnCameraStackAvgListener;
+import com.convergence.excamera.sdk.common.callback.OnCameraTLRecordListener;
 import com.convergence.excamera.sdk.wifi.WifiCameraState;
 import com.convergence.excamera.sdk.wifi.config.base.WifiAutoConfig;
 import com.convergence.excamera.sdk.wifi.config.base.WifiConfig;
@@ -44,7 +45,7 @@ import java.util.List;
  */
 public class WifiMicroCamManager implements CamManager, MirrorFlipLayout.OnMirrorFlipListener,
         ConfigMixLayout.OnMixConfigListener, ConfigComLayout.OnComConfigListener, WifiCameraController.OnControlListener,
-        OnCameraPhotographListener, OnCameraRecordListener, OnCameraStackAvgListener {
+        OnCameraPhotographListener, OnCameraRecordListener, OnCameraTLRecordListener, OnCameraStackAvgListener {
 
     private Context context;
     private WifiCameraView wifiCameraView;
@@ -68,6 +69,7 @@ public class WifiMicroCamManager implements CamManager, MirrorFlipLayout.OnMirro
         wifiCameraController.setOnControlListener(this);
         wifiCameraController.setOnCameraPhotographListener(this);
         wifiCameraController.setOnCameraRecordListener(this);
+        wifiCameraController.setOnCameraTLRecordListener(this);
         wifiCameraController.setOnCameraStackAvgListener(this);
         if (configLayout != null) {
             configLayout.setOnMirrorFlipListener(this);
@@ -122,6 +124,16 @@ public class WifiMicroCamManager implements CamManager, MirrorFlipLayout.OnMirro
     @Override
     public void stopRecord() {
         wifiCameraController.stopRecord();
+    }
+
+    @Override
+    public void startTLRecord(int timeLapseRate) {
+        wifiCameraController.startTLRecord(timeLapseRate);
+    }
+
+    @Override
+    public void stopTLRecord() {
+        wifiCameraController.stopTLRecord();
     }
 
     @Override
@@ -189,6 +201,11 @@ public class WifiMicroCamManager implements CamManager, MirrorFlipLayout.OnMirro
     @Override
     public boolean isRecording() {
         return wifiCameraController.getCurActionState() == ActionState.Recording;
+    }
+
+    @Override
+    public boolean isTLRecording() {
+        return wifiCameraController.getCurActionState() == ActionState.TLRecording;
     }
 
     /**
@@ -537,6 +554,43 @@ public class WifiMicroCamManager implements CamManager, MirrorFlipLayout.OnMirro
 
     @Override
     public void onRecordFail() {
+        Toast.makeText(context, "Fail", Toast.LENGTH_SHORT).show();
+        if (recordTimeText != null) {
+            recordTimeText.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onTLRecordStartSuccess() {
+        Toast.makeText(context, "Start", Toast.LENGTH_SHORT).show();
+        if (recordTimeText != null) {
+            recordTimeText.setText(OutputUtil.getLongRecordTimeText(0));
+            recordTimeText.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onTLRecordStartFail() {
+        Toast.makeText(context, "Fail", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onTLRecordProgress(int recordSeconds) {
+        if (recordTimeText != null) {
+            recordTimeText.setText(OutputUtil.getLongRecordTimeText(recordSeconds));
+        }
+    }
+
+    @Override
+    public void onTLRecordSuccess(String path) {
+        Toast.makeText(context, "Done : " + path, Toast.LENGTH_SHORT).show();
+        if (recordTimeText != null) {
+            recordTimeText.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onTLRecordFail() {
         Toast.makeText(context, "Fail", Toast.LENGTH_SHORT).show();
         if (recordTimeText != null) {
             recordTimeText.setVisibility(View.GONE);

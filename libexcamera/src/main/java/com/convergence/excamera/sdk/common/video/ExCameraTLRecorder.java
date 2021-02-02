@@ -5,27 +5,26 @@ import android.util.Size;
 
 import com.convergence.excamera.sdk.common.callback.ImgProvider;
 
-
 /**
- * 通用的ExCamera录像工具基类
+ * 通用的ExCamera延时摄影工具类
  *
  * @Author WangZiheng
- * @CreateDate 2020-12-07
+ * @CreateDate 2021-02-01
  * @Organization Convergence Ltd.
  */
-public class ExCameraRecorder implements VideoCreator.OnCreateVideoListener {
+public class ExCameraTLRecorder implements VideoCreator.OnCreateVideoListener {
 
     protected Context context;
-    protected OnRecordListener listener;
+    protected OnTLRecordListener listener;
     protected ImgProvider imgProvider;
     protected VideoCreator videoCreator;
 
-    public ExCameraRecorder(Context context, ImgProvider imgProvider, OnRecordListener listener) {
+    public ExCameraTLRecorder(Context context, ImgProvider imgProvider, OnTLRecordListener listener) {
         this.context = context;
         this.imgProvider = imgProvider;
         this.listener = listener;
         videoCreator = new VideoCreator.Builder(context, imgProvider, this)
-                .setFrame(VideoCreator.FRAME_STANDARD_RECORD)
+                .setFrame(VideoCreator.FRAME_TIME_LAPSE_RECORD)
                 .build();
     }
 
@@ -35,8 +34,8 @@ public class ExCameraRecorder implements VideoCreator.OnCreateVideoListener {
      * @param videoPath 视频保存路径
      * @param videoSize 视频保存分辨率
      */
-    public void setup(String videoPath, Size videoSize) {
-        videoCreator.setup(videoPath, videoSize);
+    public void setup(String videoPath, Size videoSize, int timeLapseRate) {
+        videoCreator.setup(videoPath, videoSize, timeLapseRate);
     }
 
     /**
@@ -68,78 +67,78 @@ public class ExCameraRecorder implements VideoCreator.OnCreateVideoListener {
 
     @Override
     public void onSetupSuccess() {
-        listener.onSetupRecordSuccess();
+        listener.onSetupTLRecordSuccess();
     }
 
     @Override
     public void onSetupError(String error) {
-        listener.onSetupRecordError();
+        listener.onSetupTLRecordError();
     }
 
     @Override
     public void onStartSuccess() {
-        listener.onStartRecordSuccess();
+        listener.onStartTLRecordSuccess();
     }
 
     @Override
     public void onStartError(String error) {
-        listener.onStartRecordError();
+        listener.onStartTLRecordError();
     }
 
     @Override
     public void onRunning(int runSeconds) {
-        listener.onRecordProgress(runSeconds);
+        listener.onTLRecordProgress(runSeconds);
     }
 
     @Override
     public void onCreateVideoSuccess(String path) {
-        listener.onRecordSuccess(path);
+        listener.onTLRecordSuccess(path);
     }
 
     @Override
     public void onCreateVideoError(String error) {
-        listener.onRecordError();
+        listener.onTLRecordError();
     }
 
-    public interface OnRecordListener {
+    public interface OnTLRecordListener {
 
         /**
-         * 初始化配置录像成功
+         * 初始化配置延时摄影成功
          */
-        void onSetupRecordSuccess();
+        void onSetupTLRecordSuccess();
 
         /**
-         * 初始化配置录像出错
+         * 初始化配置延时摄影出错
          */
-        void onSetupRecordError();
+        void onSetupTLRecordError();
 
         /**
-         * 开始录像成功
+         * 开始延时摄影成功
          */
-        void onStartRecordSuccess();
+        void onStartTLRecordSuccess();
 
         /**
-         * 开始录像失败
+         * 开始延时摄影失败
          */
-        void onStartRecordError();
+        void onStartTLRecordError();
 
         /**
-         * 录像读秒回调
+         * 延时摄影读秒回调
          *
          * @param recordTime 当前录像秒数
          */
-        void onRecordProgress(int recordTime);
+        void onTLRecordProgress(int recordTime);
 
         /**
-         * 录像成功
+         * 延时摄影成功
          *
          * @param videoPath 保存路径
          */
-        void onRecordSuccess(String videoPath);
+        void onTLRecordSuccess(String videoPath);
 
         /**
-         * 录像出错
+         * 延时摄影出错
          */
-        void onRecordError();
+        void onTLRecordError();
     }
 }

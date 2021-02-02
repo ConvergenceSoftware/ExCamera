@@ -50,6 +50,18 @@ public interface CamManager {
     void stopRecord();
 
     /**
+     * 开始延时摄影
+     *
+     * @param timeLapseRate 延时摄影倍率
+     */
+    void startTLRecord(int timeLapseRate);
+
+    /**
+     * 停止延时摄影
+     */
+    void stopTLRecord();
+
+    /**
      * 开始叠加平均去噪操作
      */
     void startStackAvg();
@@ -85,6 +97,13 @@ public interface CamManager {
      * @return 是否录像中
      */
     boolean isRecording();
+
+    /**
+     * 是否延时摄影中
+     *
+     * @return 是否录像中
+     */
+    boolean isTLRecording();
 
     interface OnConfigResetListener {
 

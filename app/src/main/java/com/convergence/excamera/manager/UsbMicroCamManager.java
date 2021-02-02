@@ -14,6 +14,7 @@ import com.convergence.excamera.sdk.common.OutputUtil;
 import com.convergence.excamera.sdk.common.callback.OnCameraPhotographListener;
 import com.convergence.excamera.sdk.common.callback.OnCameraRecordListener;
 import com.convergence.excamera.sdk.common.callback.OnCameraStackAvgListener;
+import com.convergence.excamera.sdk.common.callback.OnCameraTLRecordListener;
 import com.convergence.excamera.sdk.usb.UsbCameraState;
 import com.convergence.excamera.sdk.usb.core.UsbCameraController;
 import com.convergence.excamera.sdk.usb.core.UsbCameraView;
@@ -42,7 +43,7 @@ import java.util.List;
 public class UsbMicroCamManager implements CamManager, MirrorFlipLayout.OnMirrorFlipListener,
         ConfigMixLayout.OnMixConfigListener, ConfigComLayout.OnComConfigListener,
         UsbCameraController.OnControlListener, OnCameraPhotographListener,
-        OnCameraRecordListener, OnCameraStackAvgListener {
+        OnCameraRecordListener, OnCameraTLRecordListener, OnCameraStackAvgListener {
 
     private static final int EXPOSURE_MODE_AUTO = 8;
     private static final int EXPOSURE_MODE_MANUAL = 1;
@@ -69,6 +70,7 @@ public class UsbMicroCamManager implements CamManager, MirrorFlipLayout.OnMirror
         usbCameraController.setOnControlListener(this);
         usbCameraController.setOnCameraPhotographListener(this);
         usbCameraController.setOnCameraRecordListener(this);
+        usbCameraController.setOnCameraTLRecordListener(this);
         usbCameraController.setOnCameraStackAvgListener(this);
         if (configLayout != null) {
             configLayout.setOnMirrorFlipListener(this);
@@ -126,6 +128,16 @@ public class UsbMicroCamManager implements CamManager, MirrorFlipLayout.OnMirror
     }
 
     @Override
+    public void startTLRecord(int timeLapseRate) {
+        usbCameraController.startTLRecord(timeLapseRate);
+    }
+
+    @Override
+    public void stopTLRecord() {
+        usbCameraController.stopTLRecord();
+    }
+
+    @Override
     public void startStackAvg() {
         usbCameraController.startStackAvg();
     }
@@ -170,6 +182,11 @@ public class UsbMicroCamManager implements CamManager, MirrorFlipLayout.OnMirror
     @Override
     public boolean isRecording() {
         return usbCameraController.getCurActionState() == ActionState.Recording;
+    }
+
+    @Override
+    public boolean isTLRecording() {
+        return usbCameraController.getCurActionState() == ActionState.TLRecording;
     }
 
     /**
@@ -535,6 +552,43 @@ public class UsbMicroCamManager implements CamManager, MirrorFlipLayout.OnMirror
 
     @Override
     public void onRecordFail() {
+        Toast.makeText(context, "Fail", Toast.LENGTH_SHORT).show();
+        if (recordTimeText != null) {
+            recordTimeText.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onTLRecordStartSuccess() {
+        Toast.makeText(context, "Start", Toast.LENGTH_SHORT).show();
+        if (recordTimeText != null) {
+            recordTimeText.setText(OutputUtil.getLongRecordTimeText(0));
+            recordTimeText.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onTLRecordStartFail() {
+        Toast.makeText(context, "Fail", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onTLRecordProgress(int recordSeconds) {
+        if (recordTimeText != null) {
+            recordTimeText.setText(OutputUtil.getLongRecordTimeText(recordSeconds));
+        }
+    }
+
+    @Override
+    public void onTLRecordSuccess(String path) {
+        Toast.makeText(context, "Done : " + path, Toast.LENGTH_SHORT).show();
+        if (recordTimeText != null) {
+            recordTimeText.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onTLRecordFail() {
         Toast.makeText(context, "Fail", Toast.LENGTH_SHORT).show();
         if (recordTimeText != null) {
             recordTimeText.setVisibility(View.GONE);

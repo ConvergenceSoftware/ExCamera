@@ -119,11 +119,18 @@ public class WifiMicroCamActivity extends AppCompatActivity {
         }
     }
 
-    @OnLongClick({R.id.iv_take_photo_activity_usb_tele_camera})
+    @OnLongClick({R.id.iv_take_photo_activity_wifi_micro_camera, R.id.iv_record_activity_wifi_micro_camera})
     public void onViewLongClicked(View view) {
         switch (view.getId()) {
-            case R.id.iv_take_photo_activity_usb_tele_camera:
+            case R.id.iv_take_photo_activity_wifi_micro_camera:
                 camManager.startStackAvg();
+                break;
+            case R.id.iv_record_activity_wifi_micro_camera:
+                if (camManager.isTLRecording()) {
+                    camManager.stopTLRecord();
+                } else {
+                    camManager.startTLRecord(15);
+                }
                 break;
             default:
                 break;

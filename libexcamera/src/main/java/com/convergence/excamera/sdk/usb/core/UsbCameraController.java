@@ -20,8 +20,10 @@ import com.convergence.excamera.sdk.common.callback.ImgProvider;
 import com.convergence.excamera.sdk.common.callback.OnCameraPhotographListener;
 import com.convergence.excamera.sdk.common.callback.OnCameraRecordListener;
 import com.convergence.excamera.sdk.common.callback.OnCameraStackAvgListener;
+import com.convergence.excamera.sdk.common.callback.OnCameraTLRecordListener;
 import com.convergence.excamera.sdk.common.callback.OnTeleAFListener;
 import com.convergence.excamera.sdk.common.video.ExCameraRecorder;
+import com.convergence.excamera.sdk.common.video.ExCameraTLRecorder;
 import com.convergence.excamera.sdk.usb.UsbCameraConstant;
 import com.convergence.excamera.sdk.usb.UsbCameraState;
 import com.convergence.excamera.sdk.usb.entity.UsbCameraResolution;
@@ -39,7 +41,7 @@ import com.serenegiant.usb.config.base.UVCParamConfig;
  * @Organization Convergence Ltd.
  */
 public class UsbCameraController implements Handler.Callback, ImgProvider, UsbCameraCommand.OnConnectListener,
-        UsbCameraCommand.OnCommandListener, ExCameraRecorder.OnRecordListener,
+        UsbCameraCommand.OnCommandListener, ExCameraRecorder.OnRecordListener, ExCameraTLRecorder.OnTLRecordListener,
         PhotoSaver.OnPhotoSaverListener, TeleFocusHelper.TeleAFCallback,
         FrameRateObserver.OnFrameRateListener, StackAvgOperator.OnStackAvgListener {
 
@@ -51,7 +53,8 @@ public class UsbCameraController implements Handler.Callback, ImgProvider, UsbCa
     private Context context;
     private UsbCameraView usbCameraView;
     private UsbCameraCommand usbCameraCommand;
-    private UsbCameraRecorder usbCameraRecorder;
+    private ExCameraRecorder exCameraRecorder;
+    private ExCameraTLRecorder exCameraTLRecorder;
     private PhotoSaver photoSaver;
     private StackAvgOperator stackAvgOperator;
     private TeleFocusHelper teleFocusHelper;
@@ -63,6 +66,7 @@ public class UsbCameraController implements Handler.Callback, ImgProvider, UsbCa
     private OnControlListener onControlListener;
     private OnCameraPhotographListener onCameraPhotographListener;
     private OnCameraRecordListener onCameraRecordListener;
+    private OnCameraTLRecordListener onCameraTLRecordListener;
     private OnCameraStackAvgListener onCameraStackAvgListener;
     private OnTeleAFListener onTeleAFListener;
 
@@ -70,7 +74,8 @@ public class UsbCameraController implements Handler.Callback, ImgProvider, UsbCa
         this.context = context;
         this.usbCameraView = usbCameraView;
         usbCameraCommand = new UsbCameraCommand(context, usbCameraView);
-        usbCameraRecorder = new UsbCameraRecorder(context, this, this);
+        exCameraRecorder = new ExCameraRecorder(context, this, this);
+        exCameraTLRecorder = new ExCameraTLRecorder(context, this, this);
         photoSaver = new PhotoSaver(this);
         stackAvgOperator = new StackAvgOperator.Builder(context, this)
                 .setOnStackAvgListener(this)
@@ -142,6 +147,13 @@ public class UsbCameraController implements Handler.Callback, ImgProvider, UsbCa
     }
 
     /**
+     * 设置延时摄影监听
+     */
+    public void setOnCameraTLRecordListener(OnCameraTLRecordListener onCameraTLRecordListener) {
+        this.onCameraTLRecordListener = onCameraTLRecordListener;
+    }
+
+    /**
      * 设置叠加平均去噪监听
      */
     public void setOnCameraStackAvgListener(OnCameraStackAvgListener onCameraStackAvgListener) {
@@ -203,6 +215,7 @@ public class UsbCameraController implements Handler.Callback, ImgProvider, UsbCa
                 break;
             case Recording:
             case StackAvgRunning:
+            case TLRecording:
                 if (onCameraPhotographListener != null) {
                     onCameraPhotographListener.onTakePhotoFail();
                 }
@@ -239,10 +252,11 @@ public class UsbCameraController implements Handler.Callback, ImgProvider, UsbCa
                 }
                 UsbCameraResolution.Resolution resolution = usbCameraSetting.getUsbCameraResolution().getCurResolution();
                 Size videoSize = new Size(resolution.getWidth(), resolution.getHeight());
-                usbCameraRecorder.setup(path, videoSize);
+                exCameraRecorder.setup(path, videoSize);
                 break;
             case Photographing:
             case StackAvgRunning:
+            case TLRecording:
                 if (onCameraRecordListener != null) {
                     onCameraRecordListener.onRecordStartFail();
                 }
@@ -253,12 +267,62 @@ public class UsbCameraController implements Handler.Callback, ImgProvider, UsbCa
         }
     }
 
-
     /**
      * 停止录像
      */
     public void stopRecord() {
-        usbCameraRecorder.stop();
+        exCameraRecorder.stop();
+    }
+
+    /**
+     * 开始延时摄影
+     */
+    public void startTLRecord(int timeLapseRate) {
+        String path = OutputUtil.getRandomVideoPath(UsbCameraSP.getEditor(context).getCameraOutputRootPath());
+        startTLRecord(path, timeLapseRate);
+    }
+
+    /**
+     * 开始延时摄影（自定义路径）
+     */
+    public void startTLRecord(String path, int timeLapseRate) {
+        if (!isPreviewing()) {
+            if (onCameraTLRecordListener != null) {
+                onCameraTLRecordListener.onTLRecordStartFail();
+            }
+            return;
+        }
+        switch (curActionState) {
+            case Normal:
+                UsbCameraSetting usbCameraSetting = UsbCameraSetting.getInstance();
+                if (!usbCameraSetting.isAvailable()) {
+                    if (onCameraRecordListener != null) {
+                        onCameraRecordListener.onRecordStartFail();
+                    }
+                    break;
+                }
+                UsbCameraResolution.Resolution resolution = usbCameraSetting.getUsbCameraResolution().getCurResolution();
+                Size videoSize = new Size(resolution.getWidth(), resolution.getHeight());
+                exCameraTLRecorder.setup(path, videoSize, timeLapseRate);
+                break;
+            case Photographing:
+            case Recording:
+            case StackAvgRunning:
+                if (onCameraTLRecordListener != null) {
+                    onCameraTLRecordListener.onTLRecordStartFail();
+                }
+                break;
+            case TLRecording:
+            default:
+                break;
+        }
+    }
+
+    /**
+     * 停止延时摄影
+     */
+    public void stopTLRecord() {
+        exCameraTLRecorder.stop();
     }
 
     /**
@@ -285,6 +349,7 @@ public class UsbCameraController implements Handler.Callback, ImgProvider, UsbCa
                 break;
             case Photographing:
             case Recording:
+            case TLRecording:
                 if (onCameraStackAvgListener != null) {
                     onCameraStackAvgListener.onStackAvgError("Other task is working");
                 }
@@ -505,8 +570,11 @@ public class UsbCameraController implements Handler.Callback, ImgProvider, UsbCa
 
     @Override
     public void onUsbDisConnect() {
-        if (curActionState == ActionState.Recording && usbCameraRecorder.isRecording()) {
+        if (curActionState == ActionState.Recording && exCameraRecorder.isRecording()) {
             stopRecord();
+        }
+        if (curActionState == ActionState.TLRecording && exCameraTLRecorder.isRecording()) {
+            stopTLRecord();
         }
         if (onControlListener != null) {
             onControlListener.onUsbDisConnect();
@@ -560,7 +628,7 @@ public class UsbCameraController implements Handler.Callback, ImgProvider, UsbCa
 
     @Override
     public void onSetupRecordSuccess() {
-        usbCameraRecorder.start();
+        exCameraRecorder.start();
     }
 
     @Override
@@ -605,6 +673,56 @@ public class UsbCameraController implements Handler.Callback, ImgProvider, UsbCa
         updateActionState(ActionState.Normal);
         if (onCameraRecordListener != null) {
             onCameraRecordListener.onRecordFail();
+        }
+    }
+
+    @Override
+    public void onSetupTLRecordSuccess() {
+        exCameraTLRecorder.start();
+    }
+
+    @Override
+    public void onSetupTLRecordError() {
+        if (onCameraTLRecordListener != null) {
+            onCameraTLRecordListener.onTLRecordStartFail();
+        }
+    }
+
+    @Override
+    public void onStartTLRecordSuccess() {
+        updateActionState(ActionState.TLRecording);
+        if (onCameraTLRecordListener != null) {
+            onCameraTLRecordListener.onTLRecordStartSuccess();
+        }
+    }
+
+    @Override
+    public void onStartTLRecordError() {
+        if (onCameraTLRecordListener != null) {
+            onCameraTLRecordListener.onTLRecordStartFail();
+        }
+    }
+
+    @Override
+    public void onTLRecordProgress(int recordTime) {
+        if (onCameraTLRecordListener != null) {
+            onCameraTLRecordListener.onTLRecordProgress(recordTime);
+        }
+    }
+
+    @Override
+    public void onTLRecordSuccess(String videoPath) {
+        updateActionState(ActionState.Normal);
+        if (onCameraTLRecordListener != null) {
+            onCameraTLRecordListener.onTLRecordSuccess(videoPath);
+        }
+    }
+
+    @Override
+    public void onTLRecordError() {
+        updateActionState(ActionState.Normal);
+        if (onCameraTLRecordListener != null) {
+            onCameraTLRecordListener.onTLRecordFail();
         }
     }
 

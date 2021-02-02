@@ -21,6 +21,10 @@ public enum ActionState {
      */
     Recording,
     /*
+    正在延时摄影
+     */
+    TLRecording,
+    /*
     正在进行叠加平均去噪
      */
     StackAvgRunning

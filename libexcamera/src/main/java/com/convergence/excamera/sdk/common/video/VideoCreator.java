@@ -67,6 +67,7 @@ public class VideoCreator implements Handler.Callback {
     private State curState;
     private String videoPath;
     private Size videoSize;
+    private int timeLapseRate;
     private int runTime;
     private long frameProvideDelay;
 
@@ -82,7 +83,6 @@ public class VideoCreator implements Handler.Callback {
         reset(true);
     }
 
-
     /**
      * 配置初始化
      *
@@ -90,9 +90,21 @@ public class VideoCreator implements Handler.Callback {
      * @param videoSize 视频分辨率
      */
     public void setup(String videoPath, Size videoSize) {
+        setup(videoPath, videoSize, 1);
+    }
+
+    /**
+     * 配置初始化
+     *
+     * @param videoPath     视频存储路径
+     * @param videoSize     视频分辨率
+     * @param timeLapseRate 延时摄影倍率
+     */
+    public void setup(String videoPath, Size videoSize, int timeLapseRate) {
         this.videoPath = videoPath;
         this.videoSize = videoSize;
-        frameProvideDelay = 1000L / frame;
+        this.timeLapseRate = Math.max(1, timeLapseRate);
+        frameProvideDelay = (long) ((float) this.timeLapseRate / frame * 1000);
         backgroundThread = new HandlerThread("VideoCreator");
         backgroundThread.start();
         backgroundHandler = new Handler(backgroundThread.getLooper());
@@ -208,7 +220,7 @@ public class VideoCreator implements Handler.Callback {
         if (!isRunning() || bitmap == null) {
             return;
         }
-        long timeUs = System.nanoTime() / 1000;
+        long timeUs = System.nanoTime() / 1000 / timeLapseRate;
         frameQueue.offer(new Frame(bitmap, timeUs));
     }
 

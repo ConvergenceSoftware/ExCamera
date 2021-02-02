@@ -20,8 +20,10 @@ import com.convergence.excamera.sdk.common.callback.ImgProvider;
 import com.convergence.excamera.sdk.common.callback.OnCameraPhotographListener;
 import com.convergence.excamera.sdk.common.callback.OnCameraRecordListener;
 import com.convergence.excamera.sdk.common.callback.OnCameraStackAvgListener;
+import com.convergence.excamera.sdk.common.callback.OnCameraTLRecordListener;
 import com.convergence.excamera.sdk.common.callback.OnTeleAFListener;
 import com.convergence.excamera.sdk.common.video.ExCameraRecorder;
+import com.convergence.excamera.sdk.common.video.ExCameraTLRecorder;
 import com.convergence.excamera.sdk.wifi.WifiCameraConstant;
 import com.convergence.excamera.sdk.wifi.WifiCameraState;
 import com.convergence.excamera.sdk.wifi.config.base.WifiAutoConfig;
@@ -40,15 +42,17 @@ import com.convergence.excamera.sdk.wifi.entity.WifiCameraSetting;
  * @Organization Convergence Ltd.
  */
 public class WifiCameraController implements Handler.Callback, ImgProvider, WifiCameraCommand.OnCommandListener,
-        ExCameraRecorder.OnRecordListener, PhotoSaver.OnPhotoSaverListener,
-        TeleFocusHelper.TeleAFCallback, FrameRateObserver.OnFrameRateListener, StackAvgOperator.OnStackAvgListener {
+        ExCameraRecorder.OnRecordListener, ExCameraTLRecorder.OnTLRecordListener,
+        PhotoSaver.OnPhotoSaverListener, StackAvgOperator.OnStackAvgListener,
+        TeleFocusHelper.TeleAFCallback, FrameRateObserver.OnFrameRateListener {
 
     private CameraLogger cameraLogger = WifiCameraConstant.GetLogger();
 
     private Context context;
     private WifiCameraView wifiCameraView;
     private WifiCameraCommand wifiCameraCommand;
-    private WifiCameraRecorder wifiCameraRecorder;
+    private ExCameraRecorder exCameraRecorder;
+    private ExCameraTLRecorder exCameraTLRecorder;
     private PhotoSaver photoSaver;
     private StackAvgOperator stackAvgOperator;
     private TeleFocusHelper teleFocusHelper;
@@ -60,6 +64,7 @@ public class WifiCameraController implements Handler.Callback, ImgProvider, Wifi
     private OnControlListener onControlListener;
     private OnCameraPhotographListener onCameraPhotographListener;
     private OnCameraRecordListener onCameraRecordListener;
+    private OnCameraTLRecordListener onCameraTLRecordListener;
     private OnCameraStackAvgListener onCameraStackAvgListener;
     private OnTeleAFListener onTeleAFListener;
 
@@ -67,7 +72,8 @@ public class WifiCameraController implements Handler.Callback, ImgProvider, Wifi
         this.context = context;
         this.wifiCameraView = wifiCameraView;
         wifiCameraCommand = new WifiCameraCommand(context, wifiCameraView);
-        wifiCameraRecorder = new WifiCameraRecorder(context, this, this);
+        exCameraRecorder = new ExCameraRecorder(context, this, this);
+        exCameraTLRecorder = new ExCameraTLRecorder(context, this, this);
         photoSaver = new PhotoSaver(this);
         stackAvgOperator = new StackAvgOperator.Builder(context, this)
                 .setOnStackAvgListener(this)
@@ -142,6 +148,13 @@ public class WifiCameraController implements Handler.Callback, ImgProvider, Wifi
      */
     public void setOnCameraRecordListener(OnCameraRecordListener onCameraRecordListener) {
         this.onCameraRecordListener = onCameraRecordListener;
+    }
+
+    /**
+     * 设置延时摄影监听
+     */
+    public void setOnCameraTLRecordListener(OnCameraTLRecordListener onCameraTLRecordListener) {
+        this.onCameraTLRecordListener = onCameraTLRecordListener;
     }
 
     /**
@@ -246,6 +259,7 @@ public class WifiCameraController implements Handler.Callback, ImgProvider, Wifi
                 break;
             case Recording:
             case StackAvgRunning:
+            case TLRecording:
                 if (onCameraPhotographListener != null) {
                     onCameraPhotographListener.onTakePhotoFail();
                 }
@@ -282,10 +296,11 @@ public class WifiCameraController implements Handler.Callback, ImgProvider, Wifi
                 }
                 WifiCameraResolution.Resolution resolution = wifiCameraSetting.getWifiCameraParam().getWifiCameraResolution().getCurResolution();
                 Size videoSize = new Size(resolution.getWidth(), resolution.getHeight());
-                wifiCameraRecorder.setup(path, videoSize);
+                exCameraRecorder.setup(path, videoSize);
                 break;
             case Photographing:
             case StackAvgRunning:
+            case TLRecording:
                 if (onCameraRecordListener != null) {
                     onCameraRecordListener.onRecordStartFail();
                 }
@@ -300,7 +315,58 @@ public class WifiCameraController implements Handler.Callback, ImgProvider, Wifi
      * 停止录像
      */
     public void stopRecord() {
-        wifiCameraRecorder.stop();
+        exCameraRecorder.stop();
+    }
+
+    /**
+     * 开始延时摄影
+     */
+    public void startTLRecord(int timeLapseRate) {
+        String path = OutputUtil.getRandomVideoPath(WifiCameraSP.getEditor(context).getCameraOutputRootPath());
+        startTLRecord(path, timeLapseRate);
+    }
+
+    /**
+     * 开始延时摄影（自定义路径）
+     */
+    public void startTLRecord(String path, int timeLapseRate) {
+        if (!isPreviewing()) {
+            if (onCameraTLRecordListener != null) {
+                onCameraTLRecordListener.onTLRecordStartFail();
+            }
+            return;
+        }
+        switch (curActionState) {
+            case Normal:
+                WifiCameraSetting wifiCameraSetting = WifiCameraSetting.getInstance();
+                if (!wifiCameraSetting.isAvailable()) {
+                    if (onCameraRecordListener != null) {
+                        onCameraRecordListener.onRecordStartFail();
+                    }
+                    break;
+                }
+                WifiCameraResolution.Resolution resolution = wifiCameraSetting.getWifiCameraParam().getWifiCameraResolution().getCurResolution();
+                Size videoSize = new Size(resolution.getWidth(), resolution.getHeight());
+                exCameraTLRecorder.setup(path, videoSize, timeLapseRate);
+                break;
+            case Photographing:
+            case Recording:
+            case StackAvgRunning:
+                if (onCameraTLRecordListener != null) {
+                    onCameraTLRecordListener.onTLRecordStartFail();
+                }
+                break;
+            case TLRecording:
+            default:
+                break;
+        }
+    }
+
+    /**
+     * 停止延时摄影
+     */
+    public void stopTLRecord() {
+        exCameraTLRecorder.stop();
     }
 
     /**
@@ -327,6 +393,7 @@ public class WifiCameraController implements Handler.Callback, ImgProvider, Wifi
                 break;
             case Photographing:
             case Recording:
+            case TLRecording:
                 if (onCameraStackAvgListener != null) {
                     onCameraStackAvgListener.onStackAvgError("Other task is working");
                 }
@@ -340,7 +407,7 @@ public class WifiCameraController implements Handler.Callback, ImgProvider, Wifi
     /**
      * 取消正在进行的叠加平均去噪
      */
-    public void cancelStackAvg(){
+    public void cancelStackAvg() {
         stackAvgOperator.cancel();
     }
 
@@ -552,6 +619,9 @@ public class WifiCameraController implements Handler.Callback, ImgProvider, Wifi
         if (curActionState == ActionState.Recording) {
             stopRecord();
         }
+        if (curActionState == ActionState.TLRecording) {
+            stopTLRecord();
+        }
         if (onControlListener != null) {
             onControlListener.onStreamStop(isRetry);
         }
@@ -603,7 +673,7 @@ public class WifiCameraController implements Handler.Callback, ImgProvider, Wifi
 
     @Override
     public void onSetupRecordSuccess() {
-        wifiCameraRecorder.start();
+        exCameraRecorder.start();
     }
 
     @Override
@@ -648,6 +718,56 @@ public class WifiCameraController implements Handler.Callback, ImgProvider, Wifi
         updateActionState(ActionState.Normal);
         if (onCameraRecordListener != null) {
             onCameraRecordListener.onRecordFail();
+        }
+    }
+
+    @Override
+    public void onSetupTLRecordSuccess() {
+        exCameraTLRecorder.start();
+    }
+
+    @Override
+    public void onSetupTLRecordError() {
+        if (onCameraTLRecordListener != null) {
+            onCameraTLRecordListener.onTLRecordStartFail();
+        }
+    }
+
+    @Override
+    public void onStartTLRecordSuccess() {
+        updateActionState(ActionState.TLRecording);
+        if (onCameraTLRecordListener != null) {
+            onCameraTLRecordListener.onTLRecordStartSuccess();
+        }
+    }
+
+    @Override
+    public void onStartTLRecordError() {
+        if (onCameraTLRecordListener != null) {
+            onCameraTLRecordListener.onTLRecordStartFail();
+        }
+    }
+
+    @Override
+    public void onTLRecordProgress(int recordTime) {
+        if (onCameraTLRecordListener != null) {
+            onCameraTLRecordListener.onTLRecordProgress(recordTime);
+        }
+    }
+
+    @Override
+    public void onTLRecordSuccess(String videoPath) {
+        updateActionState(ActionState.Normal);
+        if (onCameraTLRecordListener != null) {
+            onCameraTLRecordListener.onTLRecordSuccess(videoPath);
+        }
+    }
+
+    @Override
+    public void onTLRecordError() {
+        updateActionState(ActionState.Normal);
+        if (onCameraTLRecordListener != null) {
+            onCameraTLRecordListener.onTLRecordFail();
         }
     }
 
