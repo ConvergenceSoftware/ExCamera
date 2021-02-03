@@ -62,9 +62,6 @@ allprojects {
         maven {
             url 'https://gitee.com/wang_ziheng/libcommon/raw/master/repository/'
         }
-        maven {
-            url  "https://dl.bintray.com/cvgc/github"
-        }
     }
 }
 ```
@@ -74,7 +71,7 @@ allprojects {
 将依赖添加到你的 app `build.gradle` 文件：
 
 ```
-implementation 'com.convergence:excamera:1.0.4'
+implementation 'com.convergence:excamera:1.1.0'
 ```
 
 ***现在你就可以在你的项目中使用 ExCamera SDK 了。 :)***
@@ -197,6 +194,9 @@ OK，现在你就可以在你自己的应用中进行WiFi连接的预览了。
 |**开始录像（默认路径）**|UsbCameraController.startRecord()|WifiCameraController.startRecord()|
 |**开始录像（自定义路径）**|UsbCameraController.startRecord(String path)|WifiCameraController.startRecord(String path)|
 |**停止录像**|UsbCameraController.stopRecord()|WifiCameraController.stopRecord()|
+|**开始延时摄影（默认路径）**|UsbCameraController.startTLRecord()|WifiCameraController.startTLRecord()|
+|**开始延时摄影（自定义路径）**|UsbCameraController.startTLRecord(String path)|WifiCameraController.startTLRecord(String path)|
+|**停止延时摄影**|UsbCameraController.stopTLRecord()|WifiCameraController.stopTLRecord()|
 |**开始去噪拍照（默认路径）**|UsbCameraController.startStackAvg()|WifiCameraController.startStackAvg()|
 |**开始去噪拍照（自定义路径）**|UsbCameraController.startStackAvg(String path)|WifiCameraController.startStackAvg(String path)|
 |**取消去噪拍照**|UsbCameraController.cancelStackAvg()|WifiCameraController.cancelStackAvg()|
