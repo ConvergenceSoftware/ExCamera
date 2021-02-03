@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.convergence.excamera.IApp;
 import com.convergence.excamera.sdk.common.ActionState;
 import com.convergence.excamera.sdk.common.OutputUtil;
 import com.convergence.excamera.sdk.common.callback.OnCameraPhotographListener;
@@ -188,12 +189,12 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
 
             @Override
             public void onSuccess() {
-                Toast.makeText(context, "Done : " + width + " * " + height, Toast.LENGTH_SHORT).show();
+                IApp.showToast("Done : " + width + " * " + height);
             }
 
             @Override
             public void onFail() {
-                Toast.makeText(context, "Fail", Toast.LENGTH_SHORT).show();
+                IApp.showToast("Fail");
             }
         });
     }
@@ -481,7 +482,7 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
             fpsText.setText(OutputUtil.getAverageFPSText(0));
             fpsText.setVisibility(View.VISIBLE);
         }
-        Toast.makeText(context, isRetry ? "Restore" : "Connect", Toast.LENGTH_SHORT).show();
+        IApp.showToast(isRetry ? "Restore" : "Connect");
     }
 
     @Override
@@ -492,7 +493,7 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
         if (fpsText != null) {
             fpsText.setVisibility(View.GONE);
         }
-        Toast.makeText(context, isRetry ? "Retry" : "DisConnect", Toast.LENGTH_SHORT).show();
+        IApp.showToast(isRetry ? "Retry" : "DisConnect");
     }
 
     @Override
@@ -536,17 +537,17 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
 
     @Override
     public void onTakePhotoSuccess(String path) {
-        Toast.makeText(context, "Done : " + path, Toast.LENGTH_SHORT).show();
+        IApp.showToast("Done : " + path);
     }
 
     @Override
     public void onTakePhotoFail() {
-        Toast.makeText(context, "Fail", Toast.LENGTH_SHORT).show();
+        IApp.showToast("Fail");
     }
 
     @Override
     public void onRecordStartSuccess() {
-        Toast.makeText(context, "Start", Toast.LENGTH_SHORT).show();
+        IApp.showToast("Start");
         if (recordTimeText != null) {
             recordTimeText.setText(OutputUtil.getRecordTimeText(0));
             recordTimeText.setVisibility(View.VISIBLE);
@@ -555,7 +556,7 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
 
     @Override
     public void onRecordStartFail() {
-        Toast.makeText(context, "Fail", Toast.LENGTH_SHORT).show();
+        IApp.showToast("Fail");
     }
 
     @Override
@@ -567,7 +568,7 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
 
     @Override
     public void onRecordSuccess(String path) {
-        Toast.makeText(context, "Done : " + path, Toast.LENGTH_SHORT).show();
+        IApp.showToast("Done : " + path);
         if (recordTimeText != null) {
             recordTimeText.setVisibility(View.GONE);
         }
@@ -575,7 +576,7 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
 
     @Override
     public void onRecordFail() {
-        Toast.makeText(context, "Fail", Toast.LENGTH_SHORT).show();
+        IApp.showToast("Fail");
         if (recordTimeText != null) {
             recordTimeText.setVisibility(View.GONE);
         }
@@ -583,7 +584,7 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
 
     @Override
     public void onTLRecordStartSuccess() {
-        Toast.makeText(context, "Start", Toast.LENGTH_SHORT).show();
+        IApp.showToast("Start");
         if (recordTimeText != null) {
             recordTimeText.setText(OutputUtil.getLongRecordTimeText(0));
             recordTimeText.setVisibility(View.VISIBLE);
@@ -592,7 +593,7 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
 
     @Override
     public void onTLRecordStartFail() {
-        Toast.makeText(context, "Fail", Toast.LENGTH_SHORT).show();
+        IApp.showToast("Fail");
     }
 
     @Override
@@ -604,7 +605,7 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
 
     @Override
     public void onTLRecordSuccess(String path) {
-        Toast.makeText(context, "Done : " + path, Toast.LENGTH_SHORT).show();
+        IApp.showToast("Done : " + path);
         if (recordTimeText != null) {
             recordTimeText.setVisibility(View.GONE);
         }
@@ -612,7 +613,7 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
 
     @Override
     public void onTLRecordFail() {
-        Toast.makeText(context, "Fail", Toast.LENGTH_SHORT).show();
+        IApp.showToast("Fail");
         if (recordTimeText != null) {
             recordTimeText.setVisibility(View.GONE);
         }
@@ -620,22 +621,22 @@ public class WifiTeleCamManager implements CamManager, MirrorFlipLayout.OnMirror
 
     @Override
     public void onStackAvgStart() {
-        Toast.makeText(context, "Stack Avg Start", Toast.LENGTH_SHORT).show();
+        IApp.showToast("Stack Avg Start");
     }
 
     @Override
     public void onStackAvgCancel() {
-        Toast.makeText(context, "Stack Avg Cancel", Toast.LENGTH_SHORT).show();
+        IApp.showToast("Stack Avg Cancel");
     }
 
     @Override
     public void onStackAvgSuccess(Bitmap bitmap, String path) {
-        Toast.makeText(context, "Stack Avg Success : " + path, Toast.LENGTH_SHORT).show();
+        IApp.showToast("Stack Avg Success : " + path);
     }
 
     @Override
     public void onStackAvgError(String error) {
-        Toast.makeText(context, "Stack Avg Fail", Toast.LENGTH_SHORT).show();
+        IApp.showToast("Stack Avg Fail");
     }
 
     @Override

@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
+        android:name=".IApp"
         android:allowBackup="true"
         android:icon="@drawable/ic_app"
         android:label="@string/app_name"
@@ -52,7 +53,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.UsbMicroCamActivity"
+            android:name=".activity.camera.UsbMicroCamActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -63,15 +64,15 @@
                 android:resource="@xml/device_filter" />
         </activity>
         <activity
-            android:name=".activity.UsbTeleCamActivity"
+            android:name=".activity.camera.UsbTeleCamActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.WifiMicroCamActivity"
+            android:name=".activity.camera.WifiMicroCamActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.WifiTeleCamActivity"
+            android:name=".activity.camera.WifiTeleCamActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
 

@@ -2,6 +2,7 @@ package com.convergence.excamera.sdk.common.video;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.media.MediaScannerConnection;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
@@ -58,7 +59,6 @@ public class VideoCreator implements Handler.Callback {
     private int frame;
     private OnCreateVideoListener listener;
 
-    private MediaScanner mediaScanner;
     private Handler mainHandler;
     private Handler backgroundHandler;
     private HandlerThread backgroundThread;
@@ -76,7 +76,6 @@ public class VideoCreator implements Handler.Callback {
         this.imgProvider = builder.imgProvider;
         this.frame = builder.frame;
         this.listener = builder.listener;
-        mediaScanner = new MediaScanner(context);
         mp4MediaMuxer = new Mp4MediaMuxer();
         mainHandler = new Handler(this);
         frameQueue = new LinkedTransferQueue<>();
@@ -154,7 +153,8 @@ public class VideoCreator implements Handler.Callback {
     public void stop() {
         if (isRunning()) {
             if (new File(videoPath).exists()) {
-                mediaScanner.scanFile(videoPath, () -> sendMsg(MSG_WHAT_STOP_SUCCESS));
+                MediaScannerConnection.scanFile(context.getApplicationContext(), new String[]{videoPath}, null,
+                        (path, uri) -> sendMsg(MSG_WHAT_STOP_SUCCESS));
             } else {
                 sendMsg(MSG_WHAT_STOP_FAIL, "Video file doesn't exist");
             }

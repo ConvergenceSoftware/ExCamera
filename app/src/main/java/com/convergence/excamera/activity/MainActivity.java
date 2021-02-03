@@ -10,6 +10,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.convergence.excamera.R;
+import com.convergence.excamera.activity.camera.UsbMicroCamActivity;
+import com.convergence.excamera.activity.camera.UsbTeleCamActivity;
+import com.convergence.excamera.activity.camera.WifiMicroCamActivity;
+import com.convergence.excamera.activity.camera.WifiTeleCamActivity;
 import com.gyf.immersionbar.ImmersionBar;
 import com.permissionx.guolindev.PermissionX;
 

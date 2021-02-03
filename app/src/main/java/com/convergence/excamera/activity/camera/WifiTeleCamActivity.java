@@ -1,22 +1,17 @@
-package com.convergence.excamera.activity;
+package com.convergence.excamera.activity.camera;
 
-import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.convergence.excamera.R;
+import com.convergence.excamera.activity.ExCameraActivity;
 import com.convergence.excamera.manager.CamManager;
 import com.convergence.excamera.manager.WifiTeleCamManager;
 import com.convergence.excamera.sdk.wifi.core.WifiCameraView;
 import com.convergence.excamera.view.config.WifiTeleConfigLayout;
-import com.gyf.immersionbar.ImmersionBar;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 
@@ -27,7 +22,7 @@ import butterknife.OnLongClick;
  * @CreateDate 2020-11-17
  * @Organization Convergence Ltd.
  */
-public class WifiTeleCamActivity extends AppCompatActivity {
+public class WifiTeleCamActivity extends ExCameraActivity {
 
     @BindView(R.id.iv_close_activity_wifi_tele_camera)
     ImageView ivCloseActivityWifiTeleCamera;
@@ -46,19 +41,14 @@ public class WifiTeleCamActivity extends AppCompatActivity {
     @BindView(R.id.item_config_activity_wifi_tele_camera)
     WifiTeleConfigLayout itemConfigActivityWifiTeleCamera;
 
-    private CamManager camManager;
+    @Override
+    protected int onBindLayoutId() {
+        return R.layout.activity_wifi_tele_camera;
+    }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_wifi_tele_camera);
-        ButterKnife.bind(this);
-        ImmersionBar.with(this)
-                .transparentBar()
-                .statusBarDarkFont(true)
-                .navigationBarDarkIcon(true)
-                .init();
-        camManager = new WifiTeleCamManager.Builder(this, viewWifiCameraActivityWifiTeleCamera)
+    protected CamManager onBindCamManager() {
+        return new WifiTeleCamManager.Builder(this, viewWifiCameraActivityWifiTeleCamera)
                 .bindConfigLayout(itemConfigActivityWifiTeleCamera)
                 .bindRecordTimeText(tvRecordTimeActivityWifiTeleCamera)
                 .bindFpsText(tvFpsActivityWifiTeleCamera)
@@ -66,33 +56,8 @@ public class WifiTeleCamActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        camManager.onStart();
-    }
+    protected void init() {
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        camManager.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        camManager.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        camManager.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        camManager.onDestroy();
     }
 
     @OnClick({R.id.iv_close_activity_wifi_tele_camera, R.id.iv_take_photo_activity_wifi_tele_camera, R.id.iv_record_activity_wifi_tele_camera, R.id.iv_resolution_activity_wifi_tele_camera})

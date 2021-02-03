@@ -1,4 +1,4 @@
-package com.convergence.excamera.activity;
+package com.convergence.excamera.activity.camera;
 
 import android.os.Bundle;
 import android.view.View;
@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.convergence.excamera.R;
+import com.convergence.excamera.activity.ExCameraActivity;
 import com.convergence.excamera.manager.CamManager;
 import com.convergence.excamera.manager.WifiMicroCamManager;
 import com.convergence.excamera.sdk.wifi.core.WifiCameraView;
@@ -27,7 +28,7 @@ import butterknife.OnLongClick;
  * @CreateDate 2020-11-17
  * @Organization Convergence Ltd.
  */
-public class WifiMicroCamActivity extends AppCompatActivity {
+public class WifiMicroCamActivity extends ExCameraActivity {
 
     @BindView(R.id.iv_close_activity_wifi_micro_camera)
     ImageView ivCloseActivityWifiMicroCamera;
@@ -46,19 +47,14 @@ public class WifiMicroCamActivity extends AppCompatActivity {
     @BindView(R.id.item_config_activity_wifi_micro_camera)
     WifiMicroConfigLayout itemConfigActivityWifiMicroCamera;
 
-    private CamManager camManager;
+    @Override
+    protected int onBindLayoutId() {
+        return R.layout.activity_wifi_micro_camera;
+    }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_wifi_micro_camera);
-        ButterKnife.bind(this);
-        ImmersionBar.with(this)
-                .transparentBar()
-                .statusBarDarkFont(true)
-                .navigationBarDarkIcon(true)
-                .init();
-        camManager = new WifiMicroCamManager.Builder(this, viewWifiCameraActivityWifiMicroCamera)
+    protected CamManager onBindCamManager() {
+        return new WifiMicroCamManager.Builder(this, viewWifiCameraActivityWifiMicroCamera)
                 .bindConfigLayout(itemConfigActivityWifiMicroCamera)
                 .bindRecordTimeText(tvRecordTimeActivityWifiMicroCamera)
                 .bindFpsText(tvFpsActivityWifiMicroCamera)
@@ -66,33 +62,8 @@ public class WifiMicroCamActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        camManager.onStart();
-    }
+    protected void init() {
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        camManager.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        camManager.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        camManager.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        camManager.onDestroy();
     }
 
     @OnClick({R.id.iv_close_activity_wifi_micro_camera, R.id.iv_take_photo_activity_wifi_micro_camera, R.id.iv_record_activity_wifi_micro_camera, R.id.iv_resolution_activity_wifi_micro_camera})
