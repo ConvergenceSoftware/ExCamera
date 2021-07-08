@@ -45,7 +45,7 @@ dependencies {
     implementation "io.reactivex.rxjava3:rxjava:3.0.0"
 }
 
-publish {
+publish {//please remove it by yourself if troubles happen
     userOrg = 'cvgc'
     repoName = 'github'
     groupId = 'com.convergence'
