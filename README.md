@@ -50,30 +50,6 @@ Add the module `libexcamera` as a dependency to your app `build.gradle` file:
 implementation project(path: ':libexcamera')
 ```
 
-#### Ⅱ Import Gradle
-
-- Step 1.
-
-Add the following Gradle configuration to your Android project. In your root `build.gradle` file:
-
-```
-allprojects {
-    repositories {
-        maven {
-            url 'https://gitee.com/wang_ziheng/libcommon/raw/master/repository/'
-        }
-    }
-}
-```
-
-- Step 2.
-
-Add the dependency to your app `build.gradle` file:
-
-```
-implementation 'com.convergence:excamera:1.1.0'
-```
-
 ***Now, you are able to use ExCamera SDK in your project. :)***
 
 ------------

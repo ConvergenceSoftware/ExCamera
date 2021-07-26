@@ -50,29 +50,6 @@ allprojects {
 implementation project(path: ':libexcamera')
 ```
 
-#### Ⅱ 导入依赖
-
-- 步骤 1.
-
-添加下列的Gradle配置到你的Android项目。在里你的根目录 `build.gradle`文件中：
-
-```
-allprojects {
-    repositories {
-        maven {
-            url 'https://gitee.com/wang_ziheng/libcommon/raw/master/repository/'
-        }
-    }
-}
-```
-
-- 步骤 2.
-
-将依赖添加到你的 app `build.gradle` 文件：
-
-```
-implementation 'com.convergence:excamera:1.1.0'
-```
 
 ***现在你就可以在你的项目中使用 ExCamera SDK 了。 :)***
 
