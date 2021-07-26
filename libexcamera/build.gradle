@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release'//please remove it by yourself if troubles happen
+//apply plugin: 'com.novoda.bintray-release'//please remove it by yourself if troubles happen
 
 android {
     compileSdkVersion 29
@@ -45,7 +45,8 @@ dependencies {
     implementation "io.reactivex.rxjava3:rxjava:3.0.0"
 }
 
-publish {
+/*
+publish {//please remove it by yourself if troubles happen
     userOrg = 'cvgc'
     repoName = 'github'
     groupId = 'com.convergence'
@@ -54,3 +55,4 @@ publish {
     desc = 'Android SDK for devices designed by Convergence Ltd.'
     website = 'https://github.com/ConvergenceSoftware/ExCamera'
 }
+*/
