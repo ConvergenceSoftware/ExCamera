@@ -108,7 +108,7 @@ OK，现在你就可以在你自己的应用中进行USB连接的预览了。
 
 #### WiFi 连接
 
-**WiFi 连接 SDK** 是为连接到我们 **WiFi Box (V2版本及以上)**或**Planet** 的相机设备服务的，并且我们基于 [Retrofit2][Retrofit.link] + [OkHttp3][OkHttp.link] + [RxAndroid][RxAndroid.link] 开发的SDK，所以你需要**注意依赖冲突**。在通过WiFi连接到我们的相机设备之前，请确保你的手机/平板设备连接到WiFi Box创建的无线热点，如`ScopeCAM_V2_XXXXXXXX`。
+**WiFi 连接 SDK** 是为连接到我们 **WiFi Box (V2版本及以上)**或**Planet** 的相机设备服务的，并且我们基于 [Retrofit2][Retrofit.link] + [OkHttp3][OkHttp.link] + [RxAndroid][RxAndroid.link] 开发的SDK，所以你需要**注意依赖冲突**。在通过WiFi连接到我们的相机设备之前，请确保你的手机/平板设备连接到WiFi Box创建的无线热点，如`ScopeCAM_V2_XXXXXXXX`、`ScopeCAM_V3_XXXXXXXX`或`ScopeCAM_Planet_XXXXXXXX`。
 
 **ps.** 控制WiFi Box(Planet)的图传IP地址为`http://192.168.8.10:8080/`, 并且你可以在 [ApiService][ApiService.java] 中找到网络请求API。
 
@@ -447,50 +447,35 @@ OK，现在你就可以在你自己的应用中进行WiFi连接的预览了。
 
 ### 6. Planet 运动控制
 
-云台运动控制通过以下接口控制：
+云台运动通过以下接口控制：
 
 通信协议:HTTP
 接口地址:http://192.168.8.10:8092 
 请求方式:GET
 请求参数:
 |字段|说明|值类型|值|
-| :------------: | :------------: | :------------: |:------------: |
-|**id**|电机id|int|0-旋转 1-俯仰|
-|**controlType**|控制方式|int|0-停止
-1-正转
-2-反转
-3-复位|
+| :------------: | :------------ | :------------: |:------------ |
+|**id**|电机id|int|0-旋转<br>1-俯仰|
+|**controlType**|控制方式|int|0-停止<br>1-正转<br>2-反转<br>3-复位|
 |**time**|运行时间|int|>=0(单位:毫秒)|
-|**mode**|电机转动模式|int|0-指定速度
-1-指定时间和速度|
-|**speed**|电机速度，不是角速度①|int|>=400
-<=2000|
-|**subDivision**|电机细分|int|2
-4
-8
-16|
-|**returnTrip**|是否消除回程差|int|0-不消回程
-1-消回程|
+|**mode**|电机转动模式|int|0-指定速度<br>1-指定时间和速度|
+|**speed**|电机速度，不是角速度①|int|>=400<br><=2000|
+|**subDivision**|电机细分|int|2<br>4<br>8<br>16|
+|**returnTrip**|是否消除回程差|int|0-不消回程<br>1-消回程|
 |**returnTripTime**|消回程时间|int|>=0(单位:毫秒)|
-①电机的旋转角速度由两个参数决定：‘speed’和”subDivision”。 电机0的理论角速度等于3,662.109375/(speed*subDivision)，电机1的理论角速度等于1,831.0546875/(speed*subDivision)。
+
+①电机的旋转角速度由两个参数决定：‘speed’和”subDivision”。 电机0的理论角速度等于3,662.109375/(speed\*subDivision)，电机1的理论角速度等于1,831.0546875/(speed\*subDivision)。
 
 返回结果:
 |字段|说明|值类型|值|
-| :------------: | :------------: | :------------: |:------------: |
-|**id**|	电机id	int	0-旋转 1-俯仰
-|**location**|	电机位置	double	电机0:0-360
-电机1:30-150|
-|**posLimit**|电机正限位|int|0-不在正限位
-1-在正限位|
-|**negLimit**|电机负限位|int|0-不在负限位
-1-在负限位|
-|**resetFlag**|电机是否在复位位置|int|0-不在复位位置
-1-在复位位置|
-|**result**|执行结果|int|1000-执行ok
-1001-电机未初始化
-1002-电机正在运行
-1003-电机已停止
-1004-电机正在复位|
+| :------------: | :------------ | :------------: |:------------ |
+|**id**|电机id|int|0-旋转 1-俯仰|
+|**location**|电机位置|double|电机0:0-360<br>电机1:30-150|
+|**posLimit**|电机正限位|int|0-不在正限位<br>1-在正限位|
+|**negLimit**|电机负限位|int|0-不在负限位<br>1-在负限位|
+|**resetFlag**|电机是否在复位位置|int|0-不在复位位置<br>1-在复位位置|
+|**result**|执行结果|int|1000-执行ok<br>1001-电机未初始化<br>1002-电机正在运行<br>1003-电机已停止<br>1004-电机正在复位|
+
 使用示例 [PlanetCommand][PlanetCommand.java]。
 
 ------------
