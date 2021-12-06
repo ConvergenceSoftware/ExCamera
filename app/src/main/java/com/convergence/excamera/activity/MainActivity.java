@@ -10,7 +10,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.convergence.excamera.R;
-import com.convergence.excamera.activity.camera.PlanetTeleCamActivity;
 import com.convergence.excamera.activity.camera.UsbMicroCamActivity;
 import com.convergence.excamera.activity.camera.UsbTeleCamActivity;
 import com.convergence.excamera.activity.camera.WifiMicroCamActivity;
@@ -67,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @OnClick({R.id.tv_micro_usb_connect_activity_main, R.id.tv_micro_wifi_connect_activity_main, R.id.tv_tele_usb_connect_activity_main, R.id.tv_tele_wifi_connect_activity_main, R.id.tv_tele_planet_connect_activity_main})
+    @OnClick({R.id.tv_micro_usb_connect_activity_main, R.id.tv_micro_wifi_connect_activity_main, R.id.tv_tele_usb_connect_activity_main, R.id.tv_tele_wifi_connect_activity_main})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_micro_usb_connect_activity_main:
@@ -81,9 +80,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.tv_tele_wifi_connect_activity_main:
                 startActivity(WifiTeleCamActivity.class);
-                break;
-            case R.id.tv_tele_planet_connect_activity_main:
-                startActivity(PlanetTeleCamActivity.class);
                 break;
             default:
                 break;
