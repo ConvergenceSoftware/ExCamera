@@ -107,7 +107,7 @@ Well, you are able to preview on you own application by USB Connection now.
 
 #### WiFi Connection
 
-**WiFi Connection SDK** serves for our camera device that connected to **WiFi Box (V2 and above)**, and we develop the SDK with [Retrofit2][Retrofit.link] + [OkHttp3][OkHttp.link] + [RxAndroid][RxAndroid.link], so you need to **pay attention to dependencies conflicts**. Before connecting to our device by WiFi, please make sure your phone/pad device is connected to the wireless hotspot issued by WiFi Box, like `ScopeCAM_V2_XXXXXXXX`
+**WiFi Connection SDK** serves for our camera device that connected to **WiFi Box (V2 and above)** or **Planet**, and we develop the SDK with [Retrofit2][Retrofit.link] + [OkHttp3][OkHttp.link] + [RxAndroid][RxAndroid.link], so you need to **pay attention to dependencies conflicts**. Before connecting to our device by WiFi, please make sure your phone/pad device is connected to the wireless hotspot issued by WiFi Box, like `ScopeCAM_V2_XXXXXXXX`, `ScopeCAM_V3_XXXXXXXX` or `ScopeCAM_Planet_XXXXXXXX`
 
 **ps.** The IP address to control the WiFi Box is `http://192.168.8.10:8080/`, and you can find the network API from [ApiService][ApiService.java]
 
@@ -189,48 +189,48 @@ For USB Connection, all configurations are saved as [UVCConfig][UVCConfig.java] 
 
 ##### Auto Config
 
-|Configuration|TAG(UVCConfig)|TAG(UVCCamera)|MicroScope CAM|
-| :------------: | :------------: | :------------: | :------------: |
-|**FocusAuto**|TAG_AUTO_FOCUS_AUTO|CTRL_FOCUS_AUTO|✔|
-|Privacy|TAG_AUTO_PRIVACY|CTRL_PRIVACY|✖|
-|**WhiteBalanceAuto**|TAG_AUTO_WHITE_BALANCE_AUTO|PU_WB_TEMP_AUTO|✔|
-|WhiteBalanceComponentAuto|TAG_AUTO_WHITE_BALANCE_COMPONENT_AUTO|PU_WB_COMPO_AUTO|✖|
+|Configuration|TAG(UVCConfig)|TAG(UVCCamera)|MicroScope CAM|TeleScope CAM|
+| :------------: | :------------: | :------------: | :------------: | :------------: |
+|**FocusAuto**|TAG_AUTO_FOCUS_AUTO|CTRL_FOCUS_AUTO|✔|✔|
+|Privacy|TAG_AUTO_PRIVACY|CTRL_PRIVACY|✖|✖|
+|**WhiteBalanceAuto**|TAG_AUTO_WHITE_BALANCE_AUTO|PU_WB_TEMP_AUTO|✔|✔|
+|WhiteBalanceComponentAuto|TAG_AUTO_WHITE_BALANCE_COMPONENT_AUTO|PU_WB_COMPO_AUTO|✖|✖|
 
 ##### Param Config
 
-|Configuration|TAG(UVCConfig)|TAG(UVCCamera)|MicroScope CAM|
-| :------------: | :------------: | :------------: | :------------: |
-|ScanningMode|TAG_PARAM_SCANNING_MODE|CTRL_SCANNING|✖|
-|**ExposureMode**|TAG_PARAM_EXPOSURE_MODE|CTRL_AE|✔|
-|ExposurePriority|TAG_PARAM_EXPOSURE_PRIORITY|CTRL_AE_PRIORITY|✖|
-|**Exposure**|TAG_PARAM_EXPOSURE|CTRL_AE_ABS|✔|
-|**Focus**|TAG_PARAM_FOCUS|CTRL_FOCUS_ABS|✔|
-|FocusRel|TAG_PARAM_FOCUS_REL|CTRL_FOCUS_REL|✖|
-|Iris|TAG_PARAM_IRIS|CTRL_IRIS_ABS|✖|
-|IrisRel|TAG_PARAM_IRIS_REL|CTRL_IRIS_REL|✖|
-|**Zoom**|TAG_PARAM_ZOOM|CTRL_ZOOM_ABS|✖|
-|ZoomRel|TAG_PARAM_ZOOM_REL|CTRL_ZOOM_REL|✖|
-|Pan|TAG_PARAM_PAN|CTRL_PANTILT_ABS|✖|
-|PanRel|TAG_PARAM_PAN_REL|CTRL_PANTILT_REL|✖|
-|Tilt|TAG_PARAM_TILT|CTRL_PANTILT_ABS|✖|
-|TiltRel|TAG_PARAM_TILT_REL|CTRL_PANTILT_REL|✖|
-|**Roll**|TAG_PARAM_ROLL|CTRL_ROLL_ABS|✖|
-|RollRel|TAG_PARAM_ROLL_REL|CTRL_ROLL_REL|✖|
-|**Brightness**|TAG_PARAM_BRIGHTNESS|PU_BRIGHTNESS|✔|
-|**Contrast**|TAG_PARAM_CONTRAST|PU_CONTRAST|✔|
-|**Hue**|TAG_PARAM_HUE|PU_HUE|✔|
-|**Saturation**|TAG_PARAM_SATURATION|PU_SATURATION|✔|
-|**Sharpness**|TAG_PARAM_SHARPNESS|PU_SHARPNESS|✔|
-|**Gamma**|TAG_PARAM_GAMMA|PU_GAMMA|✔|
-|**Gain**|TAG_PARAM_GAIN|PU_GAIN|✖|
-|**WhiteBalance**|TAG_PARAM_WHITE_BALANCE|PU_WB_TEMP|✔|
-|WhiteBalanceComponent|TAG_PARAM_WHITE_BALANCE_COMPONENT|PU_WB_COMPO|✖|
-|BacklightCompensation|TAG_PARAM_BACKLIGHT_COMPENSATION|PU_BACKLIGHT|✔|
-|PowerLineFrequency|TAG_PARAM_POWER_LINE_FREQUENCY|PU_POWER_LF|✔|
-|DigitalMultiplier|TAG_PARAM_DIGITAL_MULTIPLIER|PU_DIGITAL_MULT|✖|
-|DigitalMultiplierLimit|TAG_PARAM_DIGITAL_MULTIPLIER_LIMIT|PU_DIGITAL_LIMIT|✖|
-|AnalogVideoStandard|TAG_PARAM_ANALOG_VIDEO_STANDARD|PU_AVIDEO_STD|✖|
-|AnalogVideoLockStatus|TAG_PARAM_ANALOG_VIDEO_LOCK_STATUS|PU_AVIDEO_LOCK|✖|
+|Configuration|TAG(UVCConfig)|TAG(UVCCamera)|MicroScope CAM|TeleScope CAM|
+| :------------: | :------------: | :------------: | :------------: | :------------: |
+|ScanningMode|TAG_PARAM_SCANNING_MODE|CTRL_SCANNING|✖|✖|
+|**ExposureMode**|TAG_PARAM_EXPOSURE_MODE|CTRL_AE|✔|✔|
+|ExposurePriority|TAG_PARAM_EXPOSURE_PRIORITY|CTRL_AE_PRIORITY|✖|✖|
+|**Exposure**|TAG_PARAM_EXPOSURE|CTRL_AE_ABS|✔|✔|
+|**Focus**|TAG_PARAM_FOCUS|CTRL_FOCUS_ABS|✔|✔|
+|FocusRel|TAG_PARAM_FOCUS_REL|CTRL_FOCUS_REL|✖|✖|
+|Iris|TAG_PARAM_IRIS|CTRL_IRIS_ABS|✖|✖|
+|IrisRel|TAG_PARAM_IRIS_REL|CTRL_IRIS_REL|✖|✖|
+|**Zoom**|TAG_PARAM_ZOOM|CTRL_ZOOM_ABS|✖|✖|
+|ZoomRel|TAG_PARAM_ZOOM_REL|CTRL_ZOOM_REL|✖|✖|
+|Pan|TAG_PARAM_PAN|CTRL_PANTILT_ABS|✖|✖|
+|PanRel|TAG_PARAM_PAN_REL|CTRL_PANTILT_REL|✖|✖|
+|Tilt|TAG_PARAM_TILT|CTRL_PANTILT_ABS|✖|✖|
+|TiltRel|TAG_PARAM_TILT_REL|CTRL_PANTILT_REL|✖|✖|
+|**Roll**|TAG_PARAM_ROLL|CTRL_ROLL_ABS|✖|✖|
+|RollRel|TAG_PARAM_ROLL_REL|CTRL_ROLL_REL|✖|✖|
+|**Brightness**|TAG_PARAM_BRIGHTNESS|PU_BRIGHTNESS|✔|✔|
+|**Contrast**|TAG_PARAM_CONTRAST|PU_CONTRAST|✔|✔|
+|**Hue**|TAG_PARAM_HUE|PU_HUE|✔|✔|
+|**Saturation**|TAG_PARAM_SATURATION|PU_SATURATION|✔|✔|
+|**Sharpness**|TAG_PARAM_SHARPNESS|PU_SHARPNESS|✔|✔|
+|**Gamma**|TAG_PARAM_GAMMA|PU_GAMMA|✔|✔|
+|**Gain**|TAG_PARAM_GAIN|PU_GAIN|✖|✔|
+|**WhiteBalance**|TAG_PARAM_WHITE_BALANCE|PU_WB_TEMP|✔|✔|
+|WhiteBalanceComponent|TAG_PARAM_WHITE_BALANCE_COMPONENT|PU_WB_COMPO|✖|✖|
+|BacklightCompensation|TAG_PARAM_BACKLIGHT_COMPENSATION|PU_BACKLIGHT|✔|✔|
+|PowerLineFrequency|TAG_PARAM_POWER_LINE_FREQUENCY|PU_POWER_LF|✔|✔|
+|DigitalMultiplier|TAG_PARAM_DIGITAL_MULTIPLIER|PU_DIGITAL_MULT|✖|✖|
+|DigitalMultiplierLimit|TAG_PARAM_DIGITAL_MULTIPLIER_LIMIT|PU_DIGITAL_LIMIT|✖|✖|
+|AnalogVideoStandard|TAG_PARAM_ANALOG_VIDEO_STANDARD|PU_AVIDEO_STD|✖|✖|
+|AnalogVideoLockStatus|TAG_PARAM_ANALOG_VIDEO_LOCK_STATUS|PU_AVIDEO_LOCK|✖|✖|
 
 ##### Usage
 
@@ -290,29 +290,29 @@ Similarly, for WiFi Connection, all configurations are saved as [WifiConfig][Wif
 
 ##### Auto Config
 
-|Configuration|TAG(WifiConfig)|ID|MicroScope CAM|
-| :------------: | :------------: | :------------: |:------------: |
-|**FocusAuto**|TAG_AUTO_FOCUS_AUTO|10094860|✔|
-|**WhiteBalanceAuto**|TAG_AUTO_WHITE_BALANCE_AUTO|9963788|✔|
-|**ExposureAuto**|TAG_AUTO_EXPOSURE_AUTO|10094849|✔|
+|Configuration|TAG(WifiConfig)|ID|MicroScope CAM|TeleScope CAM|
+| :------------: | :------------: | :------------: |:------------: |:------------: |
+|**FocusAuto**|TAG_AUTO_FOCUS_AUTO|10094860|✔|✔|
+|**WhiteBalanceAuto**|TAG_AUTO_WHITE_BALANCE_AUTO|9963788|✔|✔|
+|**ExposureAuto**|TAG_AUTO_EXPOSURE_AUTO|10094849|✔|✔|
 
 ##### Param Config
 
-|Configuration|TAG(WifiConfig)|ID|MicroScope CAM|
-| :------------: | :------------: | :------------: |:------------: |
-|**Focus**|TAG_PARAM_FOCUS|10094858|✔|
-|**WhiteBalance**|TAG_PARAM_WHITE_BALANCE|9963802|✔|
-|**Exposure**|TAG_PARAM_EXPOSURE|10094850|✔|
-|**Brightness**|TAG_PARAM_BRIGHTNESS|9963776|✔|
-|**Contrast**|TAG_PARAM_CONTRAST|9963777|✔|
-|**Saturation**|TAG_PARAM_SATURATION|9963778|✔|
-|**Hue**|TAG_PARAM_HUE|9963779|✔|
-|**Gamma**|TAG_PARAM_GAMMA|9963792|✔|
-|**Gain**|TAG_PARAM_GAIN|9963795|✖|
-|**Sharpness**|TAG_PARAM_SHARPNESS|9963803|✔|
-|BacklightCompensation|TAG_PARAM_BACKLIGHT_COMPENSATION|9963804|✔|
-|PowerLineFrequency|TAG_PARAM_POWER_LINE_Frequency|9963800|✔|
-|JpegQuality|TAG_PARAM_JPEG_QUALITY|1|✖|
+|Configuration|TAG(WifiConfig)|ID|MicroScope CAM|TeleScope CAM|
+| :------------: | :------------: | :------------: |:------------: |:------------: |
+|**Focus**|TAG_PARAM_FOCUS|10094858|✔|✔|
+|**WhiteBalance**|TAG_PARAM_WHITE_BALANCE|9963802|✔|✔|
+|**Exposure**|TAG_PARAM_EXPOSURE|10094850|✔|✔|
+|**Brightness**|TAG_PARAM_BRIGHTNESS|9963776|✔|✔|
+|**Contrast**|TAG_PARAM_CONTRAST|9963777|✔|✔|
+|**Saturation**|TAG_PARAM_SATURATION|9963778|✔|✔|
+|**Hue**|TAG_PARAM_HUE|9963779|✔|✔|
+|**Gamma**|TAG_PARAM_GAMMA|9963792|✔|✔|
+|**Gain**|TAG_PARAM_GAIN|9963795|✖|✔|
+|**Sharpness**|TAG_PARAM_SHARPNESS|9963803|✔|✖|
+|BacklightCompensation|TAG_PARAM_BACKLIGHT_COMPENSATION|9963804|✔|✔|
+|PowerLineFrequency|TAG_PARAM_POWER_LINE_Frequency|9963800|✔|✔|
+|JpegQuality|TAG_PARAM_JPEG_QUALITY|1|✖|✖|
 
 ##### Usage
 
@@ -444,7 +444,45 @@ For `Exposure` of **MicroScope CAM**, it will be **Auto** when `ExposureAuto = 3
 
 ------------
 
-### 6. Default Setting
+### 6. Planet Rotatement Control
+
+Planet rotatement is controlled through the following interface:
+
+Communication protocol:HTTP
+
+Request URL:http://192.168.8.10:8092 
+
+Request Method:GET
+
+Request Parameter:
+|Parameter|Explanation|Value Type|Value|
+| :------------: | :------------ | :------------: |:------------ |
+|**id**|Motor id|int|0-Spin<br>1-Pitch|
+|**controlType**|Control type|int|0-Stop<br>1-Clockwise<br>2-Counterclockwise<br>3-Reset the position|
+|**time**|Time|int|>=0 unit(milliseconds)|
+|**mode**|Motor rotate mode|int|0-Specified speed<br>1-Specified time and speed|
+|**speed**|Motor speed, not the angular velocity①|int|>=400<br><=2000|
+|**subDivision**|Motor subdivision|int|2<br>4<br>8<br>16|
+|**returnTrip**|Whether to eliminate the return error|int|0-Not eliminate the return error<br>1-Eliminate the return error|
+|**returnTripTime**|Eliminate return error time|int|>=0 unit(milliseconds)|
+
+①The rotate angular velocity of the motor is determined by two parameter: “speed” and “subDivision”. The theoretical angular velocity of motor 0 is equal to 3,662.109375/(speed\*subDivision), and the theoretical angular velocity of motor 1 is equal to 1,831.0546875/(speed\*subDivision).
+
+Return Result:
+|Parameter|Explanation|Value Type|Value|
+| :------------: | :------------ | :------------: |:------------ |
+|**id**|Motor id|int|0-Spin<br>1-Pitch|
+location**|The location of the motor|double|Motor 0:0-360<br>Motor 1:30-150|
+|**posLimit**|Motor position limit|int|0-Not in the positivie limit<br>1-In the positive limit|
+|**negLimit**|Motor negetive limit|int|0-Not in the negetive limit<br>1-In the negetive limit|
+|**resetFlag**|Is the motor in the reset position|int|0-In the reset position<br>1-Not in the reset position|
+|**result**|Return result|int|1000-ok<br>1001-The motor isn't initialized<br>1002-The motor is running<br>1003-The motor has already stopped<br>1004-The motor is resetting the position|
+
+Usage example [PlanetCommand][PlanetCommand.java]。
+
+------------
+
+### 7. Default Setting
 
 Default setting for USB Connection : [UsbCameraConstant][UsbCameraConstant.java]
 
