@@ -108,9 +108,9 @@ OK，现在你就可以在你自己的应用中进行USB连接的预览了。
 
 #### WiFi 连接
 
-**WiFi 连接 SDK** 是为连接到我们 **WiFi Box (V2版本及以上)**或**Planet** 的相机设备服务的，并且我们基于 [Retrofit2][Retrofit.link] + [OkHttp3][OkHttp.link] + [RxAndroid][RxAndroid.link] 开发的SDK，所以你需要**注意依赖冲突**。在通过WiFi连接到我们的相机设备之前，请确保你的手机/平板设备连接到WiFi Box创建的无线热点，如`ScopeCAM_V2_XXXXXXXX`、`ScopeCAM_V3_XXXXXXXX`或`ScopeCAM_Planet_XXXXXXXX`。
+**WiFi 连接 SDK** 是为连接到我们 **WiFi Box (V2版本及以上)** 的相机设备服务的，并且我们基于 [Retrofit2][Retrofit.link] + [OkHttp3][OkHttp.link] + [RxAndroid][RxAndroid.link] 开发的SDK，所以你需要**注意依赖冲突**。在通过WiFi连接到我们的相机设备之前，请确保你的手机/平板设备连接到WiFi Box创建的无线热点，如`ScopeCAM_V2_XXXXXXXX`。
 
-**ps.** 控制WiFi Box(Planet)的图传IP地址为`http://192.168.8.10:8080/`, 并且你可以在 [ApiService][ApiService.java] 中找到网络请求API。
+**ps.** 控制WiFi Box的IP地址为`http://192.168.8.10:8080/`, 并且你可以在 [ApiService][ApiService.java] 中找到网络请求API。
 
 1. 首先，我们通过网络请求`?action=stream`接口获取图像数据流InputStream，通过数据流我们可以解析成图像Bitmap。InputStream应写成单例模式，否则可能导致超大内存占用或者内存溢出。总之，在Activity生命周期`onStart`中请求图像数据流并在`onStop`中释放资源。
 
@@ -190,48 +190,48 @@ OK，现在你就可以在你自己的应用中进行WiFi连接的预览了。
 
 ##### Auto 参数
 
-|参数|标识（UVCConfig）|标识（UVCCamera）|显微相机|望远相机|
-| :------------: | :------------: | :------------: | :------------: | :------------: |
-|**FocusAuto**|TAG_AUTO_FOCUS_AUTO|CTRL_FOCUS_AUTO|✔|✔|
-|Privacy|TAG_AUTO_PRIVACY|CTRL_PRIVACY|✖|✖|
-|**WhiteBalanceAuto**|TAG_AUTO_WHITE_BALANCE_AUTO|PU_WB_TEMP_AUTO|✔|✔|
-|WhiteBalanceComponentAuto|TAG_AUTO_WHITE_BALANCE_COMPONENT_AUTO|PU_WB_COMPO_AUTO|✖|✖|
+|参数|标识（UVCConfig）|标识（UVCCamera）|显微相机|
+| :------------: | :------------: | :------------: | :------------: |
+|**FocusAuto**|TAG_AUTO_FOCUS_AUTO|CTRL_FOCUS_AUTO|✔|
+|Privacy|TAG_AUTO_PRIVACY|CTRL_PRIVACY|✖|
+|**WhiteBalanceAuto**|TAG_AUTO_WHITE_BALANCE_AUTO|PU_WB_TEMP_AUTO|✔|
+|WhiteBalanceComponentAuto|TAG_AUTO_WHITE_BALANCE_COMPONENT_AUTO|PU_WB_COMPO_AUTO|✖|
 
 ##### Param 参数
 
-|参数|标识（UVCConfig）|标识（UVCCamera）|显微相机|望远相机|
-| :------------: | :------------: | :------------: | :------------: | :------------: |
-|ScanningMode|TAG_PARAM_SCANNING_MODE|CTRL_SCANNING|✖|✖|
-|**ExposureMode**|TAG_PARAM_EXPOSURE_MODE|CTRL_AE|✔|✔|
-|ExposurePriority|TAG_PARAM_EXPOSURE_PRIORITY|CTRL_AE_PRIORITY|✖|✖|
-|**Exposure**|TAG_PARAM_EXPOSURE|CTRL_AE_ABS|✔|✔|
-|**Focus**|TAG_PARAM_FOCUS|CTRL_FOCUS_ABS|✔|✔|
-|FocusRel|TAG_PARAM_FOCUS_REL|CTRL_FOCUS_REL|✖|✖|
-|Iris|TAG_PARAM_IRIS|CTRL_IRIS_ABS|✖|✖|
-|IrisRel|TAG_PARAM_IRIS_REL|CTRL_IRIS_REL|✖|✖|
-|**Zoom**|TAG_PARAM_ZOOM|CTRL_ZOOM_ABS|✖|✖|
-|ZoomRel|TAG_PARAM_ZOOM_REL|CTRL_ZOOM_REL|✖|✖|
-|Pan|TAG_PARAM_PAN|CTRL_PANTILT_ABS|✖|✖|
-|PanRel|TAG_PARAM_PAN_REL|CTRL_PANTILT_REL|✖|✖|
-|Tilt|TAG_PARAM_TILT|CTRL_PANTILT_ABS|✖|✖|
-|TiltRel|TAG_PARAM_TILT_REL|CTRL_PANTILT_REL|✖|✖|
-|**Roll**|TAG_PARAM_ROLL|CTRL_ROLL_ABS|✖|✖|
-|RollRel|TAG_PARAM_ROLL_REL|CTRL_ROLL_REL|✖|✖|
-|**Brightness**|TAG_PARAM_BRIGHTNESS|PU_BRIGHTNESS|✔|✔|
-|**Contrast**|TAG_PARAM_CONTRAST|PU_CONTRAST|✔|✔|
-|**Hue**|TAG_PARAM_HUE|PU_HUE|✔|✔|
-|**Saturation**|TAG_PARAM_SATURATION|PU_SATURATION|✔|✔|
-|**Sharpness**|TAG_PARAM_SHARPNESS|PU_SHARPNESS|✔|✖|
-|**Gamma**|TAG_PARAM_GAMMA|PU_GAMMA|✔|✔|
-|**Gain**|TAG_PARAM_GAIN|PU_GAIN|✖|✔|
-|**WhiteBalance**|TAG_PARAM_WHITE_BALANCE|PU_WB_TEMP|✔|✔|
-|WhiteBalanceComponent|TAG_PARAM_WHITE_BALANCE_COMPONENT|PU_WB_COMPO|✖|✖|
-|BacklightCompensation|TAG_PARAM_BACKLIGHT_COMPENSATION|PU_BACKLIGHT|✔|✔|
-|PowerLineFrequency|TAG_PARAM_POWER_LINE_FREQUENCY|PU_POWER_LF|✔|✔|
-|DigitalMultiplier|TAG_PARAM_DIGITAL_MULTIPLIER|PU_DIGITAL_MULT|✖|✖|
-|DigitalMultiplierLimit|TAG_PARAM_DIGITAL_MULTIPLIER_LIMIT|PU_DIGITAL_LIMIT|✖|✖|
-|AnalogVideoStandard|TAG_PARAM_ANALOG_VIDEO_STANDARD|PU_AVIDEO_STD|✖|✖|
-|AnalogVideoLockStatus|TAG_PARAM_ANALOG_VIDEO_LOCK_STATUS|PU_AVIDEO_LOCK|✖|✖|
+|参数|标识（UVCConfig）|标识（UVCCamera）|显微相机|
+| :------------: | :------------: | :------------: | :------------: |
+|ScanningMode|TAG_PARAM_SCANNING_MODE|CTRL_SCANNING|✖|
+|**ExposureMode**|TAG_PARAM_EXPOSURE_MODE|CTRL_AE|✔|
+|ExposurePriority|TAG_PARAM_EXPOSURE_PRIORITY|CTRL_AE_PRIORITY|✖|
+|**Exposure**|TAG_PARAM_EXPOSURE|CTRL_AE_ABS|✔|
+|**Focus**|TAG_PARAM_FOCUS|CTRL_FOCUS_ABS|✔|
+|FocusRel|TAG_PARAM_FOCUS_REL|CTRL_FOCUS_REL|✖|
+|Iris|TAG_PARAM_IRIS|CTRL_IRIS_ABS|✖|
+|IrisRel|TAG_PARAM_IRIS_REL|CTRL_IRIS_REL|✖|
+|**Zoom**|TAG_PARAM_ZOOM|CTRL_ZOOM_ABS|✖|
+|ZoomRel|TAG_PARAM_ZOOM_REL|CTRL_ZOOM_REL|✖|
+|Pan|TAG_PARAM_PAN|CTRL_PANTILT_ABS|✖|
+|PanRel|TAG_PARAM_PAN_REL|CTRL_PANTILT_REL|✖|
+|Tilt|TAG_PARAM_TILT|CTRL_PANTILT_ABS|✖|
+|TiltRel|TAG_PARAM_TILT_REL|CTRL_PANTILT_REL|✖|
+|**Roll**|TAG_PARAM_ROLL|CTRL_ROLL_ABS|✖|
+|RollRel|TAG_PARAM_ROLL_REL|CTRL_ROLL_REL|✖|
+|**Brightness**|TAG_PARAM_BRIGHTNESS|PU_BRIGHTNESS|✔|
+|**Contrast**|TAG_PARAM_CONTRAST|PU_CONTRAST|✔|
+|**Hue**|TAG_PARAM_HUE|PU_HUE|✔|
+|**Saturation**|TAG_PARAM_SATURATION|PU_SATURATION|✔|
+|**Sharpness**|TAG_PARAM_SHARPNESS|PU_SHARPNESS|✔|
+|**Gamma**|TAG_PARAM_GAMMA|PU_GAMMA|✔|
+|**Gain**|TAG_PARAM_GAIN|PU_GAIN|✖|
+|**WhiteBalance**|TAG_PARAM_WHITE_BALANCE|PU_WB_TEMP|✔|
+|WhiteBalanceComponent|TAG_PARAM_WHITE_BALANCE_COMPONENT|PU_WB_COMPO|✖|
+|BacklightCompensation|TAG_PARAM_BACKLIGHT_COMPENSATION|PU_BACKLIGHT|✔|
+|PowerLineFrequency|TAG_PARAM_POWER_LINE_FREQUENCY|PU_POWER_LF|✔|
+|DigitalMultiplier|TAG_PARAM_DIGITAL_MULTIPLIER|PU_DIGITAL_MULT|✖|
+|DigitalMultiplierLimit|TAG_PARAM_DIGITAL_MULTIPLIER_LIMIT|PU_DIGITAL_LIMIT|✖|
+|AnalogVideoStandard|TAG_PARAM_ANALOG_VIDEO_STANDARD|PU_AVIDEO_STD|✖|
+|AnalogVideoLockStatus|TAG_PARAM_ANALOG_VIDEO_LOCK_STATUS|PU_AVIDEO_LOCK|✖|
 
 ##### 使用方法
 
@@ -291,29 +291,29 @@ OK，现在你就可以在你自己的应用中进行WiFi连接的预览了。
 
 ##### Auto 参数
 
-|参数|标识（WifiConfig）|ID|显微相机|望远相机|
-| :------------: | :------------: | :------------: |:------------: |:------------: |
-|**FocusAuto**|TAG_AUTO_FOCUS_AUTO|10094860|✔|✔|
-|**WhiteBalanceAuto**|TAG_AUTO_WHITE_BALANCE_AUTO|9963788|✔|✔|
-|**ExposureAuto**|TAG_AUTO_EXPOSURE_AUTO|10094849|✔|✔|
+|参数|标识（WifiConfig）|ID|显微相机|
+| :------------: | :------------: | :------------: |:------------: |
+|**FocusAuto**|TAG_AUTO_FOCUS_AUTO|10094860|✔|
+|**WhiteBalanceAuto**|TAG_AUTO_WHITE_BALANCE_AUTO|9963788|✔|
+|**ExposureAuto**|TAG_AUTO_EXPOSURE_AUTO|10094849|✔|
 
 ##### Param 参数
 
-|参数|标识（WifiConfig）|ID|显微相机|望远相机|
-| :------------: | :------------: | :------------: |:------------: |:------------: |
-|**Focus**|TAG_PARAM_FOCUS|10094858|✔|✔|
-|**WhiteBalance**|TAG_PARAM_WHITE_BALANCE|9963802|✔|✔|
-|**Exposure**|TAG_PARAM_EXPOSURE|10094850|✔|✔|
-|**Brightness**|TAG_PARAM_BRIGHTNESS|9963776|✔|✔|
-|**Contrast**|TAG_PARAM_CONTRAST|9963777|✔|✔|
-|**Saturation**|TAG_PARAM_SATURATION|9963778|✔|✔|
-|**Hue**|TAG_PARAM_HUE|9963779|✔|✔|
-|**Gamma**|TAG_PARAM_GAMMA|9963792|✔|✔|
-|**Gain**|TAG_PARAM_GAIN|9963795|✖|✔|
-|**Sharpness**|TAG_PARAM_SHARPNESS|9963803|✔|✖|
-|BacklightCompensation|TAG_PARAM_BACKLIGHT_COMPENSATION|9963804|✔|✔|
-|PowerLineFrequency|TAG_PARAM_POWER_LINE_Frequency|9963800|✔|✔|
-|JpegQuality|TAG_PARAM_JPEG_QUALITY|1|✖|✖|
+|参数|标识（WifiConfig）|ID|显微相机|
+| :------------: | :------------: | :------------: |:------------: |
+|**Focus**|TAG_PARAM_FOCUS|10094858|✔|
+|**WhiteBalance**|TAG_PARAM_WHITE_BALANCE|9963802|✔|
+|**Exposure**|TAG_PARAM_EXPOSURE|10094850|✔|
+|**Brightness**|TAG_PARAM_BRIGHTNESS|9963776|✔|
+|**Contrast**|TAG_PARAM_CONTRAST|9963777|✔|
+|**Saturation**|TAG_PARAM_SATURATION|9963778|✔|
+|**Hue**|TAG_PARAM_HUE|9963779|✔|
+|**Gamma**|TAG_PARAM_GAMMA|9963792|✔|
+|**Gain**|TAG_PARAM_GAIN|9963795|✖|
+|**Sharpness**|TAG_PARAM_SHARPNESS|9963803|✔|
+|BacklightCompensation|TAG_PARAM_BACKLIGHT_COMPENSATION|9963804|✔|
+|PowerLineFrequency|TAG_PARAM_POWER_LINE_Frequency|9963800|✔|
+|JpegQuality|TAG_PARAM_JPEG_QUALITY|1|✖|
 
 ##### Usage
 
@@ -445,42 +445,7 @@ OK，现在你就可以在你自己的应用中进行WiFi连接的预览了。
 
 ------------
 
-### 6. Planet 运动控制
-
-云台运动通过以下接口控制：
-
-通信协议:HTTP
-接口地址:http://192.168.8.10:8092 
-请求方式:GET
-请求参数:
-|字段|说明|值类型|值|
-| :------------: | :------------ | :------------: |:------------ |
-|**id**|电机id|int|0-旋转<br>1-俯仰|
-|**controlType**|控制方式|int|0-停止<br>1-正转<br>2-反转<br>3-复位|
-|**time**|运行时间|int|>=0(单位:毫秒)|
-|**mode**|电机转动模式|int|0-指定速度<br>1-指定时间和速度|
-|**speed**|电机速度，不是角速度①|int|>=400<br><=2000|
-|**subDivision**|电机细分|int|2<br>4<br>8<br>16|
-|**returnTrip**|是否消除回程差|int|0-不消回程<br>1-消回程|
-|**returnTripTime**|消回程时间|int|>=0(单位:毫秒)|
-
-①电机的旋转角速度由两个参数决定：‘speed’和”subDivision”。 电机0的理论角速度等于3,662.109375/(speed\*subDivision)，电机1的理论角速度等于1,831.0546875/(speed\*subDivision)。
-
-返回结果:
-|字段|说明|值类型|值|
-| :------------: | :------------ | :------------: |:------------ |
-|**id**|电机id|int|0-旋转 1-俯仰|
-|**location**|电机位置|double|电机0:0-360<br>电机1:30-150|
-|**posLimit**|电机正限位|int|0-不在正限位<br>1-在正限位|
-|**negLimit**|电机负限位|int|0-不在负限位<br>1-在负限位|
-|**resetFlag**|电机是否在复位位置|int|0-不在复位位置<br>1-在复位位置|
-|**result**|执行结果|int|1000-执行ok<br>1001-电机未初始化<br>1002-电机正在运行<br>1003-电机已停止<br>1004-电机正在复位|
-
-使用示例 [PlanetCommand][PlanetCommand.java]。
-
-------------
-
-### 7. 默认配置
+### 6. 默认配置
 
 USB 连接默认配置 : [UsbCameraConstant][UsbCameraConstant.java]
 

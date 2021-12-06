@@ -75,10 +75,6 @@
             android:name=".activity.camera.WifiTeleCamActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.camera.PlanetTeleCamActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
 
     </application>
 
