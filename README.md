@@ -444,7 +444,7 @@ For `Exposure` of **MicroScope CAM**, it will be **Auto** when `ExposureAuto = 3
 
 ------------
 
-### 6. Planet ROTATEMENT CONTROL
+### 6. Planet Rotatement Control
 
 Planet rotatement is controlled through the following interface:
 
