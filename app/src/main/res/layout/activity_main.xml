@@ -148,6 +148,17 @@
                             android:textColor="@color/colorWhite"
                             android:textSize="15sp"
                             android:visibility="visible" />
+                        <TextView
+                            android:id="@+id/tv_tele_planet_connect_activity_main"
+                            android:layout_width="150dp"
+                            android:layout_height="40dp"
+                            android:layout_marginTop="10dp"
+                            android:background="@drawable/ic_bg_btn_camera_select_available"
+                            android:gravity="center"
+                            android:text="Planet Connect"
+                            android:textColor="@color/colorWhite"
+                            android:textSize="15sp"
+                            android:visibility="visible" />
 
                     </LinearLayout>
 
