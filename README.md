@@ -556,6 +556,8 @@ limitations under the License.
 [WifiCameraState.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/convergence/excamera/sdk/wifi/WifiCameraState.java
 [ActionState.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/convergence/excamera/sdk/common/ActionState.java
 
+[PlanetCommand.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/convergence/excamera/sdk/planet/core/PlanetCommand.java
+
 [UsbCameraConstant.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/convergence/excamera/sdk/usb/UsbCameraConstant.java
 [WifiCameraConstant.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/convergence/excamera/sdk/wifi/WifiCameraConstant.java
 [OutputUtil.java]: https://github.com/ConvergenceSoftware/ExCamera/blob/master/libexcamera/src/main/java/com/convergence/excamera/sdk/common/OutputUtil.java
